@@ -6,20 +6,17 @@
 \subsection{Justificacion}
 	\begin{Estructura}{diccString}[puntero(nodo($\sigma$))]
 		\begin{Tupla}[nodo]
-			\tupItem{hijos}{arreglo[256] de puntero(nodo($\sigma$))}
-			\tupItem{padre}{puntero(nodo($\sigma$))}
+			\tupItem{hijos}{arreglo[256] de puntero(nodo($\sigma$)}
 			\tupItem{significado}{puntero($\sigma$)}
 		\end{Tupla}
 	\end{Estructura}
 \subsection{Invariante de representación}
 
 \textbf{Informal}
-(1)El puntero(nodo($\sigma$)) no tiene padre ya que es la raiz
-(2)Los hijos de cada nodo (para cada elemento del arreglo) tienen como padre a este
-
-\textbf{Formal}
-\Rep[puntero(nodoAB) p][p]{(1)p$\to$padre = NULL $\wedge$ (2)($\forall$ $p_1$:puntero(nodo))(esDecendiente($p_1$, p) $\yluego$ ($\forall$ $p_2$: (puntero(nodo))(esHijo?($p_1$, $p_2$, 255)) $\Rightarrow$ $p_2 \to$padre = $p_1$))}
 
 
+\subsection{Predicado de abtraccion}
+
+\AbsFc[puntero(nodo($\sigma$))]{DiccString(string, $\sigma$)}[p]{d: DiccString(string, $\sigma$) | ($\forall$ s: string)(Def?(s, $\sigma$) $\Leftrightarrow$ ())}
 
 \end{Representacion}

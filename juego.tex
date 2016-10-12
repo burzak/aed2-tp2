@@ -45,29 +45,29 @@
 \subsubsection{Justificación}
 	\begin{Estructura}{Juego}[Game]
 		\begin{Tupla}[Game]
-			\tupItem{pokemons}{diccString(pokemon, tupla <cantSalvaje: Nat, cantTotal: Nat>}
-			\tupItem{jugadores}{Vector(InfoJugador)}
-			\tupItem{mapaInfo}{Vector(Vector(CosaFea)}		
-			\tupItem{cantidadTotPokémons}{Nat}
-			\tupItem{coordenadasPokemons}{Lista(tupla<Pokemon, Coordenada>)}		
+			\tupItem{pokemons}{diccString(pokemon, tupla <cantSalvaje: Nat, cantTotal: Nat>}\\
+			\tupItem{jugadores}{Vector(InfoJugador)}\\
+			\tupItem{mapaInfo}{Vector(Vector(CosaFea)}\\
+			\tupItem{cantidadTotPokémons}{Nat}\\
+			\tupItem{coordenadasPokemons}{Lista(tupla<Pokemon, Coordenada>)}\\
 		\end{Tupla}
 	\end{Estructura}
 	
 	\begin{Tupla}[InfoJugador]
-		\tupItem{conectado}{Bool}
-		\tupItem{expulsado}{Bool}
-		\tupItem{sanciones}{Nat}
-		\tupItem{pos}{Coordenada}
-		\tupItem{pokemons}{dicc(pokemon, cant: nat)}
-		\tupItem{posicionMapa}{$it_lista$(tupla<jugador: Nat, EsperandoCapturar: $it_ColaDePrioridad$(cantPokemon)>)}
-		\tupItem{cantTotalPoke}{Nat}
+		\tupItem{conectado}{Bool}\\
+		\tupItem{expulsado}{Bool}\\
+		\tupItem{sanciones}{Nat}\\
+		\tupItem{pos}{Coordenada}\\
+		\tupItem{pokemons}{dicc(pokemon, cant: nat)}\\
+		\tupItem{posicionMapa}{itlista(tupla<jugador: Nat, EsperandoCapturar: itColaDePrioridad(cantPokemon)>)}\\
+		\tupItem{cantTotalPoke}{Nat}\\
 	\end{Tupla}
 	
 	
 	\begin{Tupla}[CosaFea]
 		\tupItem{jugEspe}{ColaDePrioridad(cantPokemon)}
 		\tupItem{hayPokemon}{Bool}
-		\tupItem{jugadores}{ListaEnlazada(jugador, $it_ColaDePrioridad$(cantPokemon))}
+		\tupItem{jugadores}{ListaEnlazada(jugador, itColaDePrioridad(cantPokemon))}
 		\tupItem{MovimientosRestantes}{Nat}
 	\end{Tupla}
 \subsubsection{Invariante de representación}
