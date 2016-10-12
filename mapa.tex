@@ -1,0 +1,110 @@
+\section{Mapa}
+
+
+\subsection{Interfaz}
+
+\parbox {1,7cm}{{\bf Género}} mapa\\
+{\bf se explica con:}  \tadNombre{Mapa}, \tadNombre{bool}\\
+\medskip
+
+\InterfazFuncion{CrearMapa}{}{mapa}
+{res = crearMapa()}
+[O(1)]
+[Crea un nuevo mapa]
+\\
+
+\InterfazFuncion{AgregarCoordenada}{\In {c_1}{coordenada}}{mapa}
+{res = agregarCoor($c_1$)}
+[O(1)]
+[Devuelve la distancia entre 2 coordenadas]
+\\
+
+\begin{Representacion}
+\subsubsection{Justificación}
+	\begin{Estructura}{Mapa}[infomapa]
+		\begin{Tupla}[infomapa]
+			\tupItem{coordenadas}{conj(Coordenada)}\\
+			\tupItem{relacionCoordenadas}{dicc(<Coordenada, Coordenada>, Bool)}
+		\end{Tupla}
+	\end{Estructura}
+	
+\subsubsection{Invariante de representación}
+
+\textbf{Informal}\\
+
+Vale para todo par de natruales
+
+\textbf{Formal}\\
+
+\Rep[casillero e][e]{true}
+
+\subsubsection{Predicado de abtraccion}
+
+\AbsFc[estr]{Coordenada}[e]{($\forall$ s:casillero)(Abs(s) $\igobs$ c:Coordenada) | (s.latitud = latitud(c) $\wedge$ s.longitud = longitud(c))}
+
+\end{Representacion}
+
+\subsection{Algoritmos}
+\begin{Algoritmos}
+
+\begin{algorithm}[H]{\textbf{iCrearMapa}() $\to$ res: mapa}
+	\begin{algorithmic}[1]
+		\State $res \gets <\emptyset, vacio>$ \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Sólo realiza una asignación
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iAgregarCoordenada}(\In {c}{coordenada}, \In {m}{mapa}) $\to$ res: mapa}
+	\begin{algorithmic}[1]
+		\State $res \gets ((c_1.latitud - c_2.latitud)^{2} + (c_1.longitud  - c_2.longitud)^{2}))$ \Comment O(1)
+				\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Sólo realiza operaciones básicas
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iCoordenadaArriba}(\In {c}{casillero}) $\to$ res: casillero}
+	\begin{algorithmic}[1]
+		\State $res \gets <c.latitud +1, c.longitud>$ \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Sólo realiza una asignación y una suma
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iCoordenadaAbajo}(\In {c}{casillero}) $\to$ res: casillero}
+	\begin{algorithmic}[1]
+		\State $res \gets <c.latitud -1, c.longitud>$ \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Sólo realiza una asignación y una resta
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iCoordenadaIzquierda}(\In {c}{casillero}) $\to$ res: casillero}
+	\begin{algorithmic}[1]
+		\State $res \gets <c.latitud, c.longitud - 1>$ \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Sólo realiza una asignación y una resta
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iCoordenadaDerecha}(\In {c}{casillero}) $\to$ res: casillero}
+	\begin{algorithmic}[1]
+		\State $res \gets <c.latitud, c.longitud + 1>$ \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Sólo realiza una asignación y una suma
+	\end{algorithmic}
+\end{algorithm}
+
+\end{Algoritmos}
