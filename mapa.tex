@@ -7,17 +7,26 @@
 {\bf se explica con:}  \tadNombre{Mapa}, \tadNombre{bool}\\
 \medskip
 
-\InterfazFuncion{CrearMapa}{}{mapa}
+\InterfazFuncion{CrearMapa}{}{infomapa}
 {res = crearMapa()}
 [O(1)]
 [Crea un nuevo mapa]
 \\
 
-\InterfazFuncion{AgregarCoordenada}{\In {c_1}{coordenada}}{mapa}
-{res = agregarCoor($c_1$)}
-[O(1)]
-[Devuelve la distancia entre 2 coordenadas]
+\InterfazFuncion{AgregarCoordenada}{\In {c_1}{coordenada}, \Inout {m}{mapa}}{}
+[m $\igobs$ m$_0$]
+{m = agregarCoor($c_1$, m$_0$)}
+[O(n)]
+[Agrega la coordenada a mapa]
 \\
+
+\InterfazFuncion{AnchoMapa}{\In {m}{mapa}}{Nat}
+[$\#coordenadas(m) > 0$]
+{$(\forall c: Coordenada) c \in coordenadas(m) \impluego res \gte altitud(c)$}
+[O(n)]
+[Agrega la coordenada a mapa]
+\\
+
 
 \begin{Representacion}
 \subsubsection{Justificación}
@@ -47,18 +56,23 @@ Vale para todo par de natruales
 \subsection{Algoritmos}
 \begin{Algoritmos}
 
-\begin{algorithm}[H]{\textbf{iCrearMapa}() $\to$ res: mapa}
+\begin{algorithm}[H]{\textbf{iCrearMapa}() $\to$ res: mapainfo}
 	\begin{algorithmic}[1]
-		\State $res \gets <\emptyset, vacio>$ \Comment O(1)
+		\State $res \gets <Vacio(), Vacio()>$ \Comment O(1)
 		
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:} Sólo realiza una asignación
+			\Statex \underline{Justificacion:} Sólo realiza una asignación y las funciones de Vac\'io() de m\'odulo Conjunto Lineal y Diccionario Lineal son O(1)
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iAgregarCoordenada}(\In {c}{coordenada}, \In {m}{mapa}) $\to$ res: mapa}
+\begin{algorithm}[H]{\textbf{iAgregarCoordenada}(\In {c}{coordenada}, \In {m}{mapainfo}) $\to$ res: mapa}
 	\begin{algorithmic}[1]
+		\State $coordConectadas \gets Agregar(Vacio(), c)$ \Comment O(1)
+		\State $coordConectadas \gets Agregar(Vacio(), c)$ \Comment O(1)
+		\State $aVisitar \gets Agregar(Vacio(), c)$ \Comment O(1)
+		\State $res \gets ((c_1.latitud - c_2.latitud)^{2} + (c_1.longitud  - c_2.longitud)^{2}))$ \Comment O(1)
+		\State $res \gets ((c_1.latitud - c_2.latitud)^{2} + (c_1.longitud  - c_2.longitud)^{2}))$ \Comment O(1)
 		\State $res \gets ((c_1.latitud - c_2.latitud)^{2} + (c_1.longitud  - c_2.longitud)^{2}))$ \Comment O(1)
 				\medskip
 		\Statex \underline{Complejidad:} O(1)

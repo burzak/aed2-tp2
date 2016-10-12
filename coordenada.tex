@@ -45,6 +45,18 @@
 [Crea una coordenada a la derecha de la pasada por parámetro]
 \\
 
+\InterfazFuncion{TieneCoordenadaAbajo}{\In{c}{coordenada}}{bool}
+{res = latitud(c) $>$ 0}
+[O(1)]
+[Dice si tiene coordenada abajo]
+\\
+
+\InterfazFuncion{TieneCoordenadaIzquierda}{\In{c}{coordenada}}{bool}
+{res = longitud(c) $>$ 0}
+[O(1)]
+[Dice si tiene coordenada a la izquierda]
+\\
+
 \begin{Representacion}
 \subsubsection{Justificación}
 	\begin{Estructura}{Coordenada}[casillero]
@@ -130,6 +142,26 @@ Vale para todo par de natruales
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 			\Statex \underline{Justificacion:} Sólo realiza una asignación y una suma
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iTieneCoordenadaAbajo}(\In {c}{casillero}) $\to$ res: bool}
+	\begin{algorithmic}[1]
+		\State $res \gets c.latitud > 0$ \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Si latitud es mayor a 0 tiene coordenada abajo
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iTieneCoordenadaIzquierda}(\In {c}{casillero}) $\to$ res: bool}
+	\begin{algorithmic}[1]
+		\State $res \gets c.longitud > 0$ \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Si longitud es mayor a 0 tiene coordenada izquierda
 	\end{algorithmic}
 \end{algorithm}
 
