@@ -1,0 +1,81 @@
+\section{Juego}
+
+\subsection{Interfaz}
+
+\parbox {1,7cm}{{\bf Género}} juego \\
+{\bf se explica con:}  \tadNombre{Mapa}, \tadNombre{Conjunto ($\sigma$)} , \tadNombre{Secuencia($\sigma$)}\\
+\medskip
+
+\InterfazFuncion{CrearJuego}{\In {m}{mapa}}{juego}
+{res $\igobs$ crearJuego(m)}
+[O(1)]
+[Creo un nuevo juego tomando un mapa]\\
+
+\InterfazFuncion{AgregarPokemon}{\In {p}{pokemon}, \In {c}{coordenada}, \Inout {g}{juego}}{}
+[puedoAgregarPokemon(c, j) $\wedge$ g $\igobs$ g$_0$]
+{g = agregarPokemon(p, c, g$_0$)}
+[O(??)]
+[Agrego un pokemon al juego]\\
+
+\InterfazFuncion{AgregarJugador}{\In {g}{juego}}{it(jugador)}
+[g $\igobs$ g$_0$]
+{g = agregarJugador(g$_0$)}
+[O(J), Siendo J la cantidad de jugadores que fueron agregados al juego]
+[Agrega un jugador al juego]\\
+
+\InterfazFuncion{Conectarse}{\In {j}{jugador}, \In {c}{coordenada}, \Inout {g}{juego}}{}
+[g $\igobs$ g$_0$ $\wedge$ j $\in$ jugadores(g) $\yluego$ $\neg$estaConectado(j, g) $\wedge$ posExistente(c, mapa(g))]
+{g = conectarse(g$_0$)}
+[O(log(EC)), siendo EC la máxima cantidad de jugadoes esperando capturar un pokémon]
+[Conecta un jugador al juego, con todo lo que esto implica]\\
+
+\InterfazFuncion{Desconectarse}{\In {j}{jugador}, \Inout{g}{juego}}{}
+[g $\igobs$ g$_0$ $\wedge$ j $\in$ jugadores(g) $\yluego$ estaConectado(j, g)]
+{g = desconectarse(j, g$_0$)}
+[O(log(EC)), siendo EC la máxima cantidad de jugadoes esperando capturar un pokémon]
+[Desconecta al jugador j del juego]\\
+
+\InterfazFuncion{Moverse}{\In {j}{jugador}, \In {c}{coordenada}, \Inout {g}{juego}}{}
+[g $\igobs$ g$_0$ $\wedge$ j $\in$ jugadores(g) $\yluego$ estaConectado(j, g) $\wedge$ posExistente(c, mapa(g))]
+{g = moverse(j, c, g$_0$)}
+[O(??)]
+[Mueve un jugador en el mapa, verifica si hay una captura de pokémon, y para el jugador movido verifica si cometió alguna infracción]\\
+
+\begin{Representacion}
+\subsubsection{Justificación}
+	\begin{Estructura}{Juego}[Game]
+		\begin{Tupla}[Game]
+			\tupItem{pokemons}{diccString(pokemon, tupla <cantSalvaje: Nat, cantTotal: Nat>}
+			\tupItem{jugadores}{Vector(InfoJugador)}
+			\tupItem{mapaInfo}{Vector(Vector(CosaFea)}		
+			\tupItem{cantidadTotPokémons}{Nat}
+			\tupItem{coordenadasPokemons}{Lista(tupla<Pokemon, Coordenada>)}		
+		\end{Tupla}
+	\end{Estructura}
+	
+	\begin{Tupla}[InfoJugador]
+		\tupItem{conectado}{Bool}
+		\tupItem{expulsado}{Bool}
+		\tupItem{sanciones}{Nat}
+		\tupItem{pos}{Coordenada}
+		\tupItem{pokemons}{dicc(pokemon, cant: nat)}
+		\tupItem{posicionMapa}{$it_lista$(tupla<jugador: Nat, EsperandoCapturar: $it_ColaDePrioridad$(cantPokemon)>)}
+		\tupItem{cantTotalPoke}{Nat}
+	\end{Tupla}
+	
+	
+	\begin{Tupla}[CosaFea]
+		\tupItem{jugEspe}{ColaDePrioridad(cantPokemon)}
+		\tupItem{hayPokemon}{Bool}
+		\tupItem{jugadores}{ListaEnlazada(jugador, $it_ColaDePrioridad$(cantPokemon))}
+		\tupItem{MovimientosRestantes}{Nat}
+	\end{Tupla}
+\subsubsection{Invariante de representación}
+\subsubsection{Predicado de abtraccion}
+\end{Representacion}
+
+\subsection{Algoritmos}
+
+\begin{Algoritmos}
+
+\end{Algoritmos}
