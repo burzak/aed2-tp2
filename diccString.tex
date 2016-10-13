@@ -1,6 +1,48 @@
 \section{DiccString($\sigma$)}
 
+\textbf{parámetros formales}\hangindent=2\parindent\\
+\parbox{1.7cm}{\textbf{géneros}}  $\sigma$\\
+\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
+\InterfazFuncion{CopiarSignificado}{\In{s}{$\sigma$}}{$\sigma$}
+{$res \igobs s$}
+[$O(copy(s))$]
+[función de copia de $\sigma$'s]
+}
+
 \subsection{Interfaz}
+
+\InterfazFuncion{Vacio}{}{DiccString($\sigma$)}
+{res = Vacio()}
+[O(1)]
+[Crea un diccionario vacio]\\
+
+\InterfazFuncion{Significado}{\In {s}{string}, \In {d}{DiccString($\sigma$)}}{$\sigma$}
+[Definido(s, d)]
+{res = Significado(s, d)}
+[O(|L|), siendo L la máxima longitud de las claves en el dicc]
+[Devuelve el significado del diccionario]\\
+
+\InterfazFuncion{Definido}{\In {s}{string}, \In {d}{DiccString($\sigma$)}}{bool}
+{res = Definido(s, d)}
+[O(K), siendo K la cantidad de claves del diccionario]
+[Verifica si una clave existe o no en el diccionario]\\
+
+\InterfazFuncion{Vacio?}{\In {d}{DiccString($\sigma$)}}{bool}
+{res = Vacio?(d)}
+[O(1)]
+[Chequea si un diccionario es vacio]\\
+
+\InterfazFuncion{Definir}{\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{DiccString($\sigma$)}}{}
+[d $\igobs$ d$_0$]
+{d = Definir(s, c, d$_0$)}
+[O(|L|*k), siendo L la máxima longitud de las claves del diccionario y k la cantidad de claves del dicc]
+[Chequea una clave, si existe modifica su significado sino define la clave]\\
+
+\InterfazFuncion{DefinirRapido}{\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{DiccString($\sigma$)}}{}
+[d $\igobs$ d$_0$ $\wedge$ $\neg$Definido(s, d)]
+{d = DefinirRapido(s, c, d$_0$)}
+[O(|L|), siendo L la máxima longitud de las claves del diccionario]
+[Define una clave con su respectivo significado en el diccionario, necesita que la clave no exista en las claves del diccionario]\\
 
 \begin{Representacion}
 \subsection{Justificacion}
@@ -17,6 +59,79 @@
 
 \subsection{Predicado de abtraccion}
 
-\AbsFc[puntero(nodo($\sigma$))]{DiccString(string, $\sigma$)}[p]{d: DiccString(string, $\sigma$) | ($\forall$ s: string)(Def?(s, $\sigma$) $\Leftrightarrow$ ())}
+%\AbsFc[puntero(nodo($\sigma$))]{DiccString(string, $\sigma$)}[p]{d: DiccString(string, $\sigma$) | ($\forall$ s: string)(Def?(s, $\sigma$) $\Leftrightarrow$ ())}
+
+\subsection{Algoritmos}
+
+\begin{Algoritmos}
+
+\begin{algorithm}[H]{\textbf{iVacio}() $\to$ res: puntero(nodo($\sigma$))}
+	\begin{algorithmic}[1]
+		\State a $\gets$ arreglo[256] de puntero(nodo($\sigma$)) \Comment O(256), creo un arreglo vacio de 256 posiciones, que guarda punteros a nodo
+		\State $res \gets <a, NULL>$ \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Crea un arreglo vacio, como siempre va a tener 256 posiciones para cualquier entrade la complejidad queda constante, y asigna 
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iSignificado}(\In {s}{string}, \In {d}{puntero(nodo($\sigma$))}) $\to$ res: $\sigma$)}
+	\begin{algorithmic}[1]
+		\State nat i $\gets$ Longitud(s) \Comment O(1)
+		\State puntero(nodo($\sigma$)) p $\gets$ d \Comment O(1)
+		\While{i $<$ Longitud(s)} \Comment O(|s|), longitud de s
+			\State p $\gets$ p $\to$ hijos[ord(s[i])] \Comment O(1)
+		 	\State i $\gets$ i +1 \Comment O(1)
+		 \EndWhile
+		 \State res $\gets$ *(p $\to$ significado) \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(|s|)
+			\Statex \underline{Justificacion:} Recorre toda la clave, usando un puntero. Cuando este llega al final devuelve el significado, ya que recorrio toda la clave por el DiccString.  
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iDefinido}(\In {s}{string}, \In {d}{puntero(nodo($\sigma$))}) $\to$ res: bool}
+	\begin{algorithmic}[1]
+		\State nat i $\gets$ Longitud(s) \Comment O(1)
+		\State puntero(nodo($\sigma$)) p $\gets$ d \Comment O(1)
+		\While{i $<$ Longitud(s) $\wedge$ p $\to$ hijos[ord(s[i])] $\neq$ NULL} \Comment O(|s|), longitud de s
+			\State p $\gets$ p $\to$ hijos[ord(s[i])] \Comment O(1)
+		 	\State i $\gets$ i +1 \Comment O(1)
+		 \EndWhile
+		 \State res $\gets$ (i $=$ Longitud(s)) $\wedge$ (p$\to$ significado $\neq$ NULL) \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(|s|)
+			\Statex \underline{Justificacion:} En el peor de los casos recorre toda la clave para verificar si esta definida o no.  
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iVacio?}(\In {d}{puntero(nodo($\sigma$))}) $\to$ res: bool}
+	\begin{algorithmic}[1]
+		\State bool b $\gets$ false \Comment O(1)
+		\State nat i $\gets$ 0 \Comment O(1)
+		\While{i $<$ 256 $\wedge$ $\neg$b} \Comment O(256), termina siendo O(1)
+			\If{d $\to$ hijos[i] $\neq$ NULL} \Comment O(1)
+				 b $\gets$ true \Comment O(1)
+			\EndIf
+		\EndWhile
+		\State res $\gets$ (d $=$ NULL) $\vee$ (i $=$ 256)\Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Chequea si el DiccString es vacio, para esto verifica si la raiz es null o que ningun existe.
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iDefinir}(\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{puntero(nodo($\sigma$))})}
+	\begin{algorithmic}[1]
+		\State 
+		\medskip
+		\Statex \underline{Complejidad:} O(|s|)
+			\Statex \underline{Justificacion:}Chequea si el DiccString es vacio, para esto verifica si la raiz es null.  
+	\end{algorithmic}
+\end{algorithm}
+
+\end{Algoritmos}
 
 \end{Representacion}
