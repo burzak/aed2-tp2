@@ -22,7 +22,7 @@
 
 \InterfazFuncion{AnchoMapa}{\In {m}{mapa}}{Nat}
 [$\#coordenadas(m) > 0$]
-{$(\forall c: Coordenada) c \in coordenadas(m) \impluego res \gte altitud(c)$}
+{$(\forall c: Coordenada) c \in coordenadas(m) \impluego res \geq altitud(c)$}
 [O(n)]
 [Agrega la coordenada a mapa]
 \\
@@ -36,7 +36,7 @@
 			\tupItem{relacionCoordenadas}{dicc(<Coordenada, Coordenada>, Bool)}
 		\end{Tupla}
 	\end{Estructura}
-	
+
 \subsubsection{Invariante de representación}
 
 \textbf{Informal}\\
@@ -59,7 +59,7 @@ Vale para todo par de natruales
 \begin{algorithm}[H]{\textbf{iCrearMapa}() $\to$ res: mapainfo}
 	\begin{algorithmic}[1]
 		\State $res \gets <Vacio(), Vacio()>$ \Comment O(1)
-		
+
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 			\Statex \underline{Justificacion:} Sólo realiza una asignación y las funciones de Vac\'io() de m\'odulo Conjunto Lineal y Diccionario Lineal son O(1)
@@ -83,7 +83,7 @@ Vale para todo par de natruales
 \begin{algorithm}[H]{\textbf{iCoordenadaArriba}(\In {c}{casillero}) $\to$ res: casillero}
 	\begin{algorithmic}[1]
 		\State $res \gets <c.latitud +1, c.longitud>$ \Comment O(1)
-		
+
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 			\Statex \underline{Justificacion:} Sólo realiza una asignación y una suma
@@ -93,7 +93,7 @@ Vale para todo par de natruales
 \begin{algorithm}[H]{\textbf{iCoordenadaAbajo}(\In {c}{casillero}) $\to$ res: casillero}
 	\begin{algorithmic}[1]
 		\State $res \gets <c.latitud -1, c.longitud>$ \Comment O(1)
-		
+
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 			\Statex \underline{Justificacion:} Sólo realiza una asignación y una resta
@@ -103,7 +103,7 @@ Vale para todo par de natruales
 \begin{algorithm}[H]{\textbf{iCoordenadaIzquierda}(\In {c}{casillero}) $\to$ res: casillero}
 	\begin{algorithmic}[1]
 		\State $res \gets <c.latitud, c.longitud - 1>$ \Comment O(1)
-		
+
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 			\Statex \underline{Justificacion:} Sólo realiza una asignación y una resta
@@ -114,7 +114,7 @@ Vale para todo par de natruales
 \begin{algorithm}[H]{\textbf{iCoordenadaDerecha}(\In {c}{casillero}) $\to$ res: casillero}
 	\begin{algorithmic}[1]
 		\State $res \gets <c.latitud, c.longitud + 1>$ \Comment O(1)
-		
+
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 			\Statex \underline{Justificacion:} Sólo realiza una asignación y una suma
