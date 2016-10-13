@@ -6,6 +6,8 @@
 {\bf se explica con:}  \tadNombre{Mapa}, \tadNombre{Conjunto ($\sigma$)} , \tadNombre{Secuencia($\sigma$)}\\
 \medskip
 
+\parbox {1,5cm}{\bf{Operaciones básicas}}\\
+
 \InterfazFuncion{CrearJuego}{\In {m}{mapa}}{juego}
 {res $\igobs$ crearJuego(m)}
 [O(1)]
@@ -41,41 +43,166 @@
 [O(??)]
 [Mueve un jugador en el mapa, verifica si hay una captura de pokémon, y para el jugador movido verifica si cometió alguna infracción]\\
 
+\bf{Operaciones del iterador}\\
+
+\InterfazFuncion{CrearIt}{\In {v}{vector(infoJugador)}}{itVector(infoJugador)}
+{res = CrearItUni(v)}
+[O(1)]
+[Crea un iterador unidireccional no modificable al principio del vector, no necesariamente es un elemento válido por ende no se puede usar Actual sin Avanzar]
+[]\\
+
+\InterfazFuncion{HayMas?}{\In {it}{itVector(infoJugador)}}{bool}
+{res $\igobs$ HayMas?(it)}
+[O(n), siendo n la cantidad de elementos del vector]
+[Devuelve true si y solo si quedan elementos para avanzar]\\
+
+\InterfazFuncion{Avanzar}{\Inout {it}{itVector(infoJugador)}}{}
+[HayMas?(it) $\wedge$ it $\igobs$ it$_0$]
+{it $\igobs$ Avanzar(it$_0$)}
+[O(n), siendo n la cantidad de elementos del vector]
+[Avanza el iterador al próximo elemento del vector]\\
+
+\InterfazFuncion{Actual}{\In {it}{itVector(infoJugador)}}{infoJugador}
+[HayMas?(it)]
+{res $\igobs$ Actual(it)}
+[O(1)]
+[Devuelve el elemento apuntado por el iterador]
+[res no es modificable porque el iterador no es modificable]\\
+
+\InterfazFuncion{Siguientes}{\In {it}{itVector(infoJugador)}}{lista(infoJugador)}
+{res $\igobs$ Siguientes(it)}
+[O(n), siendo n la cantidad de elementos del vector]
+[Devuelve los elementos del vector posteriores al iterador, puede no haber ninguno]\\
+
+
 \begin{Representacion}
+\Titulo{Representacion del modulo}
 \subsubsection{Justificación}
 	\begin{Estructura}{Juego}[Game]
 		\begin{Tupla}[Game]
-			\tupItem{pokemons}{diccString(pokemon, tupla <cantSalvaje: Nat, cantTotal: Nat>}\\
-			\tupItem{jugadores}{Vector(InfoJugador)}\\
-			\tupItem{mapaInfo}{Vector(Vector(CosaFea)}\\
-			\tupItem{cantidadTotPokémons}{Nat}\\
-			\tupItem{coordenadasPokemons}{Lista(tupla<Pokemon, Coordenada>)}\\
+			\tupItem{pokemons}{diccString(pokemon, tupla <cantSalvaje: Nat, cantTotal: Nat>}
+			\tupItem{\\jugadores}{Vector(InfoJugador)}
+			\tupItem{\\mapaInfo}{Vector(Vector(CosaFea)}
+			\tupItem{\\cantidadTotPokémons}{Nat}
+			\tupItem{\\coordenadasPokemons}{Lista(tupla<Pokemon, Coordenada>)}
 		\end{Tupla}
 	\end{Estructura}
 	
 	\begin{Tupla}[InfoJugador]
-		\tupItem{conectado}{Bool}\\
-		\tupItem{expulsado}{Bool}\\
-		\tupItem{sanciones}{Nat}\\
-		\tupItem{pos}{Coordenada}\\
-		\tupItem{pokemons}{dicc(pokemon, cant: nat)}\\
-		\tupItem{posicionMapa}{itlista(tupla<jugador: Nat, EsperandoCapturar: itColaDePrioridad(cantPokemon)>)}\\
-		\tupItem{cantTotalPoke}{Nat}\\
+		\tupItem{conectado}{Bool}
+		\tupItem{\\expulsado}{Bool}
+		\tupItem{\\sanciones}{Nat}
+		\tupItem{\\pos}{Coordenada}
+		\tupItem{\\pokemons}{dicc(pokemon, cant: nat)}
+		\tupItem{\\posicionMapa}{itlista(tupla<jugador: Nat, EsperandoCapturar: itColaDePrioridad(cantPokemon)>)}
+		\tupItem{\\cantTotalPoke}{Nat}
 	\end{Tupla}
 	
 	
 	\begin{Tupla}[CosaFea]
-		\tupItem{jugEspe}{ColaDePrioridad(cantPokemon)}
-		\tupItem{hayPokemon}{Bool}
-		\tupItem{jugadores}{ListaEnlazada(jugador, itColaDePrioridad(cantPokemon))}
-		\tupItem{MovimientosRestantes}{Nat}
+		\tupItem{\\jugEspe}{ColaDePrioridad(cantPokemon)}
+		\tupItem{\\hayPokemon}{Bool}
+		\tupItem{\\jugadores}{ListaEnlazada(jugador, itColaDePrioridad(cantPokemon))}
+		\tupItem{\\MovimientosRestantes}{Nat}
 	\end{Tupla}
-\subsubsection{Invariante de representación}
-\subsubsection{Predicado de abtraccion}
-\end{Representacion}
 
+\subsubsection{Invariante de representación}
+
+\subsubsection{Predicado de abtraccion}
+
+	\Titulo{Representacion del iterador}
+\subsection{Justificacion}
+
+	\begin{Estructura}{itVector(infoJugador)}[iter]
+		\begin{Tupla}[iter]
+		\tupItem{posicion}{nat}
+		\tupItem{vector}{puntero(Vector(infoJugador))}
+		\end{Tupla}
+	\end{Estructura}
+\subsection{Invariante de representacion}
+
+\textbf{Informal}
+
+\textbf{Formal}
+
+\subsection{Predicado de abstraccion}
+
+\end{Representacion}
 \subsection{Algoritmos}
 
 \begin{Algoritmos}
+\Titulo {Algoritmos del Modulo}
+\Titulo {Algoritmos del iterador}
+
+\begin{algorithm}[H]{\textbf{iCrearIt}(\In {v}{Vector(infoJugador)}) $\to$ res: iter))}
+	\begin{algorithmic}[1]
+		\State res $\gets$ <0, v> \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:}Crea un iterador al princio del vector, solo 
+		realiza una asignación  
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iHayMas?}(\In {it}{iter}) $\to$ res: bool))}
+	\begin{algorithmic}[1]
+		\State bool b $\gets$ false
+		\State nat i $\gets$ it.posicion \Comment O(1)
+		\While {i $<$ it.vector$\to$ longitud $\wedge$ $\neg$b} \Comment O(longitud(v))
+			\If {it.vector$\to$ elementos[i].expulsado $=$ false} \Comment O(1)
+				\State b $\gets$ true \Comment O(1)
+			\EndIf
+		\State i $\gets$ i +1 \Comment O(1)		
+		\EndWhile
+		\State res $\gets$ b
+		\medskip
+		\Statex \underline{Complejidad:} O(longitud(v))
+		\Statex \underline{Justificacion:}En el peor de lo casos hay que recorrer todo el vector para saber si existe otro elemento
+
+\end{algorithmic}
+\end{algorithm}	
+		
+\begin{algorithm}[H]{\textbf{iAvanzar}(\Inout {it}{iter})}
+	\begin{algorithmic}[1]
+		\State bool b $\gets$ false
+		\State nat i $\gets$ it.posicion \Comment O(1)
+		\While {i $<$ it.vector$\to$ longitud $\wedge$ $\neg$b} \Comment O(longitud(v))
+			\If {it.vector$\to$ elementos[i].expulsado $=$ false} \Comment O(1)
+				\State b $\gets$ true \Comment O(1)
+			\EndIf
+		\State i $\gets$ i +1 \Comment O(1)		
+		\EndWhile
+		\State it.posicion $\gets$ i \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(longitud(v))
+		\Statex \underline{Justificacion:}Recorre el vector y para en el primer elemento válido, que existe por la precondición de la función, luego actualiza la posición del iterador  
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iActual}(\In {it}{iter}) $\to$ res: infoJugador))}
+	\begin{algorithmic}[1]
+		\State res $\gets$ it.vector$\to$ elementos[it.posicion] \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:}Se mete al vector a travéz del iterador y devuelve el contenido del vector en la posición en donde está el iterador  
+	\end{algorithmic}
+\end{algorithm}
+	
+\begin{algorithm}[H]{\textbf{iSiguientes}(\In {it}{iter}) $\to$ res: lista(infoJugador)))}
+	\begin{algorithmic}[1]
+		\State lista(infoJugador) ls $\gets$ Vacia() \Comment O(1), crea una lista vacia
+		\State nat i $\gets$ it.posicion \Comment O(1)
+		\While {i $<$ it.vector$\to$ longitud} \Comment O(longitud(v)$*$copy(infoJugador))
+			\If {it.vector$\to$ elementos[i].expulsado $=$ false} \Comment O(1)
+				\State AgregarAtras(ls, it.vector$\to$ elementos[i]) \Comment O(copy (infoJugador))
+			\EndIf
+		\State i $\gets$ i +1 \Comment O(1)		
+		\EndWhile
+		\State res $\gets$ ls \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(longitud(v) *copy(infoJugador))
+		\Statex \underline{Justificacion:}Para devolver una lista con los elementos que quedan por recorrer, recorro todo el vector viendo que elementos son válidos y si un elemento es válido lo agrego a una lista, considerando el costo de copiar el elemento.
+	\end{algorithmic}
+\end{algorithm}
 
 \end{Algoritmos}

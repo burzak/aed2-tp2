@@ -24,7 +24,7 @@
 
 \InterfazFuncion{Definido}{\In {s}{string}, \In {d}{DiccString($\sigma$)}}{bool}
 {res = Definido(s, d)}
-[O(K), siendo K la cantidad de claves del diccionario]
+[O(|L|), siendo L la máxima longitud de las claves en el dicc]
 [Verifica si una clave existe o no en el diccionario]\\
 
 \InterfazFuncion{Vacio?}{\In {d}{DiccString($\sigma$)}}{bool}
@@ -35,14 +35,14 @@
 \InterfazFuncion{Definir}{\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{DiccString($\sigma$)}}{}
 [d $\igobs$ d$_0$]
 {d = Definir(s, c, d$_0$)}
-[O(|L|*k), siendo L la máxima longitud de las claves del diccionario y k la cantidad de claves del dicc]
-[Chequea una clave, si existe modifica su significado sino define la clave]\\
-
-\InterfazFuncion{DefinirRapido}{\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{DiccString($\sigma$)}}{}
-[d $\igobs$ d$_0$ $\wedge$ $\neg$Definido(s, d)]
-{d = DefinirRapido(s, c, d$_0$)}
 [O(|L|), siendo L la máxima longitud de las claves del diccionario]
-[Define una clave con su respectivo significado en el diccionario, necesita que la clave no exista en las claves del diccionario]\\
+[Define una clave en el diccionario]\\
+
+\InterfazFuncion{Borrar}{\In {s}{string}, \Inout {d}{DiccString($\sigma$)}}{}
+[d $=$ d$_0$]
+{d $=$ Borrar(s, d$_0$)}
+[O(|L|), siendo L la máxima longitud de las claves en el diccionario]
+[Borra la clave, si es prefijo de alguna otra clave solo borra el significado]
 
 \begin{Representacion}
 \subsection{Justificacion}
@@ -55,11 +55,17 @@
 \subsection{Invariante de representación}
 
 \textbf{Informal}
-
+(1)Para todo nodo, sus hijos no pueden tenerlo como hijo
+(2)Todas las hojas tienen significado
 
 \subsection{Predicado de abtraccion}
 
-%\AbsFc[puntero(nodo($\sigma$))]{DiccString(string, $\sigma$)}[p]{d: DiccString(string, $\sigma$) | ($\forall$ s: string)(Def?(s, $\sigma$) $\Leftrightarrow$ ())}
+\AbsFc[puntero(nodo)]{dicc(string, $\sigma$)}[p]{ d : dicc(string,$\sigma$) | $(\forall s:string)\Big( \big(Def?(s,d)$ $\Longleftrightarrow (encontrarPalabra(s,p) \neq NULL$ $\yluego$ $encontrarPalabra(s,p)\to significado \neq NULL)\big)$ $\land$ $\big(*(encontrarPalabra(s,p)\to significado) = obtener(s,p)\big)\Big)$}
+
+
+~  
+ \tadOperacion{encontrarPalabra}{string,puntero(nodo)}{puntero(nodo)}{}
+  \tadAxioma{encontrarPalabra($s$, $p$)}{\IF $vacia(s)$ $\lor$ $p=NULL$  THEN $p$ ELSE encontrarPalabra($fin(s)$, $p\to caracteres$[$ord(prim(s))$]) FI}
 
 \subsection{Algoritmos}
 
@@ -125,10 +131,23 @@
 
 \begin{algorithm}[H]{\textbf{iDefinir}(\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{puntero(nodo($\sigma$))})}
 	\begin{algorithmic}[1]
-		\State 
+		\State puntero(nodo($\sigma$)) p $\gets$ d \Comment O(1)
+		\State nat i $\gets$ 0 \Comment O(1)
+		\While{i $<$ Longitud(s)} \Comment O(|s|), longitud de s
+			\If{p$\to$ hijos[ord(s[i])] $=$ NULL} \Comment O(1) 
+				puntero(nodo($\sigma$)) $p_2$ $gets$ NULL \Comment O(1)
+				p$\to$ hijos[ord(s[i])] $\gets$ $p_2$ \Comment O(1)	
+				p $\gets$ p$\to$ hijos[ord(s[i])] \Comment O(1)
+				i $\gets$ i + 1 \Comment O(1)
+			\Else
+				p $\gets$ p$\to$ hijos[ord(s[i])] \Comment O(1)
+				i $\gets$ i + 1 \Comment O(1)
+			\EndIf
+		\EndWhile
+		p$\to$ significado $\gets$ c \Comment O(1)		
 		\medskip
 		\Statex \underline{Complejidad:} O(|s|)
-			\Statex \underline{Justificacion:}Chequea si el DiccString es vacio, para esto verifica si la raiz es null.  
+			\Statex \underline{Justificacion:}Recorre la clave, si existe el nodo solo avanza a este sino crea una nuevo y avanza. Al final asigna el significado, como recorre la clave una vez la complejidad final es O(|s|)
 	\end{algorithmic}
 \end{algorithm}
 
