@@ -45,31 +45,31 @@
 
 \bf{Operaciones del iterador}\\
 
-\InterfazFuncion{CrearIt}{\In {v}{vector(infoJugador)}}{itVector(infoJugador)}
+\InterfazFuncion{CrearIt}{\In {g}{game}}{itJuego($\sigma$)}
 {res = CrearItUni(v)}
 [O(1)]
 [Crea un iterador unidireccional no modificable al principio del vector, no necesariamente es un elemento válido por ende no se puede usar Actual sin Avanzar]
 []\\
 
-\InterfazFuncion{HayMas?}{\In {it}{itVector(infoJugador)}}{bool}
+\InterfazFuncion{HayMas?}{\In {it}{itJuego($\sigma$)}}{bool}
 {res $\igobs$ HayMas?(it)}
 [O(n), siendo n la cantidad de elementos del vector]
 [Devuelve true si y solo si quedan elementos para avanzar]\\
 
-\InterfazFuncion{Avanzar}{\Inout {it}{itVector(infoJugador)}}{}
+\InterfazFuncion{Avanzar}{\Inout {it}{itJuego($\sigma$)}}{}
 [HayMas?(it) $\wedge$ it $\igobs$ it$_0$]
 {it $\igobs$ Avanzar(it$_0$)}
 [O(n), siendo n la cantidad de elementos del vector]
 [Avanza el iterador al próximo elemento del vector]\\
 
-\InterfazFuncion{Actual}{\In {it}{itVector(infoJugador)}}{infoJugador}
+\InterfazFuncion{Actual}{\In {it}{itJuego($\sigma$)}}{$\sigma$}
 [HayMas?(it)]
 {res $\igobs$ Actual(it)}
 [O(1)]
 [Devuelve el elemento apuntado por el iterador]
 [res no es modificable porque el iterador no es modificable]\\
 
-\InterfazFuncion{Siguientes}{\In {it}{itVector(infoJugador)}}{lista(infoJugador)}
+\InterfazFuncion{Siguientes}{\In {it}{itJuego($\sigma$)}}{lista($\sigma$)}
 {res $\igobs$ Siguientes(it)}
 [O(n), siendo n la cantidad de elementos del vector]
 [Devuelve los elementos del vector posteriores al iterador, puede no haber ninguno]\\
@@ -132,6 +132,21 @@
 
 \begin{Algoritmos}
 \Titulo {Algoritmos del Modulo}
+
+\begin{algorithm}[H]{\textbf{iAgregarJugador}(\In {g}{Game}) $\to$ res: itJuego($\sigma$)}
+	\begin{algorithmic}[1]
+		\State AgregarAtras (g.jugadroes, <false, false, 0, <0, 0>, Vacio(), NULL, 0>) \Comment O(longitud(g.jugadores) + copy(tupla))
+		\State   itJuego($\sigma$) it $\gets$ CrearIt(g) \Comment O(1)
+		\While {it.posicion $<$ Longitud(g.jugadores)} \Comment O(longitud(g.jugadores))
+			\State it.posicion $\gets$ it.posicion + 1 \Comment O(1)
+		\EndWhile
+		\State res $\gets$ it \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(longitud(g.jugadores))
+		\Statex \underline{Justificacion:}Agrega un jugador al juego, el costo de copiar la tupla es O(1) porque todas las componentes están vacías, después crea un iterador al principio del vector y lo avanza hasta la última posición donde fue agregado el jugador y lo devuelve. Para hacer esto último tengo que recorrer todo el vector entonces la complejidad final es O(longitud(g.jugadores) + (longitud(g.jugadores) + copiar(tupla))), como dijimos el costo de copiar  
+	\end{algorithmic}
+\end{algorithm}
+
 \Titulo {Algoritmos del iterador}
 
 \begin{algorithm}[H]{\textbf{iCrearIt}(\In {v}{Vector(infoJugador)}) $\to$ res: iter))}
