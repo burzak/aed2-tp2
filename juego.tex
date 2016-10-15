@@ -43,6 +43,21 @@
 [O(??)]
 [Mueve un jugador en el mapa, verifica si hay una captura de pokémon, y para el jugador movido verifica si cometió alguna infracción]\\
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% OBSERVADORES BASICOS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\InterfazFuncion{Mapa}{\In {g}{Juego}}{Mapa}
+{res $\igobs$ mapa(g)}
+[O(1)]
+[Devuelve la instancia de mapa que tenemos guardada]
+\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \bf{Operaciones del iterador}\\
 
 \InterfazFuncion{CrearIt}{\In {g}{game}}{itJuego($\sigma$)}
@@ -81,6 +96,7 @@
 	\begin{Estructura}{Juego}[Game]
 		\begin{Tupla}[Game]
 			\tupItem{pokemons}{diccString(pokemon, tupla <cantSalvaje: Nat, cantTotal: Nat>}
+			\tupItem{\\mapa}{Mapa}
 			\tupItem{\\jugadores}{Vector(InfoJugador)}
 			\tupItem{\\mapaInfo}{Vector(Vector(CosaFea)}
 			\tupItem{\\cantidadTotPokémons}{Nat}
@@ -133,6 +149,21 @@
 \begin{Algoritmos}
 \Titulo {Algoritmos del Modulo}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Generadores
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{algorithm}[H]{\textbf{iCrearJuego}(\In {m}{mapa}) $\to$ res: Game}
+	\begin{algorithmic}[1]
+		\State res $\gets$ <Vacio(), m, Vac\'ia(), Vac\'ia(), 0, Vac\'ia()> 
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:} Todo es O(1) ya que estoy creando una tupla con estructuras vac\'ias que son $\Theta$(1) y una asignaci\'on
+	\end{algorithmic}
+\end{algorithm}
+
+
 \begin{algorithm}[H]{\textbf{iAgregarJugador}(\In {g}{Game}) $\to$ res: itJuego($\sigma$)}
 	\begin{algorithmic}[1]
 		\State AgregarAtras (g.jugadroes, <false, false, 0, <0, 0>, Vacio(), NULL, 0>) \Comment O(longitud(g.jugadores) + copy(tupla))
@@ -146,6 +177,25 @@
 		\Statex \underline{Justificacion:}Agrega un jugador al juego, el costo de copiar la tupla es O(1) porque todas las componentes están vacías, después crea un iterador al principio del vector y lo avanza hasta la última posición donde fue agregado el jugador y lo devuelve. Para hacer esto último tengo que recorrer todo el vector entonces la complejidad final es O(longitud(g.jugadores) + (longitud(g.jugadores) + copiar(tupla))), como dijimos el costo de copiar  
 	\end{algorithmic}
 \end{algorithm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% OBSERVADORES BASICOS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{algorithm}[H]{\textbf{iMapa}(\In {g}{Game}) $\to$ res: mapa}
+	\begin{algorithmic}[1]
+		\State res $\gets$ g.mapa \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:} Devuelve la instancia de mapa que tenemos guardada
+	\end{algorithmic}
+\end{algorithm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Iterador
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \Titulo {Algoritmos del iterador}
 
