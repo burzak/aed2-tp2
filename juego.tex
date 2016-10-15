@@ -60,31 +60,31 @@
 
 \bf{Operaciones del iterador}\\
 
-\InterfazFuncion{CrearIt}{\In {g}{game}}{itJuego($\sigma$)}
+\InterfazFuncion{CrearIt}{\In {g}{game}}{itJugador}
 {res = CrearItUni(v)}
 [O(1)]
 [Crea un iterador unidireccional no modificable al principio del vector, no necesariamente es un elemento válido por ende no se puede usar Actual sin Avanzar]
 []\\
 
-\InterfazFuncion{HayMas?}{\In {it}{itJuego($\sigma$)}}{bool}
+\InterfazFuncion{HayMas?}{\In {it}{itJugador}}{bool}
 {res $\igobs$ HayMas?(it)}
 [O(n), siendo n la cantidad de elementos del vector]
 [Devuelve true si y solo si quedan elementos para avanzar]\\
 
-\InterfazFuncion{Avanzar}{\Inout {it}{itJuego($\sigma$)}}{}
+\InterfazFuncion{Avanzar}{\Inout {it}{itJugador}}{}
 [HayMas?(it) $\wedge$ it $\igobs$ it$_0$]
 {it $\igobs$ Avanzar(it$_0$)}
 [O(n), siendo n la cantidad de elementos del vector]
 [Avanza el iterador al próximo elemento del vector]\\
 
-\InterfazFuncion{Actual}{\In {it}{itJuego($\sigma$)}}{$\sigma$}
+\InterfazFuncion{Actual}{\In {it}{itJugador}}{Nat}
 [HayMas?(it)]
 {res $\igobs$ Actual(it)}
 [O(1)]
-[Devuelve el elemento apuntado por el iterador]
+[Devuelve el Id apuntado por el iterador]
 [res no es modificable porque el iterador no es modificable]\\
 
-\InterfazFuncion{Siguientes}{\In {it}{itJuego($\sigma$)}}{lista($\sigma$)}
+\InterfazFuncion{Siguientes}{\In {it}{itJugador)}}{lista($\sigma$)}
 {res $\igobs$ Siguientes(it)}
 [O(n), siendo n la cantidad de elementos del vector]
 [Devuelve los elementos del vector posteriores al iterador, puede no haber ninguno]\\
@@ -129,7 +129,7 @@
 	\Titulo{Representacion del iterador}
 \subsection{Justificacion}
 
-	\begin{Estructura}{itVector(infoJugador)}[iter]
+	\begin{Estructura}{itJugador}[iter]
 		\begin{Tupla}[iter]
 		\tupItem{posicion}{nat}
 		\tupItem{vector}{puntero(Vector(infoJugador))}
@@ -189,6 +189,64 @@
 	\end{algorithmic}
 \end{algorithm}
 
+\begin{algorithm}[H]{\textbf{iAgregarPokemon}(\In {p}{string}, \In {c}{coordenada}, \In {g}{game})}
+	\begin{algorithmic}[1]
+		\State AgregarRapido(g.coordenadasPokemons, c) \Comment O(copiar(c)) = O(1)
+		\If{$\neg$Definido(p, g.pokemons)} \Comment O(2*|p|) = O(|p|)
+			\State Definir(p, <1, 0>, g.pokemons) \Comment O(|P|)
+		\Else
+			\State Definir(p, <Significado(p, g.pokemons).cantSalvaje +1, Significado(p, g.pokemons).cantAtrapados>, g.pokemons) \Comment O(|p|)
+		\EndIf
+		\State g.mapaInfo[c].hayPokemon $\gets$ true \Comment O(1)
+		\State g.mapaInfo[c].movimientosRestantes $\gets$ 0 \Comment O(1)
+		\State lista(coordenada) lc $\gets$ Vacia() \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(longitud(g.jugadores))
+		\Statex \underline{Justificacion:}  
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iCeldasValidas}(\In {g}{Game}, \In {c}{coordenada}, \In {n}{nat}) $\to$ res: lista(coordenada)}
+	\begin{algorithmic}[1]
+		\State lista(coordenada) ls $\gets$ Vacia() \Comment O(1)
+		\State nat i $\gets$ n \Comment O(1)
+		\While {i $>$ 0}
+			\If {g.mapaInfo[<c.latitud+i, c.longitud+i>].coordenadaVálida $=$ true}
+				\State AgregarAtras(l, <c.latitud+i, c.longitud+i>)
+			\EndIf
+			\If {g.mapaInfo[<c.latitud, c.longitud+i>].coordenadaVálida $=$ true}
+				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
+			\EndIf
+			\If {g.mapaInfo[<c.latitud+i, c.longitud>].coordenadaVálida $=$ true}
+				\State AgregarAtras(l, <c.latitud+i, c.longitud>)			
+			\EndIf
+			\If {g.mapaInfo[<c.latitud-i, c.longitud-i>].coordenadaVálida $=$ true}
+				\State AgregarAtras(l, <c.latitud-i, c.longitud-i>)			
+			\EndIf
+			\If {g.mapaInfo[<c.latitud-i, c.longitud+i>].coordenadaVálida $=$ true}
+				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
+			\EndIf
+			\If {g.mapaInfo[<c.latitud, c.longitud+i>].coordenadaVálida $=$ true}
+				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
+			\EndIf
+			\If {g.mapaInfo[<c.latitud, c.longitud+i>].coordenadaVálida $=$ true}
+				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
+			\EndIf
+			\If {g.mapaInfo[<c.latitud, c.longitud+i>].coordenadaVálida $=$ true}
+				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
+			\EndIf
+			\If {g.mapaInfo[<c.latitud, c.longitud+i>].coordenadaVálida $=$ true}
+				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
+			\EndIf
+			
+		\EndWhile
+		\medskip
+		\Statex \underline{Complejidad:} O(longitud(g.jugadores))
+		\Statex \underline{Justificacion:}
+	\end{algorithmic}
+\end{algorithm}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % OBSERVADORES BASICOS
@@ -210,9 +268,9 @@
 
 \Titulo {Algoritmos del iterador}
 
-\begin{algorithm}[H]{\textbf{iCrearIt}(\In {v}{Vector(infoJugador)}) $\to$ res: iter))}
+\begin{algorithm}[H]{\textbf{iCrearIt}(\In {g}{game}) $\to$ res: iter))}
 	\begin{algorithmic}[1]
-		\State res $\gets$ <0, v> \Comment O(1)
+		\State res $\gets$ <0, puntero(g.jugadores)> \Comment O(1)
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 		\Statex \underline{Justificacion:}Crea un iterador al princio del vector, solo 
@@ -255,29 +313,29 @@
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iActual}(\In {it}{iter}) $\to$ res: infoJugador))}
+\begin{algorithm}[H]{\textbf{iActual}(\In {it}{iter}) $\to$ res: nat}
 	\begin{algorithmic}[1]
-		\State res $\gets$ it.vector$\to$ elementos[it.posicion] \Comment O(1)
+		\State res $\gets$ it.posicion \Comment O(1)
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
-		\Statex \underline{Justificacion:}Se mete al vector a travéz del iterador y devuelve el contenido del vector en la posición en donde está el iterador  
+		\Statex \underline{Justificacion:}Devuelve la id del jugador que apunta el iterador  
 	\end{algorithmic}
 \end{algorithm}
 	
-\begin{algorithm}[H]{\textbf{iSiguientes}(\In {it}{iter}) $\to$ res: lista(infoJugador)))}
+\begin{algorithm}[H]{\textbf{iSiguientes}(\In {it}{iter}) $\to$ res: lista(jugadores)))}
 	\begin{algorithmic}[1]
-		\State lista(infoJugador) ls $\gets$ Vacia() \Comment O(1), crea una lista vacia
+		\State lista(nat) ls $\gets$ Vacia() \Comment O(1), crea una lista vacia
 		\State nat i $\gets$ it.posicion \Comment O(1)
-		\While {i $<$ it.vector$\to$ longitud} \Comment O(longitud(v)$*$copy(infoJugador))
+		\While {i $<$ it.vector$\to$ longitud} \Comment O(longitud(v))
 			\If {it.vector$\to$ elementos[i].expulsado $=$ false} \Comment O(1)
-				\State AgregarAtras(ls, it.vector$\to$ elementos[i]) \Comment O(copy (infoJugador))
+				\State AgregarAtras(ls, it.posicion) \Comment O(1)
 			\EndIf
 		\State i $\gets$ i +1 \Comment O(1)		
 		\EndWhile
 		\State res $\gets$ ls \Comment O(1)
 		\medskip
-		\Statex \underline{Complejidad:} O(longitud(v) *copy(infoJugador))
-		\Statex \underline{Justificacion:}Para devolver una lista con los elementos que quedan por recorrer, recorro todo el vector viendo que elementos son válidos y si un elemento es válido lo agrego a una lista, considerando el costo de copiar el elemento.
+		\Statex \underline{Complejidad:} O(longitud(v))
+		\Statex \underline{Justificacion:}Para devolver una lista con los elementos que quedan por recorrer, recorro todo el vector viendo que elementos son válidos y si un elemento es válido lo agrego a una lista.
 	\end{algorithmic}
 \end{algorithm}
 
