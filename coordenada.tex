@@ -57,6 +57,18 @@
 [Dice si tiene coordenada a la izquierda]
 \\
 
+\InterfazFuncion{Latitud}{\In{c}{coordenada}}{Nat}
+{res = latitud(c)}
+[O(1)]
+[Devuelve latitud de la coordenada]
+\\
+
+\InterfazFuncion{Longitud}{\In{c}{coordenada}}{Nat}
+{res = longitud(c)}
+[O(1)]
+[Devuelve longitud de la coordenada]
+\\
+
 \begin{Representacion}
 \subsubsection{Justificación}
 	\begin{Estructura}{Coordenada}[casillero]
@@ -162,6 +174,28 @@ Vale para todo par de natruales
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 			\Statex \underline{Justificacion:} Si longitud es mayor a 0 tiene coordenada izquierda
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iLatitud}(\In {c}{casillero}) $\to$ res: Nat}
+	\begin{algorithmic}[1]
+		\State $res \gets c.latitud$ \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Solo hacemos una asignaci\'on de un valor guardado en la estructura interna
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iLongitud}(\In {c}{casillero}) $\to$ res: Nat}
+	\begin{algorithmic}[1]
+		\State $res \gets c.longitud$ \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Solo hacemos una asignaci\'on de un valor guardado en la estructura interna
 	\end{algorithmic}
 \end{algorithm}
 

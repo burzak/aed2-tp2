@@ -7,24 +7,31 @@
 {\bf se explica con:}  \tadNombre{Mapa}, \tadNombre{bool}\\
 \medskip
 
-\InterfazFuncion{CrearMapa}{}{infomapa}
+\InterfazFuncion{CrearMapa}{}{Mapa}
 {res = crearMapa()}
 [O(1)]
 [Crea un nuevo mapa]
 \\
 
-\InterfazFuncion{AgregarCoordenada}{\In {c_1}{coordenada}, \Inout {m}{mapa}}{}
+\InterfazFuncion{Coordenadas}{\In {m}{Mapa}}{Conj(Coordenada)}
+{res = coordenadas(m)}
+[O(1)]
+[Devuelve todas las coordenadas del mapa]
+\\
+
+\InterfazFuncion{AgregarCoordenada}{\In {c}{Coordenada}, \Inout {m}{Mapa}}{}
 [m $\igobs$ m$_0$]
-{m = agregarCoor($c_1$, m$_0$)}
+{m = agregarCoor(c, m$_0$)}
 [O(n)]
 [Agrega la coordenada a mapa]
 \\
 
-\InterfazFuncion{AnchoMapa}{\In {m}{mapa}}{Nat}
-[$\#coordenadas(m) > 0$]
-{$(\forall c: Coordenada) c \in coordenadas(m) \impluego res \geq altitud(c)$}
+
+\InterfazFuncion{CoordenadasConectadasA}{\In {c}{Coordenada}, \In {m}{Mapa}}{Conj(Coordenada)}
+[$c \in coordenadas(m)$]
+{$(\forall c_1: Coordenada) c_1 \in res \wedge c_1 \in coordenadas(m) \impluego hayCamino(c, c_1, m)$}
 [O(n)]
-[Agrega la coordenada a mapa]
+[Devuelve un conjunto de coordenadas a las cuales hayCamino]
 \\
 
 
@@ -33,7 +40,9 @@
 	\begin{Estructura}{Mapa}[infomapa]
 		\begin{Tupla}[infomapa]
 			\tupItem{coordenadas}{conj(Coordenada)}\\
-			\tupItem{relacionCoordenadas}{dicc(<Coordenada, Coordenada>, Bool)}
+			\tupItem{relacionCoordenadas}{secu(secu(Bool))}
+			\tupItem{ancho}{Nat}
+			\tupItem{alto}{Nat}
 		\end{Tupla}
 	\end{Estructura}
 
@@ -58,7 +67,7 @@ Vale para todo par de natruales
 
 \begin{algorithm}[H]{\textbf{iCrearMapa}() $\to$ res: mapainfo}
 	\begin{algorithmic}[1]
-		\State $res \gets <Vacio(), Vacio()>$ \Comment O(1)
+		\State $res \gets <Vacio(), Vacio(), 0, 0>$ \Comment O(1)
 
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
@@ -68,21 +77,50 @@ Vale para todo par de natruales
 
 \begin{algorithm}[H]{\textbf{iAgregarCoordenada}(\In {c}{coordenada}, \In {m}{mapainfo}) $\to$ res: mapa}
 	\begin{algorithmic}[1]
+		\State \IF Longitud(c) > mapainfo.ancho THEN m.ancho $\gets$ Longitud(c) ELSE FI \Comment O(1)
+		\State \IF Latitud(c) > mapainfo.alto THEN m.alto $\gets$ Latitud(c) ELSE FI \Comment O(1)
+		\State \textbf{var} T: Nat \Comment O(1)
+		\State $T \gets$ mapainfo.ancho * mapainfo.alto \Comment O(1)
+		\State \textbf{var} aVisitar: arreglo[T] de arreglo[T] de Bool \Comment O(T)
+		\State \textbf{var} tam: Nat \Comment O(1)
+		\State $tam \gets 0$ \Comment O(1)
+		\While{$tam < T$} \Comment O($T^2$)
+			\State $aVisitar[tam] \gets arreglo[T]$ \Comment O(T)
+			\State $T \gets T + 1$ \Comment O(1)
+		\EndWhile
+		\State \textbf{var} coordConectadas: ConjuntoLineal(coordenada) \Comment O(1)
+		\State \textbf{var} aVisitar: ConjuntoLineal(coordenada) \Comment O(1)
 		\State $coordConectadas \gets Agregar(Vacio(), c)$ \Comment O(1)
-		\State $coordConectadas \gets Agregar(Vacio(), c)$ \Comment O(1)
+		\State $visitados \gets Agregar(Vacio(), c)$ \Comment O(1)
 		\State $aVisitar \gets Agregar(Vacio(), c)$ \Comment O(1)
-		\State $res \gets ((c_1.latitud - c_2.latitud)^{2} + (c_1.longitud  - c_2.longitud)^{2}))$ \Comment O(1)
-		\State $res \gets ((c_1.latitud - c_2.latitud)^{2} + (c_1.longitud  - c_2.longitud)^{2}))$ \Comment O(1)
-		\State $res \gets ((c_1.latitud - c_2.latitud)^{2} + (c_1.longitud  - c_2.longitud)^{2}))$ \Comment O(1)
-				\medskip
-		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:} Sólo realiza operaciones básicas
+		\While{$\neg EsVac\'io?(aVisitar)$} \Comment O(T)
+			\State \IF Longitud(c) $>$ 0 $\yluego$ Pertenece(mapainfo.coordenadas, CoordenadaIzquierda(c)) $\wedge \neg$ Pertenece(visitados, CoordenadaIzquierda(c)) THEN
+			 Agregar(visitados, CoordenadaIzquierda(c)) \Comment O(T)
+			 Agregar()
+			 ELSE FI
+		\EndWhile
+		\medskip
+		\Statex \underline{Complejidad:} O($T^2$)
+		\Statex \underline{Justificacion:} Donde T es el tamaño de la grilla de todo el mapa (ancho * alto).
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iCoordenadaArriba}(\In {c}{casillero}) $\to$ res: casillero}
+\begin{algorithm}[H]{\textbf{iCoordenadasConectadasA}(\In {c}{coordenada}, \In {m}{infomapa}) $\to$ res: Conj(coordenada)}
 	\begin{algorithmic}[1]
-		\State $res \gets <c.latitud +1, c.longitud>$ \Comment O(1)
+		\State visitadas $\gets$ Vac\'io() \Comment O(1)
+		\State aVisitar $\gets$ Encolar(Vac\'ia(), c) \Comment  O(1)
+		\State conectadas $\gets$ Agregar(Vac\'io(), c) \Comment O(1)
+		\While{EsVac\'ia(aVisitar)} \Comment O($\#$m.coordenadas)
+			\State coor $\gets$ Proximo(aVisitar) \Comment O(1)
+			\State \If {Latitud(c) > 0} \Comment O(1)
+					\State coorAbajo $\gets$ CoordenadaAbajo(c) \Comment O(1)
+%				\State \IF \neg Pertenece?(visitadas, coorAbajo) \wedge Pertenece?(m.coordenadas, coorAbajo) THEN \Comment O($\#$m.coordenadas)
+%					\State 
+%				ELSE FI
+			\Else
+				\State aoeuaueo
+			\EndIf
+		\EndWhile
 
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
@@ -90,35 +128,5 @@ Vale para todo par de natruales
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iCoordenadaAbajo}(\In {c}{casillero}) $\to$ res: casillero}
-	\begin{algorithmic}[1]
-		\State $res \gets <c.latitud -1, c.longitud>$ \Comment O(1)
-
-		\medskip
-		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:} Sólo realiza una asignación y una resta
-	\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[H]{\textbf{iCoordenadaIzquierda}(\In {c}{casillero}) $\to$ res: casillero}
-	\begin{algorithmic}[1]
-		\State $res \gets <c.latitud, c.longitud - 1>$ \Comment O(1)
-
-		\medskip
-		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:} Sólo realiza una asignación y una resta
-	\end{algorithmic}
-\end{algorithm}
-
-
-\begin{algorithm}[H]{\textbf{iCoordenadaDerecha}(\In {c}{casillero}) $\to$ res: casillero}
-	\begin{algorithmic}[1]
-		\State $res \gets <c.latitud, c.longitud + 1>$ \Comment O(1)
-
-		\medskip
-		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:} Sólo realiza una asignación y una suma
-	\end{algorithmic}
-\end{algorithm}
 
 \end{Algoritmos}
