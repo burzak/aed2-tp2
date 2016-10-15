@@ -34,6 +34,13 @@
 \\
 
 
+\InterfazFuncion{PosExistente}{\In {c}{Coordenada},\In {m}{Mapa}}{Bool}
+{res $\igobs$ posExistente(c, m)}
+[O(1)]
+[Devuelve true si existe esa coordenada]
+\\
+
+
 \InterfazFuncion{CoordenadasConectadasA}{\In {c}{Coordenada}, \In {m}{Mapa}}{Conj(Coordenada)}
 [$c \in coordenadas(m)$]
 {$(\forall c_1: Coordenada) c_1 \in res \wedge c_1 \in coordenadas(m) \impluego hayCamino(c, c_1, m)$}
@@ -91,6 +98,17 @@ Vale para todo par de natruales
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 			\Statex \underline{Justificacion:} Son solamente 3 asignaciones y un acceso de orden de 1 en un arreglo estatico
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iPosExistente}(\In {c}{coordenada}, \In {m} {infomapa}) $\to$ res: bool}
+	\begin{algorithmic}[1]
+		\State pos $\gets$ m.ancho * Longitud(c) + m.alto * Latitud(c) \Comment O(1)
+		\State res $\gets$ m.relacionCoordenadas[pos][pos] \Comment O(1)
+
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Es solamente 2 asignaciones y un acceso de orden 1 a un arreglo. Esto funciona porque cuando calculo las relaciones entre las coordenas siempre definimos que una coordenada esta relacionada consigo misma.
 	\end{algorithmic}
 \end{algorithm}
 
