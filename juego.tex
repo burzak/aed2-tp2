@@ -53,6 +53,20 @@
 [Devuelve la instancia de mapa que tenemos guardada]
 \\
 
+\InterfazFuncion{Jugadores}{\In {g}{Juego}}{Conj(Jugador)}
+{res $\igobs$ jugadores(g)}
+[O(1)]
+[Devuelve la instancia de mapa que tenemos guardada]
+\\
+
+\InterfazFuncion{EstaConectado}{\In {j}{Jugador}, \In {g}{Juego}}{Bool}
+[j $\in$ jugadores(g)]
+{res $\igobs$ estaConectado(g)}
+[O(1)]
+[Dice si un jugador esta conectado o no]
+\\
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -276,6 +290,28 @@
 		\Statex \underline{Justificacion:} Devuelve la instancia de mapa que tenemos guardada
 	\end{algorithmic}
 \end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iJugadores}(\In {g}{Game}) $\to$ res: conj(jugador)}
+	\begin{algorithmic}[1]
+		\State res $\gets$ CrearIt(g) \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:} Crea un iterador a jugadores que tiene orden de 1 y lo devuelve
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iEstaConectado}(\In {j}{jugador}, \In {g}{Game}) $\to$ res: conj(jugador)}
+	\begin{algorithmic}[1]
+		\State res $\gets$ g.jugadores[j].conectado \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:} Es una asignaci\'on, un acceso de O(1) a un vector por el id del jugador y ah\'i guardamos una tupla con informaci\'on del jugador, en particular si est\'a \'o no conectado
+	\end{algorithmic}
+\end{algorithm}
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
