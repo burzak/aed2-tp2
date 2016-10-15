@@ -98,7 +98,7 @@
 			\tupItem{pokemons}{diccString(pokemon, tupla <cantSalvaje: Nat, cantTotal: Nat>}
 			\tupItem{\\mapa}{Mapa}
 			\tupItem{\\jugadores}{Vector(InfoJugador)}
-			\tupItem{\\mapaInfo}{Vector(Vector(CosaFea)}
+			\tupItem{\\mapaInfo}{Arreglo de Arreglo de InfoCoordenada)}
 			\tupItem{\\cantidadTotPokémons}{Nat}
 			\tupItem{\\coordenadasPokemons}{Lista(tupla<Pokemon, Coordenada>)}
 		\end{Tupla}
@@ -115,7 +115,7 @@
 	\end{Tupla}
 	
 	
-	\begin{Tupla}[CosaFea]
+	\begin{Tupla}[InfoCoordenada]
 		\tupItem{\\jugEspe}{ColaDePrioridad(cantPokemon)}
 		\tupItem{\\hayPokemon}{Bool}
 		\tupItem{\\jugadores}{ListaEnlazada(jugador, itColaDePrioridad(cantPokemon))}
@@ -156,10 +156,21 @@
 
 \begin{algorithm}[H]{\textbf{iCrearJuego}(\In {m}{mapa}) $\to$ res: Game}
 	\begin{algorithmic}[1]
-		\State res $\gets$ <Vacio(), m, Vac\'ia(), Vac\'ia(), 0, Vac\'ia()> 
+		\State coords $\gets$ Coordenadas(m) \Comment O(1)
+		\State iter $\gets$ CrearIt(coords) \Comment O(1)
+		\State ancho $\gets$ 0 \Comment O(1)
+		\State alto $\gets$ 0 \Comment O(1)
+		\While{HaySiguiente(iter)} \Comment O($\#$coords)
+			\State c $\gets$ Siguiente(iter) \Comment O(1)
+			\State Avanzar(iter) \Comment O(1)
+			\State \IF Altitud(c) > alto THEN alto $\gets$ Altitud(c) ELSE FI \Comment O(1)
+			\State \IF Longitud(c) > ancho THEN ancho $\gets$ Longitud(c) ELSE FI \Comment O(1)
+		\EndWhile
+		\State infocoor $\gets$ arreglo[ancho] de arreglo[alto] de <Vac\'ia(), Bool, Vac\'ia(), 10> \Comment O(m.ancho * m.alto)
+		\State res $\gets$ <Vacio(), m, Vac\'ia(), infocoor, 0, Vac\'ia()> \Comment O(1)
 		\medskip
-		\Statex \underline{Complejidad:} O(1)
-		\Statex \underline{Justificacion:} Todo es O(1) ya que estoy creando una tupla con estructuras vac\'ias que son $\Theta$(1) y una asignaci\'on
+		\Statex \underline{Complejidad:} O(TM)
+		\Statex \underline{Justificacion:} Donde TM es el tama\~no del mapa (alto $\times$ ancho)
 	\end{algorithmic}
 \end{algorithm}
 
