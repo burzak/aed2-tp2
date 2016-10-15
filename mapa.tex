@@ -26,6 +26,13 @@
 [Agrega la coordenada a mapa]
 \\
 
+\InterfazFuncion{HayCamino}{\In {c_1}{Coordenada}, \In {c_2}{Coordenada}, \In {m}{Mapa}}{Bool}
+[$c_1 \in coordenadas(m) \wedge c_2 \in coordenadas(m)$]
+{res $\igobs$ hayCamino($c_1, c_2$)}
+[O(1)]
+[Te dice si dos coordenadas estan conectadas]
+\\
+
 
 \InterfazFuncion{CoordenadasConectadasA}{\In {c}{Coordenada}, \In {m}{Mapa}}{Conj(Coordenada)}
 [$c \in coordenadas(m)$]
@@ -40,7 +47,7 @@
 	\begin{Estructura}{Mapa}[infomapa]
 		\begin{Tupla}[infomapa]
 			\tupItem{coordenadas}{conj(Coordenada)}\\
-			\tupItem{relacionCoordenadas}{secu(secu(Bool))}
+			\tupItem{relacionCoordenadas}{arreglo(arreglo(Bool))}
 			\tupItem{ancho}{Nat}
 			\tupItem{alto}{Nat}
 		\end{Tupla}
@@ -67,7 +74,7 @@ Vale para todo par de natruales
 
 \begin{algorithm}[H]{\textbf{iCrearMapa}() $\to$ res: mapainfo}
 	\begin{algorithmic}[1]
-		\State $res \gets <Vacio(), Vacio(), 0, 0>$ \Comment O(1)
+		\State $res \gets <Vacio(), arreglo[0], 0, 0>$ \Comment O(1)
 
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
@@ -75,33 +82,46 @@ Vale para todo par de natruales
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iAgregarCoordenada}(\In {c}{coordenada}, \In {m}{mapainfo}) $\to$ res: mapa}
+\begin{algorithm}[H]{\textbf{iHayCamino}(\In {c1}{coordenada}, \In {c2}{coordenada}, \In {m} {infomapa}) $\to$ res: bool}
 	\begin{algorithmic}[1]
-		\State \IF Longitud(c) > mapainfo.ancho THEN m.ancho $\gets$ Longitud(c) ELSE FI \Comment O(1)
-		\State \IF Latitud(c) > mapainfo.alto THEN m.alto $\gets$ Latitud(c) ELSE FI \Comment O(1)
-		\State \textbf{var} T: Nat \Comment O(1)
-		\State $T \gets$ mapainfo.ancho * mapainfo.alto \Comment O(1)
-		\State \textbf{var} aVisitar: arreglo[T] de arreglo[T] de Bool \Comment O(T)
-		\State \textbf{var} tam: Nat \Comment O(1)
-		\State $tam \gets 0$ \Comment O(1)
-		\While{$tam < T$} \Comment O($T^2$)
-			\State $aVisitar[tam] \gets arreglo[T]$ \Comment O(T)
-			\State $T \gets T + 1$ \Comment O(1)
-		\EndWhile
-		\State \textbf{var} coordConectadas: ConjuntoLineal(coordenada) \Comment O(1)
-		\State \textbf{var} aVisitar: ConjuntoLineal(coordenada) \Comment O(1)
-		\State $coordConectadas \gets Agregar(Vacio(), c)$ \Comment O(1)
-		\State $visitados \gets Agregar(Vacio(), c)$ \Comment O(1)
-		\State $aVisitar \gets Agregar(Vacio(), c)$ \Comment O(1)
-		\While{$\neg EsVac\'io?(aVisitar)$} \Comment O(T)
-			\State \IF Longitud(c) $>$ 0 $\yluego$ Pertenece(mapainfo.coordenadas, CoordenadaIzquierda(c)) $\wedge \neg$ Pertenece(visitados, CoordenadaIzquierda(c)) THEN
-			 Agregar(visitados, CoordenadaIzquierda(c)) \Comment O(T)
-			 Agregar()
-			 ELSE FI
-		\EndWhile
+		\State pos1 $\gets$ m.ancho * Longitud(c1) + m.alto * Latitud(c1) \Comment O(1)
+		\State pos2 $\gets$ m.ancho * Longitud(c2) + m.alto * Latitud(c2) \Comment O(1)
+		\State res $\gets$ m.relacionCoordenadas[pos1][pos2] \Comment O(1)
+
 		\medskip
-		\Statex \underline{Complejidad:} O($T^2$)
-		\Statex \underline{Justificacion:} Donde T es el tamaño de la grilla de todo el mapa (ancho * alto).
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Son solamente 3 asignaciones y un acceso de orden de 1 en un arreglo estatico
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iAgregarCoordenada}(\In {c}{coordenada}, \In {m}{infomapa})}
+	\begin{algorithmic}[1]
+		\State \IF Longitud(c) > infomapa.ancho THEN m.ancho $\gets$ Longitud(c) ELSE FI \Comment O(1)
+		\State \IF Latitud(c) > infomapa.alto THEN m.alto $\gets$ Latitud(c) ELSE FI \Comment O(1)
+		\State Agregar(m.coordenadas, c) \Comment O($\#$m.coordenadas)
+		\State m.relacionCoordenadas $\gets$ arreglo[m.ancho*m.alto] de arreglo[m.ancho*m.alto] de Bool \Comment O($(m.ancho*m.alto)^2$)
+
+
+		\State iter $\gets$ CrearIt(m.coordenadas) \Comment O(1)
+		
+		\While{HaySiguiente(iter)} \Comment O($\#$m.coordenadas$^3$)
+			\State coor $\gets$ Siguiente(iter) \Comment O(1)
+			\State Avanzar(iter) \Comment O(1)
+			\State conectadas $\gets$ iCoordenadasConectadas(coor, m) \Comment O($\#$m.coordenadas$^2$)
+			\State iterConectadas $\gets$ CrearIt(conectadas) \Comment O(1)
+			\While {HaySiguiente(iterConectadas)} \Comment O($\#$m.coordenadas)
+				\State $coor_2$ $\gets$ Siguiente(iterConectadas) \Comment(1)
+				\State Avanzar(iterConectadas) \Comment O(1)
+				\State pos1 $\gets$ m.ancho * Longitud(coor) + m.alto * Altitud(coor) \Comment O(1)
+				\State pos2 $\gets$ m.ancho * Longitud($coor_2$) + m.alto * Altitud($coor_2$) \Comment O(1)
+				\State m.relacionCoordenadas[pos1][pos2] $\gets$ True \Comment O(1)
+				\State m.relacionCoordenadas[pos2][pos1] $\gets$ True \Comment O(1)
+			\EndWhile
+		\EndWhile
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(max($n^3$, $T^2$))
+		\Statex \underline{Justificacion:} Donde T es el tama\~no de la grilla de todo el mapa (ancho * alto) y n es el cardinal de coordenadas en el Mapa. Ya que la creaci\'on de los arreglos no es gratis, tiene un costo que es el tama\~no del ancho*alto del Mapa. Tambi\'en ejecutamos un While de n iteraciones donde ejecutamos operaciones que cuestan como m\'aximo $n^2$ por lo cual el While tiene un costo del orden de $n^3$. Dado que la creaci\'on podr\'ia tomar m\'as tiempo que ejecutar el While debemos tomar el m\'aximo valor de ambos como la complejidad del algoritmo.
 	\end{algorithmic}
 \end{algorithm}
 
@@ -109,22 +129,46 @@ Vale para todo par de natruales
 	\begin{algorithmic}[1]
 		\State visitadas $\gets$ Vac\'io() \Comment O(1)
 		\State aVisitar $\gets$ Encolar(Vac\'ia(), c) \Comment  O(1)
-		\State conectadas $\gets$ Agregar(Vac\'io(), c) \Comment O(1)
-		\While{EsVac\'ia(aVisitar)} \Comment O($\#$m.coordenadas)
+		\State res $\gets$ Agregar(Vac\'io(), c) \Comment O(1)
+		\While{$\neg$ EsVac\'ia(aVisitar)} \Comment O($\#$m.coordenadas$^2$)
 			\State coor $\gets$ Proximo(aVisitar) \Comment O(1)
-			\State \If {Latitud(c) > 0} \Comment O(1)
-					\State coorAbajo $\gets$ CoordenadaAbajo(c) \Comment O(1)
-%				\State \IF \neg Pertenece?(visitadas, coorAbajo) \wedge Pertenece?(m.coordenadas, coorAbajo) THEN \Comment O($\#$m.coordenadas)
-%					\State 
-%				ELSE FI
+			\State Desencolar(aVisitar)
+			\State Agregar(visitadas, coor) \Comment O($\#$m.coordenadas)			
+			\If {Latitud(coor) > 0} \Comment O(1)
+					\State coorAbajo $\gets$ CoordenadaAbajo(coor) \Comment O(1)
+					\If {$\neg$ Pertenece?(visitadas, coorAbajo) $\wedge$ Pertenece?(m.coordenadas, coorAbajo)} \Comment O($\#$m.coordenadas)
+						\State Agregar(res, coorAbajo) \Comment O($\#$m.coordenadas)
+						\State Encolar(aVisitar, coorAbajo) \Comment O(copy(coordenada))
+					\Else
+					\EndIf
 			\Else
-				\State aoeuaueo
+			\EndIf
+			\If {longitud(coor) > 0} \Comment O(1)
+					\State coorIzq $\gets$ CoordenadaIzquierda(coor) \Comment O(1)
+					\If {$\neg$ Pertenece?(visitadas, coorIzq) $\wedge$ Pertenece?(m.coordenadas, coorIzq)} \Comment O($\#$m.coordenadas)
+						\State Agregar(res, coorIzq) \Comment O($\#$m.coordenadas)
+						\State Encolar(aVisitar, coorIzq) \Comment O(copy(coordenada))
+					\Else
+					\EndIf
+			\Else
+			\EndIf
+			\State coorDer $\gets$ CoordenadaDerecha(coor) \Comment O(1)
+			\If {$\neg$ Pertenece?(visitadas, coorDer) $\wedge$ Pertenece?(m.coordenadas, coorDer)} \Comment O($\#$m.coordenadas)
+				\State Agregar(res, coorDer) \Comment O($\#$m.coordenadas)
+				\State Encolar(aVisitar, coorDer) \Comment O(copy(coordenada))
+			\Else
+			\EndIf
+			\State coorArriba $\gets$ CoordenadaDerecha(coor) \Comment O(1)
+			\If {$\neg$ Pertenece?(visitadas, coorArriba) $\wedge$ Pertenece?(m.coordenadas, coorArriba)} \Comment O($\#$m.coordenadas)
+				\State Agregar(res, coorArriba) \Comment O($\#$m.coordenadas)
+				\State Encolar(aVisitar, coorArriba) \Comment O(copy(coordenada))
+			\Else
 			\EndIf
 		\EndWhile
 
 		\medskip
-		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:} Sólo realiza una asignación y una suma
+		\Statex \underline{Complejidad:} O($n^2$)
+			\Statex \underline{Justificacion:} Dado un mapa y una coordenada te devuelve todas las coordenadas conectadas a esa coordenada inicial. Tomando como \textbf{n} el cardinal de infomapa.coordenadas nos da O($n^2$).
 	\end{algorithmic}
 \end{algorithm}
 
