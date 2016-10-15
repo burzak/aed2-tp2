@@ -101,6 +101,7 @@
 			\tupItem{\\mapaInfo}{Vector(Vector(CosaFea)}
 			\tupItem{\\cantidadTotPokémons}{Nat}
 			\tupItem{\\coordenadasPokemons}{Lista(tupla<Pokemon, Coordenada>)}
+			\tupItem{\\pokemonsDeJugadores}{Lista(Dicc(pokemon: string, cant: nat))}
 		\end{Tupla}
 	\end{Estructura}
 	
@@ -109,8 +110,8 @@
 		\tupItem{\\expulsado}{Bool}
 		\tupItem{\\sanciones}{Nat}
 		\tupItem{\\pos}{Coordenada}
-		\tupItem{\\pokemons}{dicc(pokemon, cant: nat)}
-		\tupItem{\\posicionMapa}{itlista(tupla<jugador: Nat, EsperandoCapturar: itColaDePrioridad(cantPokemon)>)}
+		\tupItem{\\pokemons}{itLista(Dicc(pokemon: string, cant: nat))}
+		\tupItem{\\posicionMapa}{itDicc(jugador: Nat, EsperandoCapturar: itColaDePrioridad(cantPokemon)))}
 		\tupItem{\\cantTotalPoke}{Nat}
 	\end{Tupla}
 	
@@ -118,7 +119,8 @@
 	\begin{Tupla}[CosaFea]
 		\tupItem{\\jugEspe}{ColaDePrioridad(cantPokemon)}
 		\tupItem{\\hayPokemon}{Bool}
-		\tupItem{\\jugadores}{ListaEnlazada(jugador, itColaDePrioridad(cantPokemon))}
+		\tupItem{\\yaSeCapturo}{Bool}
+		\tupItem{\\jugadores}{Dicc(jugador: nat, EsperandoCapturar: itColaDePrioridad(cantPokemon))}
 		\tupItem{\\MovimientosRestantes}{Nat}
 	\end{Tupla}
 
@@ -166,7 +168,7 @@
 
 \begin{algorithm}[H]{\textbf{iAgregarJugador}(\In {g}{Game}) $\to$ res: itJuego($\sigma$)}
 	\begin{algorithmic}[1]
-		\State AgregarAtras (g.jugadroes, <false, false, 0, <0, 0>, Vacio(), NULL, 0>) \Comment O(longitud(g.jugadores) + copy(tupla))
+		\State AgregarAtras (g.jugadroes, <false, false, 0, <0, 0>, NULL, NULL, 0>) \Comment O(longitud(g.jugadores) + copy(tupla))
 		\State   itJuego($\sigma$) it $\gets$ CrearIt(g) \Comment O(1)
 		\While {it.posicion $<$ Longitud(g.jugadores)} \Comment O(longitud(g.jugadores))
 			\State it.posicion $\gets$ it.posicion + 1 \Comment O(1)
@@ -189,50 +191,64 @@
 		\State g.mapaInfo[c].hayPokemon $\gets$ true \Comment O(1)
 		\State g.mapaInfo[c].movimientosRestantes $\gets$ 0 \Comment O(1)
 		\State lista(coordenada) lc $\gets$ Vacia() \Comment O(1)
-		
+		\State lc $\gets$ CeldasValidas(g, c) \Comment O(1)
+		\State AgregarAtras(lc, c) \Comment O(1)
+		\State itLista(coordenadas) it $\gets$ CrearIt(lc) \Comment O(1)
+		\While{HaySiguiente(it)}
+			\State itDicc(jugador, EsperandoCapturar) it2 $\gets$ CrearIt(g.mapaInfo[Siguiente(it)].jugadores) \Comment O(1)
+			\While {HaySiguiente(it2)}
+				\State it
+			\EndWhile
+		\EndWhile			
 		\medskip
 		\Statex \underline{Complejidad:} O(longitud(g.jugadores))
 		\Statex \underline{Justificacion:}  
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iCeldasValidas}(\In {g}{Game}, \In {c}{coordenada}, \In {n}{nat}) $\to$ res: lista(coordenada)}
+\begin{algorithm}[H]{\textbf{iCeldasValidas}(\In {g}{Game}, \In {c}{coordenada}) $\to$ res: lista(coordenada)}
 	\begin{algorithmic}[1]
 		\State lista(coordenada) ls $\gets$ Vacia() \Comment O(1)
-		\State nat i $\gets$ n \Comment O(1)
-		\While {i $>$ 0}
-			\If {g.mapaInfo[<c.latitud+i, c.longitud+i>].coordenadaVálida $=$ true}
-				\State AgregarAtras(l, <c.latitud+i, c.longitud+i>)
-			\EndIf
-			\If {g.mapaInfo[<c.latitud, c.longitud+i>].coordenadaVálida $=$ true}
-				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
-			\EndIf
-			\If {g.mapaInfo[<c.latitud+i, c.longitud>].coordenadaVálida $=$ true}
-				\State AgregarAtras(l, <c.latitud+i, c.longitud>)			
-			\EndIf
-			\If {g.mapaInfo[<c.latitud-i, c.longitud-i>].coordenadaVálida $=$ true}
-				\State AgregarAtras(l, <c.latitud-i, c.longitud-i>)			
-			\EndIf
-			\If {g.mapaInfo[<c.latitud-i, c.longitud+i>].coordenadaVálida $=$ true}
-				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
-			\EndIf
-			\If {g.mapaInfo[<c.latitud, c.longitud+i>].coordenadaVálida $=$ true}
-				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
-			\EndIf
-			\If {g.mapaInfo[<c.latitud, c.longitud+i>].coordenadaVálida $=$ true}
-				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
-			\EndIf
-			\If {g.mapaInfo[<c.latitud, c.longitud+i>].coordenadaVálida $=$ true}
-				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
-			\EndIf
-			\If {g.mapaInfo[<c.latitud, c.longitud+i>].coordenadaVálida $=$ true}
-				\State AgregarAtras(l, <c.latitud, c.longitud+i>)			
-			\EndIf
-			
+		\State nat i $\gets$ 4 \Comment O(1)
+		\While {i $>$ 0} \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)+i, longitud(c)>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)-i, longitud(c)>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c), longitud(c)+i>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c), longitud(c)-i>) \Comment O(1)
+			\State i $\gets$ i - 1 \Comment O(1)
 		\EndWhile
+		\State i $\gets$ 3
+		\While {i > 0} \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)+3, longitud(c)-(i-1)>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)+3>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)-3, longitud(c)-(i-1)>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)-3>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)-3, longitud(c)+(i-1)>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)-3>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)+3, longitud(c)+(i-1)>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)+3>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)+2>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)+1>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)-2>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)-1>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)-2>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)-1>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)+2>) \Comment O(1)
+			\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)+1>) \Comment O(1)			
+			\State i $\gets$ i -1 \Comment O(1) 
+		\EndWhile
+		\State itLista(coordenada) it $\gets$ CrearIt(ls) \Comment O(1)		
+		\While {HaySiguiente(it)} \Comment O(1)
+			\If{PosExistente (Siguiente(it), g.mapa)} \Comment O(1)
+				\State Avanzar(it) \Comment O(1) 
+			\Else
+				\State EleminarSiguiente(it) \Comment O(1)			
+			\EndIf
+		\EndWhile
+		\State res $\gets$ ls \Comment O(1)
 		\medskip
-		\Statex \underline{Complejidad:} O(longitud(g.jugadores))
-		\Statex \underline{Justificacion:}
+		\Statex \underline{Complejidad:} O(1))
+		\Statex \underline{Justificacion:}Como me estoy fijando un numero finito de coordenadas, y la cantidad que veo no varia porque no depende de la entrada, puedo decir que toma O(1) ver todas las celdas, luego recorro la lista para ver cuales son válidas y cuales no, que como son una cantidad constatnte de celdas recorrer la lista tambien es constante
 	\end{algorithmic}
 \end{algorithm}
 
