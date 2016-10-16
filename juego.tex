@@ -551,8 +551,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 		\State g.jugadores[j].pos $\gets$ c \Comment O(1)
 		\If{HayPokemonCerca(c, g)} \Comment O(log $\#$(elementosEnColaDeC))
 			\State itDicc(jugador, itColaPrioridad(cantPokemon)) itPosicion $\gets$ DefinirRapido(g.mapaInfo[c].jugadores, j, Encolar(g.mapaInfo[posPokemonCerca(c, g)].jugEspe, g.jugadores[j].cantTotalPoke, j)) \Comment O(log $\#$(elementosEnColaDeC))
-			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)			
-			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)		
+			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)							\State g.mapaInfo[posPokemonCercano(c, g)].MovimientosRestantes $\gets$ 0 \Comment O(1)
 		\Else
 			\State itDicc(jugador, itColaPrioridad(cantPokemon)) itPosicion $\gets$ DefinirRapido(g.mapaInfo[c].jugadores, j, NULL) \Comment O(1)
 			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)			
