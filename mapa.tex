@@ -3,30 +3,30 @@
 
 \subsection{Interfaz}
 
-\parbox {1,7cm}{{\bf Género}} Mapa\\
-{\bf se explica con:}  \tadNombre{Mapa}, \tadNombre{bool}\\
+\parbox {1,7cm}{{\bf Género}} mapa\\
+{\bf se explica con:}  \tadNombre{Conj($\sigma$)}, \tadNombre{bool}, \tadNombre{Coordenada}\\
 \medskip
 
-\InterfazFuncion{CrearMapa}{}{Mapa}
+\InterfazFuncion{CrearMapa}{}{mapa}
 {res = crearMapa()}
 [O(1)]
 [Crea un nuevo mapa]
 \\
 
-\InterfazFuncion{Coordenadas}{\In {m}{Mapa}}{Conj(Coordenada)}
+\InterfazFuncion{Coordenadas}{\In {m}{mapa}}{Conj(Coordenada)}
 {res = coordenadas(m)}
 [O(1)]
 [Devuelve todas las coordenadas del mapa]
 \\
 
-\InterfazFuncion{AgregarCoordenada}{\In {c}{Coordenada}, \Inout {m}{Mapa}}{}
+\InterfazFuncion{AgregarCoordenada}{\In {c}{Coordenada}, \Inout {m}{mapa}}{}
 [m $\igobs$ m$_0$]
 {m = agregarCoor(c, m$_0$)}
 [O(n)]
 [Agrega la coordenada a mapa]
 \\
 
-\InterfazFuncion{HayCamino}{\In {c_1}{Coordenada}, \In {c_2}{Coordenada}, \In {m}{Mapa}}{Bool}
+\InterfazFuncion{HayCamino}{\In {c_1}{Coordenada}, \In {c_2}{Coordenada}, \In {m}{mapa}}{Bool}
 [$c_1 \in coordenadas(m) \wedge c_2 \in coordenadas(m)$]
 {res $\igobs$ hayCamino($c_1, c_2$)}
 [O(1)]
@@ -34,14 +34,14 @@
 \\
 
 
-\InterfazFuncion{PosExistente}{\In {c}{Coordenada},\In {m}{Mapa}}{Bool}
+\InterfazFuncion{PosExistente}{\In {c}{Coordenada},\In {m}{mapa}}{Bool}
 {res $\igobs$ posExistente(c, m)}
 [O(1)]
 [Devuelve true si existe esa coordenada]
 \\
 
 
-\InterfazFuncion{CoordenadasConectadasA}{\In {c}{Coordenada}, \In {m}{Mapa}}{Conj(Coordenada)}
+\InterfazFuncion{CoordenadasConectadasA}{\In {c}{Coordenada}, \In {m}{mapa}}{Conj(Coordenada)}
 [$c \in coordenadas(m)$]
 {$(\forall c_1: Coordenada) c_1 \in res \wedge c_1 \in coordenadas(m) \impluego hayCamino(c, c_1, m)$}
 [O(n)]

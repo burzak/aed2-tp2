@@ -2,15 +2,15 @@
 
 \subsection{Interfaz}
 
-\parbox {1,7cm}{{\bf Género}} juego, itJugadores \\
-{\bf se explica con:}  \tadNombre{Mapa}, \tadNombre{Conjunto ($\sigma$)} , \tadNombre{Secuencia($\sigma$)}\\
+\parbox {1,7cm}{{\bf Género}} juego \\
+{\bf se explica con:}  \tadNombre{Mapa}, \tadNombre{Conjunto ($\sigma$)} , \tadNombre{Secuencia($\sigma$)}, \tadNombre{Bool}, \tadNombre{Pokemon}, \tadNombre{Jugador}, \tadNombre{Nat}\\
 \medskip
 
 \parbox {1,5cm}{\bf{Operaciones básicas}}\\
 
 \InterfazFuncion{CrearJuego}{\In {m}{mapa}}{juego}
 {res $\igobs$ crearJuego(m)}
-[O(TM), donde TM es el tamaño del mapa]
+[O(1)]
 [Creo un nuevo juego tomando un mapa]\\
 
 \InterfazFuncion{AgregarPokemon}{\In {p}{pokemon}, \In {c}{coordenada}, \Inout {g}{juego}}{}
@@ -272,7 +272,6 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 (10)La coordenada del jugador se corresponde con PosicionMapa de infoJugador\\
 
-
 \subsubsection{Predicado de abtraccion}
 
 	\Titulo{Representacion del iterador}
@@ -290,7 +289,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \textbf{Informal}
 
-
+\textbf{Formal}
 
 \subsection{Predicado de abstraccion}
 
@@ -788,7 +787,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \begin{algorithm}[H]{\textbf{iCrearIt}(\In {g}{game}) $\to$ res: iter))}
 	\begin{algorithmic}[1]
-		\State res $\gets$ <0, g.jugadores> \Comment O(1)
+		\State res $\gets$ <0, puntero(g.jugadores)> \Comment O(1)
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 		\Statex \underline{Justificacion:}Crea un iterador al princio del vector, solo 
