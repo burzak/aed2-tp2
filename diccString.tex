@@ -11,6 +11,8 @@
 
 \subsection{Interfaz}
 
+\bf{Operacion del modulo}
+
 \InterfazFuncion{Vacio}{}{DiccString($\sigma$)}
 {res = Vacio()}
 [O(1)]
@@ -44,12 +46,20 @@
 [O(|L|), siendo L la máxima longitud de las claves en el diccionario]
 [Borra la clave, si es prefijo de alguna otra clave solo borra el significado]
 
+\bf{Operaciones del iterador}
+
 \begin{Representacion}
+
+\Titulo{Representacion del modulo}
 \subsection{Justificacion}
-	\begin{Estructura}{diccString}[puntero(nodo($\sigma$))]
+	\begin{Estructura}{diccString}[Arbolito]
+		\begin{Tupla}[Arbolito]
+			\tupItem{raiz}{puntero(nodo($\sigma$))}
+			\tupItem{claves}{conj(string)}\\
+			
 		\begin{Tupla}[nodo]
 			\tupItem{hijos}{arreglo[256] de puntero(nodo($\sigma$)}
-			\tupItem{significado}{puntero($\sigma$)}
+			\tupItem{significado}{puntero($\sigma$)}\\
 		\end{Tupla}
 	\end{Estructura}
 \subsection{Invariante de representación}
@@ -57,6 +67,7 @@
 \textbf{Informal}
 (1)Para todo nodo, sus hijos no pueden tenerlo como hijo
 (2)Todas las hojas tienen significado
+(3)Para todo elem en claves, elem esta definido en el diccionarioy viceversa
 
 \subsection{Predicado de abtraccion}
 
@@ -67,23 +78,25 @@
  \tadOperacion{encontrarPalabra}{string,puntero(nodo)}{puntero(nodo)}{}
   \tadAxioma{encontrarPalabra($s$, $p$)}{\IF $vacia(s)$ $\lor$ $p=NULL$  THEN $p$ ELSE encontrarPalabra($fin(s)$, $p\to caracteres$[$ord(prim(s))$]) FI}
 
+\Titulo {Representacion del iterador}
+\end{Representacion}
 \subsection{Algoritmos}
 
 \begin{Algoritmos}
+\Titulo {Algoritmos del modulo}
 
-\begin{algorithm}[H]{\textbf{iVacio}() $\to$ res: puntero(nodo($\sigma$))}
+\begin{algorithm}[H]{\textbf{iVacio}() $\to$ res:Arbolito)}
 	\begin{algorithmic}[1]
 		\State a $\gets$ arreglo[256] de puntero(nodo($\sigma$)) \Comment O(256), creo un arreglo vacio de 256 posiciones, que guarda punteros a nodo
-		\State $res \gets <a, NULL>$ \Comment O(1)
-		
+		\State $res \gets <<a, NULL>, Vacio()>$ \Comment O(1)
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:} Crea un arreglo vacio, como siempre va a tener 256 posiciones para cualquier entrade la complejidad queda constante, y asigna 
+			\Statex \underline{Justificacion:} Crea un arreglo vacio, como siempre va a tener 256 posiciones para cualquier entrade la complejidad queda constante, asigna y crea un conjunto vacio
 	\end{algorithmic}
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iSignificado}(\In {s}{string}, \In {d}{puntero(nodo($\sigma$))}) $\to$ res: $\sigma$)}
+\begin{algorithm}[H]{\textbf{iSignificado}(\In {s}{string}, \In {d}{Arbolito}) $\to$ res: $\sigma$)}
 	\begin{algorithmic}[1]
 		\State nat i $\gets$ Longitud(s) \Comment O(1)
 		\State puntero(nodo($\sigma$)) p $\gets$ d \Comment O(1)
@@ -98,7 +111,7 @@
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iDefinido}(\In {s}{string}, \In {d}{puntero(nodo($\sigma$))}) $\to$ res: bool}
+\begin{algorithm}[H]{\textbf{iDefinido}(\In {s}{string}, \In {d}{Arbolito)}) $\to$ res: bool}
 	\begin{algorithmic}[1]
 		\State nat i $\gets$ Longitud(s) \Comment O(1)
 		\State puntero(nodo($\sigma$)) p $\gets$ d \Comment O(1)
@@ -113,13 +126,13 @@
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iVacio?}(\In {d}{puntero(nodo($\sigma$))}) $\to$ res: bool}
+\begin{algorithm}[H]{\textbf{iVacio?}(\In {d}{Arbolito}) $\to$ res: bool}
 	\begin{algorithmic}[1]
 		\State bool b $\gets$ false \Comment O(1)
 		\State nat i $\gets$ 0 \Comment O(1)
 		\While{i $<$ 256 $\wedge$ $\neg$b} \Comment O(256), termina siendo O(1)
 			\If{d $\to$ hijos[i] $\neq$ NULL} \Comment O(1)
-				 b $\gets$ true \Comment O(1)
+				 \State b $\gets$ true \Comment O(1)
 			\EndIf
 		\EndWhile
 		\State res $\gets$ (d $=$ NULL) $\vee$ (i $=$ 256)\Comment O(1)
@@ -129,28 +142,29 @@
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iDefinir}(\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{puntero(nodo($\sigma$))})}
+\begin{algorithm}[H]{\textbf{iDefinir}(\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{Arbolito})}
 	\begin{algorithmic}[1]
 		\State puntero(nodo($\sigma$)) p $\gets$ d \Comment O(1)
 		\State nat i $\gets$ 0 \Comment O(1)
 		\While{i $<$ Longitud(s)} \Comment O(|s|), longitud de s
 			\If{p$\to$ hijos[ord(s[i])] $=$ NULL} \Comment O(1) 
-				puntero(nodo($\sigma$)) $p_2$ $gets$ NULL \Comment O(1)
-				p$\to$ hijos[ord(s[i])] $\gets$ $p_2$ \Comment O(1)	
-				p $\gets$ p$\to$ hijos[ord(s[i])] \Comment O(1)
-				i $\gets$ i + 1 \Comment O(1)
+				\State puntero(nodo($\sigma$)) $p_2$ $gets$ NULL \Comment O(1)
+				\State p$\to$ hijos[ord(s[i])] $\gets$ $p_2$ \Comment O(1)	
+				\State p $\gets$ p$\to$ hijos[ord(s[i])] \Comment O(1)
+				\State i $\gets$ i + 1 \Comment O(1)
 			\Else
-				p $\gets$ p$\to$ hijos[ord(s[i])] \Comment O(1)
-				i $\gets$ i + 1 \Comment O(1)
+				\State p $\gets$ p$\to$ hijos[ord(s[i])] \Comment O(1)
+				\State i $\gets$ i + 1 \Comment O(1)
 			\EndIf
 		\EndWhile
-		p$\to$ significado $\gets$ c \Comment O(1)		
+		\State p$\to$ significado $\gets$ c \Comment O(1)		
+		\State AgregarRapido(d.claves, s) \Comment O(1)
 		\medskip
 		\Statex \underline{Complejidad:} O(|s|)
-			\Statex \underline{Justificacion:}Recorre la clave, si existe el nodo solo avanza a este sino crea una nuevo y avanza. Al final asigna el significado, como recorre la clave una vez la complejidad final es O(|s|)
+			\Statex \underline{Justificacion:}Recorre la clave, si existe el nodo solo avanza a este sino crea una nuevo y avanza. Al final asigna el significado y lo agrega al conjunto, como recorre la clave una vez la complejidad final es O(|s|)
 	\end{algorithmic}
 \end{algorithm}
 
+\Titulo {Algoritmos del iterador}
 \end{Algoritmos}
 
-\end{Representacion}
