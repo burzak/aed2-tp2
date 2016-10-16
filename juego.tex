@@ -2,7 +2,7 @@
 
 \subsection{Interfaz}
 
-\parbox {1,7cm}{{\bf Género}} juego \\
+\parbox {1,7cm}{{\bf Género}} juego, itJugadores \\
 {\bf se explica con:}  \tadNombre{Mapa}, \tadNombre{Conjunto ($\sigma$)} , \tadNombre{Secuencia($\sigma$)}, \tadNombre{Bool}, \tadNombre{Pokemon}, \tadNombre{Jugador}, \tadNombre{Nat}\\
 \medskip
 
@@ -10,7 +10,7 @@
 
 \InterfazFuncion{CrearJuego}{\In {m}{mapa}}{juego}
 {res $\igobs$ crearJuego(m)}
-[O(1)]
+[O(TM), donde TM es el tamaño del mapa (ancho*alto)]
 [Creo un nuevo juego tomando un mapa]\\
 
 \InterfazFuncion{AgregarPokemon}{\In {p}{pokemon}, \In {c}{coordenada}, \Inout {g}{juego}}{}
@@ -125,13 +125,13 @@
 
 \InterfazFuncion{PuedoAgregarPokemon}{\In {c}{Coordenada}, \In {g}{juego}}{Bool}
 {res $\igobs$ puedoAgregarPokemon(g)}
-[O(?)]
+[O(PS), donde PS es la cantidad de pokemons salvajes]
 [Devuelve True si se puede agregar un Pokemon en la coordenada]
 \\
 
 \InterfazFuncion{HayPokemonCercano}{\In {c}{Coordenada}, \In {g}{juego}}{Bool}
 {res $\igobs$ hayPokemonCercano(c, g)}
-[O(?)]
+[O(1)]
 [Devuelve True s\'i y solo s\'i hay un Pokemon a radio 4 de la Coordenada]
 \\
 
@@ -197,6 +197,7 @@
 \InterfazFuncion{CeldasValidas}{\In {g}{juego}, \In {c}{coordenada}}{lista(coordenadas)}
 [c $\in$ coordenadas(mapa(g))]
 {($\forall c_1$: coordenada)(esta?($c_1$, res)$\impluego$(distEuclidea($c_1$, c)$\leq$2  $\wedge$ posExistente($c_1$, mapa(g)))}
+[O(1)]
 [Devuelve una lista con las coordenas a una distancia no mayor de 2 de la coordenada c y que ademas existan en el mapa del juego]
 
 \begin{Representacion}
