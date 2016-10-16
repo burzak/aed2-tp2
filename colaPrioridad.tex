@@ -135,7 +135,6 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 \end{algorithm}
 
 
-
 \begin{algorithm}[H]{\textbf{iDesencolar}(\Inout {c}{colaPrioridadMin($\sigma$)}}
 	\begin{algorithmic}[1]
 
@@ -143,18 +142,15 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 		\,
 		\If{c.padreAgregar$\rightarrow$der = NULL}\Comment O(1)
 			\State ultimo $\leftarrow$ c.padreAgregar$\rightarrow$izq\Comment O(1)
-			\State ultimo$\rightarrow$izq$\leftarrow$c.raiz$\rightarrow$izq\Comment O(1)
-			\State ultimo$\rightarrow$der$\leftarrow$c.raiz$\rightarrow$der\Comment O(1)
-			\State c.raiz$\leftarrow$ultimo\Comment O(1)
 			\State c.padreAgregar$\rightarrow$izq$\leftarrow$NULL\Comment O(1)
 			\,
 		\Else
 			\State ultimo $\leftarrow$ c.padreAgregar$\rightarrow$der\Comment O(1)
-			\State ultimo$\rightarrow$izq$\leftarrow$c.raiz$\rightarrow$izq\Comment O(1)
-			\State ultimo$\rightarrow$der$\leftarrow$c.raiz$\rightarrow$der\Comment O(1)
-			\State c.raiz$\leftarrow$ultimo\Comment O(1)
 			\State c.padreAgregar$\rightarrow$der$\leftarrow$NULL\Comment O(1)
 		\EndIf
+		\State ultimo$\rightarrow$izq$\leftarrow$c.raiz$\rightarrow$izq\Comment O(1)
+		\State ultimo$\rightarrow$der$\leftarrow$c.raiz$\rightarrow$der\Comment O(1)
+		\State c.raiz$\leftarrow$ultimo\Comment O(1)
 		\,
 		%Ahora sift down
 		\While {ultimo$\rightarrow$der $\neq$ NULL $\wedge$ ultimo$\rightarrow$izq $\neq$ NULL $\wedge$ (ultimo$\rightarrow$der.clave $<$ ultimo.clave $\vee$ ultimo$\rightarrow$izq.clave $<$ ultimo.clave))} \Comment O(log(n))
@@ -179,16 +175,39 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iProximo}(\In {c}{colaPrioridadMin($\sigma$)}) $\to$ res: $\sigma$}
+
+\begin{algorithm}[H]{\textbf{iBorrarConIt}(\Inout {c}{colaPrioridadMin($\sigma$)}, \Inout {p}{iterCola}}
 	\begin{algorithmic}[1]
-		
-		\State res$\leftarrow$c$\rightarrow$raiz.significado
+		\State puntero(nodoHeap($\sigma$)) ultimo $\leftarrow$ NULL\Comment O(1)
+		\,
+		\If{c.padreAgregar$\rightarrow$der = NULL}\Comment O(1)
+			\State ultimo$\leftarrow$ c.padreAgregar$\rightarrow$izq\Comment O(1)
+			\State c.padreAgregar$\rightarrow$izq$\leftarrow$NULL\Comment O(1)
+			\,
+		\Else
+			\State ultimo $\leftarrow$ c.padreAgregar$\rightarrow$der\Comment O(1)
+			\State c.padreAgregar$\rightarrow$der$\leftarrow$NULL\Comment O(1)
+		\EndIf
+		\State ultimo$\rightarrow$izq$\leftarrow$p$\rightarrow$izq\Comment O(1)
+		\State ultimo$\rightarrow$der$\leftarrow$p$\rightarrow$der\Comment O(1)
+		\State ultimo$\to$padre$\leftarrow$p$\to$padre	\Comment O(1)
+		\,
+		%Ahora sift down
+		\While {ultimo$\rightarrow$der $\neq$ NULL $\wedge$ ultimo$\rightarrow$izq $\neq$ NULL $\wedge$ (ultimo$\rightarrow$der.clave $<$ ultimo.clave $\vee$ ultimo$\rightarrow$izq.clave $<$ ultimo.clave))} \Comment O(log(n))
+			\State siftDown(ultimo, c)\Comment O(1)
+		\EndWhile
 		
 		\medskip
-		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:}Se obtiene el significado de la raiz del heap.
+		\Statex \underline{Complejidad:} O(log(n))
+			\Statex \underline{Justificacion:} Muy similar a iDesencolar(), pero eliminando el puntero del parámetro. $\newline$ Se elimina el elemento apuntado por el iterador, se reemplaza por el último elemento, luego se utiliza la función sift-down para volver a tener la propiedad de heap. El ciclo itera como máximo log(n) veces, que es la altura del heap (sólo se puede llevar hasta el fondo).  
 	\end{algorithmic}
 \end{algorithm}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Funciones auxiliares
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{algorithm}[H]{\textbf{BuscarPadreInsertar}(\In {c}{colaPrioridadMin($\sigma$)})}
 	\begin{algorithmic}[1]
