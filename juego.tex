@@ -200,7 +200,8 @@
 [Devuelve una lista con las coordenas a una distancia no mayor de 2 de la coordenada c y que ademas existan en el mapa del juego]
 
 \begin{Representacion}
-\Titulo{Representacion del modulo}
+\ttitulo{ del modulo}
+
 \subsubsection{Justificación}
 Game representa un Juego.\\
 En pokemons guardamos un diccionario sobre Trie y la clave es el Pokemon (string). Esto nos permite encontrar un pokemon en |P|. En el diccionario guardamos la cantidad de pokemones salvajes que hay y cuantos hubieron de ese tipo en total para poder calcular la rareza del pokemon en O(|P|) junto con cantidadTotPokemons que es el total de los Pokemons en el juego.
@@ -274,7 +275,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \subsubsection{Predicado de abtraccion}
 
-	\Titulo{Representacion del iterador}
+\ttitulo{Representacion del iterador}
 
 \subsection{Justificacion}
 	El objetivo del iterador era poder devolver un iterador a la lista de jugadores en O(1) pudiendo siguiente no ser O(1). Creamos el iterados ya que en la lista de jugadores guardamos los jugadores que est\'an jugando como los expulsados y con el iterador recorremos los jugadores no expulsado. Guardamos la ultima posici\'on donde estamos paradon con y el puntero al Vector real de los jugadores
@@ -298,7 +299,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 \subsection{Algoritmos}
 
 \begin{Algoritmos}
-\Titulo {Algoritmos del Modulo}
+\ttitulo { del Modulo}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -551,7 +552,8 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 		\State g.jugadores[j].pos $\gets$ c \Comment O(1)
 		\If{HayPokemonCerca(c, g)} \Comment O(log $\#$(elementosEnColaDeC))
 			\State itDicc(jugador, itColaPrioridad(cantPokemon)) itPosicion $\gets$ DefinirRapido(g.mapaInfo[c].jugadores, j, Encolar(g.mapaInfo[posPokemonCerca(c, g)].jugEspe, g.jugadores[j].cantTotalPoke, j)) \Comment O(log $\#$(elementosEnColaDeC))
-			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)							\State g.mapaInfo[posPokemonCercano(c, g)].MovimientosRestantes $\gets$ 0 \Comment O(1)
+			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)			
+			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)		
 		\Else
 			\State itDicc(jugador, itColaPrioridad(cantPokemon)) itPosicion $\gets$ DefinirRapido(g.mapaInfo[c].jugadores, j, NULL) \Comment O(1)
 			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)			
@@ -783,7 +785,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 % Iterador
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\Titulo {Algoritmos del iterador}
+\ttitulo {Algoritmos del iterador}
 
 \begin{algorithm}[H]{\textbf{iCrearIt}(\In {g}{game}) $\to$ res: iter))}
 	\begin{algorithmic}[1]
