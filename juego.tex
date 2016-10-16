@@ -130,6 +130,12 @@
 [O(n), siendo n la cantidad de elementos del vector]
 [Devuelve los elementos del vector posteriores al iterador, puede no haber ninguno]\\
 
+\bf{No exportable, operaciones auxiliares}\\
+
+\InterfazFuncion{CeldasValidas}{\In {g}{juego}, \In {c}{coordenada}}{lista(coordenadas)}
+[c $\in$ coordenadas(mapa(g))]
+{($\forall c_1$: coordenada)(esta?($c_1$, res)$\impluego$(distEuclidea($c_1$, c)$\leq$2  $\wedge$ posExistente($c_1$, mapa(g)))}
+[Devuelve una lista con las coordenas a una distancia no mayor de 2 de la coordenada c y que ademas existan en el mapa del juego]
 
 \begin{Representacion}
 \Titulo{Representacion del modulo}
@@ -153,7 +159,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 			\tupItem{\\jugadores}{Vector(InfoJugador)}
 			\tupItem{\\mapaInfo}{Arreglo de Arreglo de InfoCoordenada}
 			\tupItem{\\cantidadTotPokémons}{Nat}
-			\tupItem{\\coordenadasPokemons}{Lista(tupla<Pokemon, Coordenada>)}
+			\tupItem{\\coordenadasPokemons}{Dicc(Coordenada, pokemon)}
 			\tupItem{\\pokemonsDeJugadores}{Lista(Dicc(pokemon: string, cant: nat))}
 		\end{Tupla}
 	\end{Estructura}
@@ -250,10 +256,10 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 \begin{algorithm}[H]{\textbf{iAgregarPokemon}(\In {p}{string}, \In {c}{coordenada}, \Inout {g}{game})}
 	\begin{algorithmic}[1]
 		\State AgregarRapido(g.coordenadasPokemons, c) \Comment O(copiar(c)) = O(1)
-		\If{$\neg$Definido(p, g.pokemons)} \Comment O(2*|p|) = O(|p|)
-			\State Definir(p, <1, 0>, g.pokemons) \Comment O(|P|)
+		\If{$\neg$Definido(p, g.pokemons)} \Comment O(2$*$|p|) = O(|p|)
+			\State Definir(p, <1, 1>, g.pokemons) \Comment O(|P|)
 		\Else
-			\State Definir(p, <Significado(p, g.pokemons).cantSalvaje +1, Significado(p, g.pokemons).cantAtrapados>, g.pokemons) \Comment O(|p|)
+			\State Definir(p, <Significado(p, g.pokemons).cantSalvaje +1, Significado(p, g.pokemons).cantTotales +1>, g.pokemons) \Comment O(|p|)
 		\EndIf
 		\State g.mapaInfo[c].hayPokemon $\gets$ true \Comment O(1)
 		\State g.mapaInfo[c].jugEspe $\gets$ Vacio() \Comment O(1)
@@ -330,6 +336,72 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 	\end{algorithmic}
 \end{algorithm}
 
+
+\begin{algorithm}[H]{\textbf{iAgregarJugador}(\In {g}{Game}) $\to$ res: itJuego($\sigma$)}
+	\begin{algorithmic}[1]
+		\State Dicc(pokemon, nat) dicc $\gets$ Vacio() \Comment O(1)
+		\State itLista(Dicc(pokemon, cantidad)) it $\gets$ AgregarAtras(g.pokemonsDeJugadores, dicc) \Comment O(1) 
+		\State AgregarAtras (g.jugadroes, <false, false, 0, <0, 0>, it, NULL, 0>) \Comment O(longitud(g.jugadores) + copy(tupla))
+		\State   itJuego($\sigma$) it $\gets$ CrearIt(g) \Comment O(1)
+		\While {it.posicion $<$ Longitud(g.jugadores)} \Comment O(longitud(g.jugadores))
+			\State it.posicion $\gets$ it.posicion + 1 \Comment O(1)
+		\EndWhile
+		\State res $\gets$ it \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(longitud(g.jugadores))
+		\Statex \underline{Justificacion:}Agrega un jugador al juego, el costo de copiar la tupla es O(1) porque todas las componentes están vacías, después crea un iterador al principio del vector y lo avanza hasta la última posición donde fue agregado el jugador y lo devuelve. Para hacer esto último tengo que recorrer todo el vector entonces la complejidad final es O(longitud(g.jugadores) + (longitud(g.jugadores) + copiar(tupla))), como dijimos el costo de copiar  
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iMoverse}(\In {j}{jugador}, \In {c}{coordenada}, \Inout {g}{Game})}
+	\begin{algorithmic}[1]
+		\If {SiguienteSignificado(g.jugadores[j].posicionMapa) $\neq$ NULL} \Comment O(1)
+				\State Borrar(SiguienteSignificado(g.jugadores[j].posicionMapa)) \Comment O(1)
+				\State g.jugadores[J].posicionMapa $=$ NULL \Comment O(1)
+		\EndIf		
+		\If{distEuclidia(c, g.jugadores[j].pos) $>$ 100 $\vee$ $\neg$(hayCamino(c,g.jugadores[j].pos, g.mapa))} \Comment O(1)
+			\State g.jugadores[j].sanciones $\gets$ g.jugadores[j].sanciones +1 \Comment O(1)
+			\If(g.jugadores[j].sanciones $\geq$ 4) \Comment O(1)
+				\State g.jugadores[j].expulsado $\gets$ true \Comment O(1)			
+			\EndIf
+		\EndIf
+		\If {g.jugadores[j].expulsado $=$ true}
+			\State g.cantidadTotPokemons $\gets$ g.cantidadTotPokemons - g.jugadores[j].cantTotalPoke \Comment O(1)
+			\State itDicc(pokemon, nat) itPokemons $\gets$ CrearIt(Siguiente(g.jugadores[j].pokemons))
+			\While{HaySiguiente(itPokemons)} \Comment O($\#$(pokemonsDicc)*|P|)
+				\State Significado(g.pokemones, SiguienteClave(itPokemons)).cantTotal - SiguienteSignificado(itPokemons) \Comment O(|P|)
+				\If {Significado(g.pokemones, SiguienteClave(it.Pokemons)).cantTotal = 0}
+					\State Borrar(g.pokemons, SiguienteClave(it.Pokemons)) \Comment O(|P|)					\EndIf				
+				\State EliminarSiguiente(itPokemons) \Comment O(1)		
+			\EndWhile
+			\State EliminarSiguiente(g.jugadores[j].pokemons) \Comment O(1)
+			\State g.jugadores[j].pokemons $\gets$ NULL \Comment O(1)
+			\State g.jugadores[j].cantTotalPoke $\gets$ 0 \Comment O(1)
+		\Else
+			\State lista(coordenada) lc $\gets$ CeldasValidas(g.jugadores[j].pos, g.mapa) \Comment O(1)
+			\State itLista(coordenada) itCoordenada $\gets$ lc \Comment O(1)
+			\While {HaySiguiente(itCoordenada)} \Comment O(1)
+				\If {g.mapaInfo[Siguiente(itCoordenada)].hayPokemon $=$ false} \Comment O(1)
+					\State EleminarSiguiente(itCoordenada) \Comment O(1)
+				\EndIf
+			\EndWhile
+			\State g.jugadores[j].pos $\gets$ c \Comment O(1)
+			\If{itCoordenada $\neq$ NULL}
+				\State itDicc(jugador, itColaPrioridad(cantidadPokemons)) itDicc $\gets$ DefinirRapido(g.mapaInfo[c].jugadores, j, Encolar(g.mapaInfo[Siguiente(itCoordenada)].jugEspe, g.jugadores[j].cantTotalPoke, j)) \Comment O(log ($\#$elemEnLaCola))
+				\State g.jugadores[j].posicionMapa $\gets$ itDicc \Comment O(1)
+			\Else
+				\State itDicc(jugador, itColaPrioridad(cantidadPokemons)) itDicc $\gets$ DefinirRapido(g.mapaInfo[c].jugadores, j, NULL)	\Comment O(1)		
+				\State g.jugadores[j].posicionMapa $\gets$ itDicc
+			\EndIf
+		\EndIf
+		\State itDicc(coordenada, pokemons) itPokemons $\gets$ g.coordenadasPokemons \Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} 
+		\Statex \underline{Justificacion:}
+	\end{algorithmic}
+\end{algorithm}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % OBSERVADORES BASICOS
