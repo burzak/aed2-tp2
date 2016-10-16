@@ -22,8 +22,8 @@
 \InterfazFuncion{AgregarCoordenada}{\In {c}{Coordenada}, \Inout {m}{mapa}}{}
 [m $\igobs$ m$_0$]
 {m = agregarCoor(c, m$_0$)}
-[O(n)]
-[Agrega la coordenada a mapa]
+[O(max($n^3$, $T^2$))]
+[Agrega la coordenada a mapa. Donde T es el tama\~no de la grilla de todo el mapa (ancho * alto) y n es el cardinal de coordenadas en el Mapa. Donde n representa la cantidad de coordenadas en el mapa]
 \\
 
 \InterfazFuncion{HayCamino}{\In {c_1}{Coordenada}, \In {c_2}{Coordenada}, \In {m}{mapa}}{Bool}
@@ -45,7 +45,7 @@
 \InterfazFuncion{CoordenadasConectadasA}{\In {c}{Coordenada}, \In {m}{mapa}}{Conj(Coordenada)}
 [$c \in coordenadas(m)$]
 {$(\forall c_1: Coordenada) c_1 \in res \wedge c_1 \in coordenadas(m) \impluego hayCamino(c, c_1, m)$}
-[O(n)]
+[O(n$^2$)]
 [Devuelve un conjunto de coordenadas a las cuales hayCamino]
 \\
 
