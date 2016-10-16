@@ -47,66 +47,66 @@
 % OBSERVADORES BASICOS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\InterfazFuncion{Mapa}{\In {g}{Juego}}{Mapa}
+\InterfazFuncion{Mapa}{\In {g}{juego}}{Mapa}
 {res $\igobs$ mapa(g)}
 [O(1)]
 [Devuelve la instancia de mapa que tenemos guardada]
 \\
 
-\InterfazFuncion{Jugadores}{\In {g}{Juego}}{Conj(Jugador)}
+\InterfazFuncion{Jugadores}{\In {g}{juego}}{Conj(Jugador)}
 {res $\igobs$ jugadores(g)}
 [O(1)]
 [Devuelve la instancia de mapa que tenemos guardada]
 \\
 
-\InterfazFuncion{EstaConectado}{\In {j}{Jugador}, \In {g}{Juego}}{Bool}
+\InterfazFuncion{EstaConectado}{\In {j}{Jugador}, \In {g}{juego}}{Bool}
 [j $\in$ jugadores(g)]
 {res $\igobs$ estaConectado(g)}
 [O(1)]
 [Dice si un jugador esta conectado o no]
 \\
 
-\InterfazFuncion{Sanciones}{\In {j}{Jugador}, \In {g}{Juego}}{Nat}
+\InterfazFuncion{Sanciones}{\In {j}{Jugador}, \In {g}{juego}}{Nat}
 [j $\in$ jugadores(g)]
 {res $\igobs$ sanciones(g)}
 [O(1)]
 [La cantidad de sanciones que tiene un jugador]
 \\
 
-\InterfazFuncion{Posicion}{\In {j}{Jugador}, \In {g}{Juego}}{Coordenada}
+\InterfazFuncion{Posicion}{\In {j}{Jugador}, \In {g}{juego}}{Coordenada}
 [j $\in$ jugadores(g) $\impluego$ estaConectado(j, g)]
 {res $\igobs$ posicion(j, g)}
 [O(1)]
 [Posici\'on actual del jugador cuando se encuentra conectado]
 \\
 
-\InterfazFuncion{Pokemons}{\In {j}{Jugador}, \In {g}{Juego}}{Iter(<Pokemon, Nat>)}
+\InterfazFuncion{Pokemons}{\In {j}{Jugador}, \In {g}{juego}}{Iter(<Pokemon, Nat>)}
 [j $\in$ jugadores(g)]
 {res $\igobs$ pok\'emons(j, g)}
 [O(1)]
 [Devuelve un iterador <Pokemon, Nat>]
 \\
 
-\InterfazFuncion{Expulsados}{\In {g}{Juego}}{Conj(Jugador)}
+\InterfazFuncion{Expulsados}{\In {g}{juego}}{Conj(Jugador)}
 {res $\igobs$ expulsados(g)}
 [O(J)]
 [Conjunto de jugadores expulsados del juego]
 \\
 
-\InterfazFuncion{PosConPokemons}{\In {g}{Juego}}{Conj(coor)}
+\InterfazFuncion{PosConPokemons}{\In {g}{juego}}{Conj(coor)}
 {res $\igobs$ posConPok\'emons(g)}
 [O(1)]
 [Conjunto de coordenadas con Pok\'emones]
 \\
 
-\InterfazFuncion{PokemonEnPos}{\In {c}{Coordenada}, \In {g}{Juego}}{Pokemon}
+\InterfazFuncion{PokemonEnPos}{\In {c}{Coordenada}, \In {g}{juego}}{Pokemon}
 [c $\in$ posConPokemons(g)]
 {res $\igobs$ pokemonEnPos(c, g)}
 [O(1)]
 [Devolvemos el Pokemon en la Coordenada]
 \\
 
-\InterfazFuncion{CantMovimientosParaCaptura}{\In {c}{Coordenada}, \In {g}{Juego}}{Nat}
+\InterfazFuncion{CantMovimientosParaCaptura}{\In {c}{Coordenada}, \In {g}{juego}}{Nat}
 [c $\in$ posConPokemons(g)]
 {res $\igobs$ cantMovimientosParaCaptura(c, g)}
 [O(1)]
@@ -117,19 +117,19 @@
 % OTRAS OPERACIONES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\InterfazFuncion{JugadoresConectados}{\In {g}{Juego}}{Conj(Jugador)}
+\InterfazFuncion{JugadoresConectados}{\In {g}{juego}}{Conj(Jugador)}
 {res $\igobs$ jugadoresConectados(g)}
 [O(J)]
 [Conjunto de jugadores conectados]
 \\
 
-\InterfazFuncion{PuedoAgregarPokemon}{\In {c}{Coordenada}, \In {g}{Juego}}{Bool}
+\InterfazFuncion{PuedoAgregarPokemon}{\In {c}{Coordenada}, \In {g}{juego}}{Bool}
 {res $\igobs$ puedoAgregarPokemon(g)}
 [O(?)]
 [Devuelve True si se puede agregar un Pokemon en la coordenada]
 \\
 
-\InterfazFuncion{HayPokemonCercano}{\In {c}{Coordenada}, \In {g}{Juego}}{Bool}
+\InterfazFuncion{HayPokemonCercano}{\In {c}{Coordenada}, \In {g}{juego}}{Bool}
 {res $\igobs$ hayPokemonCercano(c, g)}
 [O(?)]
 [Devuelve True s\'i y solo s\'i hay un Pokemon a radio 4 de la Coordenada]
@@ -232,8 +232,10 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 \subsubsection{Predicado de abtraccion}
 
 	\Titulo{Representacion del iterador}
-\subsection{Justificacion}
 
+\subsection{Justificacion}
+	El objetivo del iterador era poder devolver un iterador a la lista de jugadores en O(1) pudiendo siguiente no ser O(1). Creamos el iterados ya que en la lista de jugadores guardamos los jugadores que est\'an jugando como los expulsados y con el iterador recorremos los jugadores no expulsado. Guardamos la ultima posici\'on donde estamos paradon con y el puntero al Vector real de los jugadores
+	
 	\begin{Estructura}{itJugador}[iter]
 		\begin{Tupla}[iter]
 		\tupItem{posicion}{nat}
@@ -339,57 +341,58 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 		\State lista(coordenada) ls $\gets$ Vacia() \Comment O(1)
 		\State nat i $\gets$ 4 \Comment O(1)
 		\While {i $>$ 0} \Comment O(1)
-			\State AgregarAtras(ls, <latitud(c)+i, longitud(c)>) \Comment O(1)
+			\State AgregarAtras(ls, $<$latitud(c)+i, longitud(c)$>$) \Comment O(1)
 			\If{latitud(c)-i$>$0}
-				\State AgregarAtras(ls, <latitud(c)-i, longitud(c)>) \Comment O(1)
+				\State AgregarAtras(ls, $<$latitud(c)-i, longitud(c)$>$) \Comment O(1)
 			\EndIf			
-			\State AgregarAtras(ls, <latitud(c), longitud(c)+i>) \Comment O(1)
+			\State AgregarAtras(ls, $<$latitud(c), longitud(c)+i$>$) \Comment O(1)
 			\If{longitud(c)-i $>$0}
-				\State AgregarAtras(ls, <latitud(c), longitud(c)-i>) \Comment O(1)
+				\State AgregarAtras(ls, $<$latitud(c), longitud(c)-i$>$) \Comment O(1)
 			\EndIf			
 			\State i $\gets$ i - 1 \Comment O(1)
 		\EndWhile
 		\State i $\gets$ 3
-		\While {i > 0} \Comment O(1)
+		\While {i $>$ 0} \Comment O(1)
 			\If{longitud(c)-(i-1)$>$0}
-				\State AgregarAtras(ls, <latitud(c)+3, longitud(c)-(i-1)>) \Comment O(1)
+				\State AgregarAtras(ls, $<$latitud(c)+3, longitud(c)-(i-1)$>$) \Comment O(1)
 			\EndIf
-			\If{latitud(c)-(i-1)>0}			
-				\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)+3>) \Comment O(1)
+			\If{latitud(c)-(i-1)$>$0}			
+				\State AgregarAtras(ls, $<$latitud(c)-(i-1), longitud(c)+3$>$) \Comment O(1)
 			\EndIf
-			\If{latitud(c)-3>0 $\wedge$ longitud(c)-(i-1)}			
-				\State AgregarAtras(ls, <latitud(c)-3, longitud(c)-(i-1)>) \Comment O(1)
+			\If{latitud(c)-3$>$0 $\wedge$ longitud(c)-(i-1)}			
+				\State AgregarAtras(ls, $<$latitud(c)-3, longitud(c)-(i-1)$>$) \Comment O(1)
 			\EndIf
-			\If{latitud(c)-(i-1) > 0 $\wedge$ longitud(c)-3 > 0}
-				\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)-3>) \Comment O(1)
+			\If{latitud(c)-(i-1) $>$ 0 $\wedge$ longitud(c)-3 $>$ 0}
+				\State AgregarAtras(ls, $<$latitud(c)-(i-1), longitud(c)-3$>$) \Comment O(1)
 			\EndIf
-			\If{latitud(c)-3 > 0}		
-				\State AgregarAtras(ls, <latitud(c)-3, longitud(c)+(i-1)>) \Comment O(1)
+			\If{latitud(c)-3 $>$ 0}		
+				\State AgregarAtras(ls, $<$latitud(c)-3, longitud(c)+(i-1)$>$) \Comment O(1)
 			\EndIf
-			\If{longitud(c)-3 > 0}			
-				\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)-3>) \Comment O(1)
+			\If{longitud(c)-3 $>$ 0}			
+				\State AgregarAtras(ls, $<$latitud(c)+(i-1), longitud(c)-3$>$) \Comment O(1)
 			\EndIf			
-			\State AgregarAtras(ls, <latitud(c)+3, longitud(c)+(i-1)>) \Comment O(1)
-			\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)+3>) \Comment O(1)
-			\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)+2>) \Comment O(1)
-			\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)+1>) \Comment O(1)
-			\If{longitud(c)-2 > 0}
-				\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)-2>) \Comment O(1)
+			\State AgregarAtras(ls, $<$latitud(c)+3, longitud(c)+(i-1)$>$) \Comment O(1)
+			\State AgregarAtras(ls, $<$latitud(c)+(i-1), longitud(c)+3$>$) \Comment O(1)
+			\State AgregarAtras(ls, $<$latitud(c)+(i-1), longitud(c)+2$>$) \Comment O(1)
+			\State AgregarAtras(ls, $<$latitud(c)+(i-1), longitud(c)+1$>$) \Comment O(1)
+			\If{longitud(c)-2 $>$ 0}
+				\State AgregarAtras(ls, $<$latitud(c)+(i-1), longitud(c)-2$>$) \Comment O(1)
 			\EndIf
-			\If{longitud(c)-1 >0}			
-				\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)-1>) \Comment O(1)
+			\If{longitud(c)-1 $>$ 0}			
+				\State AgregarAtras(ls, $<$latitud(c)+(i-1), longitud(c)-1$>$) \Comment O(1)
 			\EndIf
-			\If{latitud(c)-(i-1) >0 $\wedge$ longitud(c)-2 >0}			
-				\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)-2>) \Comment O(1)
+			\If{latitud(c)-(i-1) $>$ 0 $\wedge$ longitud(c)-2 $>$0}
+				\State AgregarAtras(ls, $<$latitud(c)-(i-1), longitud(c)-2$>$) \Comment O(1)
 			\EndIf
-			\If{latitud(c)-(i-1)>0 $\wedge$ longitud(c)-1 >0}			
-				\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)-1>) \Comment O(1)
+			\If{latitud(c)-(i-1)$>$0 $\wedge$ longitud(c)-1 $>$0}			
+				\State AgregarAtras(ls, $<$latitud(c)-(i-1), longitud(c)-1$>$) \Comment O(1)
 			\EndIf
-			\If{latitud(c)-(i-1) > 0}			
-				\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)+2>) \Comment O(1)
+			\If{latitud(c)-(i-1) $>$ 0}
+				\State AgregarAtras(ls, $<$latitud(c)-(i-1), longitud(c)+2$>$) \Comment O(1)
 			\EndIf			
-			\If{latitud(c)-(i-1) >0}			
-				\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)+1>) \Comment O(1)					\EndIf			
+			\If{latitud(c)-(i-1) $>$0}			
+				\State AgregarAtras(ls, $<$latitud(c)-(i-1), longitud(c)+1$>$) \Comment O(1)
+			\EndIf			
 			\State i $\gets$ i -1 \Comment O(1) 
 		\EndWhile
 		\State itLista(coordenada) it $\gets$ CrearIt(ls) \Comment O(1)		
@@ -419,6 +422,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \begin{algorithm}[H]{\textbf{iActualizarJugadorYCoordenadas}(\In {j}{jugador}, \In {c}{coordenada}, \Inout {g}{Game})}
 	\begin{algorithmic}[1]
+	\begin{scriptsize}
 		\If{distEuclidia(c, g.jugadores[j].pos) $>$ 100 $\vee$ $\neg$(hayCamino(c, g.jugadores[j].pos, g.mapa))} \Comment O(1)
 			\State g.jugadores[j].sanciones $\gets$ g.jugadores[j].sanciones +1 \Comment O(1)
 			\If(g.jugadores[j].sanciones $\geq$ 4) \Comment O(1)
@@ -462,6 +466,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 		\medskip
 		\Statex \underline{Complejidad:} O(log $\#$(elementosEnColaDeC) + $\#$(pokemonsDicc)*|P|), donde P es la máxima longitud de las claves de diccionario
 		\Statex \underline{Justificacion:}Primero chequeo si el jugador cometió una infracción, si lo hizo le sumo una sanción. Entonces veo si lo tengo que expulsar, si lo hago resto su cantidad de pokemons al total de pokemons en el juego porque desaparecen, despues por cada pokemon del diccionario del jugador, resto su cantidad a su respectivo pokemon en el diccString (resto a su cantidadTotal en el diccString), esto me toma O($\#$(elementos del dicc) * |P|). Si no lo tengo que expulsar simplemente defino su nueva coordenada y veo si tengo que agregarlo a una nueva cola de prioridad o no, si tengo que hacerlo tengo que revalanciar la cola eso me cuesta O(log $\#$(elementos de la cola en la coordenada c)), sino es constante. Entonces la complejidad final es O(log $\#$(elementosEnColaDeC) + $\#$(pokemonsDicc)*|P|). Para chequear que la complejidad cumple la pedida (La función la uso en moverse) veo que $\#$(elementos del diccionario de pokemons del jugador) es a lo sumo PC (máxima cantidad de pokemons atrapados por un jugador), cuando lo multiplico por |P|, veo que la complejidad está contenida en O((PS + PC) * |P|). Para la otra parte de la complejidad veo que log $\#$(elementos de la cola de C) se acota por log (EC) (donde EC es la máxima cantidad de jugadores esperando capturar un pokemon) esto pasa porque la cola está contemplada en la complejidad, pasaría, en peor caso, O(log(EC)), entonces la complejidad de esta función está contenida en la pedida.
+		\end{scriptsize}
 	\end{algorithmic}
 \end{algorithm}
 
