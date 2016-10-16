@@ -123,7 +123,7 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 (5)La clave de cada nodo es menor o igual a la de sus hijos (si los tiene).\\
 (6)Todo subárbol es un heap.\\
 
-\subsection{Predicado de abtraccion}
+\subsection{Predicado de abstracción}
 
 %\AbsFc[puntero(nodo)]{dicc(string, $\sigma$)}[p]{ d : dicc(string,$\sigma$) | $(\forall s:string)\Big( \big(Def?(s,d)$ $\Longleftrightarrow (encontrarPalabra(s,p) \neq NULL$ $\yluego$ $encontrarPalabra(s,p)\to significado \neq NULL)\big)$ $\land$ $\big(*(encontrarPalabra(s,p)\to significado) = obtener(s,p)\big)\Big)$}
 
@@ -131,9 +131,14 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 %~  
 % \tadOperacion{encontrarPalabra}{string,puntero(nodo)}{puntero(nodo)}{}
 %  \tadAxioma{encontrarPalabra($s$, $p$)}{\IF $vacia(s)$ $\lor$ $p=NULL$  THEN $p$ ELSE encontrarPalabra($fin(s)$, $p\to caracteres$[$ord(prim(s))$]) FI}
-\bf{Representacion del iterador}
 
-\subsection{Justificacion}
+\subsection{Representación del iterador}
+
+\subsection{Justificación}
+
+El iterador nos permite acceder a cualquier elemento del heap en tiempo constante, sin necesidad de hacer búsqueda exhaustiva. En particular nos interesa eliminar un elemento (cuando un jugador se aleja del pokemon) en tiempo O(log(n)).
+Este iterador en particular no tiene función avanzar porque sólo nos interesa que apunte siempre al mismo nodo.
+
 
 	\begin{Estructura}{iterCola}[iter]
 		\begin{Tupla}[iter]
