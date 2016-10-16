@@ -27,7 +27,7 @@
 [O(1)]
 [Devuelve el valor del primer elemento de la cola de prioridad]\\
 
-\InterfazFuncion{Encolar}{\Inout {c}{colaPrioridadMin($\sigma$)}, \In {x}{$\sigma$}}{iterColaMin}
+\InterfazFuncion{Encolar}{\Inout {c}{colaPrioridadMin($\sigma$)}, \In {k}{$\kappa$}, \In {s}{$\beta$}}{iterColaMin}
 {$res \igobs encolar(x,c)$}
 [O(log(n))]
 [Agrega un elemento a la cola de prioridad. Devuelve un iterador apuntando al elemento insertado]\\
@@ -41,7 +41,9 @@
 % FALTA BORRAR DEL ITERADOR
 
 \begin{Representacion}
+
 \subsection{Justificacion}
+Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1) al primer de elemento de la cola y tener las operaciones de encolar y desencolar en O(log(n)). $\newline$ Como queremos poder agregar y quitar una arbitraria cantidad de elementos, no podemos usar un arreglo para representar el heap, dado que para extender el arreglo tendríamos una complejidad mayor a la pedida. $\newline$ Lo representamos sobre un árbol binario completo izquierdista, cumpliendo la complejidad de heap. $\newline$ El principal uso de la cola de prioridad será para determinar qué jugador captura al pokemon, la prioridad será: aquel que tenga la menor cantidad de pokemons tendrá la mayor prioridad. $\newline$ No nos interesa buscar en la estructura de manera eficiente (la complejidad de la búsqueda es O(n)) pero sí nos interesa obtener el primer elemento en O(1). $\newline$
 	\begin{Estructura}{colaPrioridadMin}[tupla(raiz: puntero(nodoHeap($\sigma$)), padreAgregar: puntero(nodoHeap($\sigma$)))]
 		\begin{Tupla}[nodoHeap]
 			\tupItem{padre}{puntero(nodoHeap($\sigma$))}
@@ -53,13 +55,13 @@
 	\end{Estructura}
 \subsection{Invariante de representación}
 
-\textbf{Informal}
-(1)Para todo nodo, sus hijos no pueden tenerlo como hijo.
-(2)Todas las hojas tienen significado.
-(3)La raíz no tiene padre.
-(4)Árbol binario perfectamente balanceado e izquierdista.
-(5)La clave de cada nodo es menor o igual a la de sus hijos (si los tiene).
-(6)Todo subárbol es un heap.
+\textbf{Informal}\\
+(1)Para todo nodo, sus hijos no pueden tenerlo como hijo.\\
+(2)Todas las hojas tienen significado.\\
+(3)La raíz no tiene padre.\\
+(4)Árbol binario perfectamente balanceado e izquierdista.\\
+(5)La clave de cada nodo es menor o igual a la de sus hijos (si los tiene).\\
+(6)Todo subárbol es un heap.\\
 
 \subsection{Predicado de abtraccion}
 
@@ -88,7 +90,7 @@
 
 \begin{algorithm}[H]{\textbf{iEsVacia?}(\In {r}{puntero(nodoHeap($\sigma$))}) $\to$ res: bool)}
 	\begin{algorithmic}[1]
-		\State $res \gets r = NULL$ \Comment O(1)
+		\State $res \gets r = NULL$\Comment O(1)
 		
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
@@ -96,37 +98,39 @@
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iEncolar}(\Inout {c}{colaPrioridadMin($\sigma$)}, \In {c}{$\sigma$}, \In {s}{$\sigma$}) $\to$ res: iter}
+\begin{algorithm}[H]{\textbf{iEncolar}(\Inout {c}{colaPrioridadMin($\sigma$)}, \In {k}{$\kappa$}, \In {s}{$\beta$}) $\to$ res: iterColaMin}
 	\begin{algorithmic}[1]
 
 		% Insertamos el elemento
 		\State BuscarPadreAgregar(c) \Comment O(log(n))
-		
-		\ puntero(nodoHeap($\sigma$)) nuevo $\leftarrow$ c.padreAgregar$\rightarrow$izq	\Comment O(1)
-
-		\State nuevo$\rightarrow$izq $\leftarrow$ NULL \Comment O(1)
-		\State nuevo$\rightarrow$der $\leftarrow$ NULL \Comment O(1)
-		\State nuevo.clave $\leftarrow$ c \Comment O(1)
-		\State nuevo.significado $\leftarrow$ b \Comment O(1)
-		\State nuevo$\rightarrow$padre $\leftarrow$ c.padreAgregar \Comment O(1)
-				
-		\If{c.padreAgregar$\rightarrow$izq = NULL} \Comment O(1)
-			\State c.padreAgregar$\rightarrow$izq $\leftarrow$ nuevo \Comment O(1)
+		\,
+		\ puntero(nodoHeap($\sigma$)) nuevo $\leftarrow$ c.padreAgregar$\rightarrow$izq\Comment O(1)
+		\,
+		\State nuevo$\rightarrow$izq $\leftarrow$ NULL\Comment O(1)
+		\State nuevo$\rightarrow$der $\leftarrow$ NULL\Comment O(1)
+		\State nuevo.clave $\leftarrow$ k\Comment O(1)
+		\State nuevo.significado $\leftarrow$ s\Comment O(1)
+		\State nuevo$\rightarrow$padre $\leftarrow$ c.padreAgregar\Comment O(1)
+		\,	
+		\If{c.padreAgregar$\rightarrow$izq = NULL}\Comment O(1)
+			\State c.padreAgregar$\rightarrow$izq $\leftarrow$ nuevo\Comment O(1)
+		\,
 		\Else
-			\State c.padreAgregar$\rightarrow$der $\leftarrow$ nuevo \Comment O(1)
+			\State c.padreAgregar$\rightarrow$der $\leftarrow$ nuevo\Comment O(1)
 		\EndIf
-
+		\,
 		% Sift up
 				
-		\While{nuevo.clave < nuevo$\rightarrow$padre.clave} \Comment O(log(n))
-			\State siftUp(c, nuevo)	\Comment O(1)
+		\While{nuevo.clave < nuevo$\rightarrow$padre.clave}\Comment O(log(n))
+			\State siftUp(c, nuevo)\Comment O(1)
 		\EndWhile			
+		\,		
 		\State res$\rightarrow$nuevo
 		
 		
 		\medskip
 		\Statex \underline{Complejidad:} O(log(n))
-			\Statex \underline{Justificacion: Se agrega un elemento al fondo del heap, luego se utiliza la función sift-up para volver a la propiedad de heap. Ocurren varias operaciones independientes que tienen complejidad O(log(n)), por lo tanto tiene una complejidad O(log(n)).}  
+			\Statex \underline{Justificacion:} Se agrega un elemento al fondo del heap, luego se utiliza la función sift-up para volver a la propiedad de heap. Ocurren varias operaciones independientes que tienen complejidad O(log(n)), por lo tanto tiene una complejidad O(log(n)).
 	\end{algorithmic}
 \end{algorithm}
 
@@ -135,30 +139,31 @@
 \begin{algorithm}[H]{\textbf{iDesencolar}(\Inout {c}{colaPrioridadMin($\sigma$)}}
 	\begin{algorithmic}[1]
 
-		\State puntero(nodoHeap($\sigma$)) ultimo $\leftarrow$ NULL \Comment O(1)
-
-		\If{c.padreAgregar$\rightarrow$der = NULL} \Comment O(1)
-			\State ultimo $\leftarrow$ c.padreAgregar$\rightarrow$izq \Comment O(1)
-			\State ultimo$\rightarrow$izq$\leftarrow$c.raiz$\rightarrow$izq \Comment O(1)
-			\State ultimo$\rightarrow$der$\leftarrow$c.raiz$\rightarrow$der \Comment O(1)
-			\State c.raiz$\leftarrow$ultimo \Comment O(1)
-			\State c.padreAgregar$\rightarrow$izq$\leftarrow$NULL \Comment O(1)
+		\State puntero(nodoHeap($\sigma$)) ultimo $\leftarrow$ NULL\Comment O(1)
+		\,
+		\If{c.padreAgregar$\rightarrow$der = NULL}\Comment O(1)
+			\State ultimo $\leftarrow$ c.padreAgregar$\rightarrow$izq\Comment O(1)
+			\State ultimo$\rightarrow$izq$\leftarrow$c.raiz$\rightarrow$izq\Comment O(1)
+			\State ultimo$\rightarrow$der$\leftarrow$c.raiz$\rightarrow$der\Comment O(1)
+			\State c.raiz$\leftarrow$ultimo\Comment O(1)
+			\State c.padreAgregar$\rightarrow$izq$\leftarrow$NULL\Comment O(1)
+			\,
 		\Else
-			\State ultimo $\leftarrow$ c.padreAgregar$\rightarrow$der \Comment O(1)
-			\State ultimo$\rightarrow$izq$\leftarrow$c.raiz$\rightarrow$izq \Comment O(1)
-			\State ultimo$\rightarrow$der$\leftarrow$c.raiz$\rightarrow$der \Comment O(1)
-			\State c.raiz$\leftarrow$ultimo \Comment O(1)
-			\State c.padreAgregar$\rightarrow$der$\leftarrow$NULL \Comment O(1)
+			\State ultimo $\leftarrow$ c.padreAgregar$\rightarrow$der\Comment O(1)
+			\State ultimo$\rightarrow$izq$\leftarrow$c.raiz$\rightarrow$izq\Comment O(1)
+			\State ultimo$\rightarrow$der$\leftarrow$c.raiz$\rightarrow$der\Comment O(1)
+			\State c.raiz$\leftarrow$ultimo\Comment O(1)
+			\State c.padreAgregar$\rightarrow$der$\leftarrow$NULL\Comment O(1)
 		\EndIf
-		
+		\,
 		%Ahora sift down
 		\While {ultimo$\rightarrow$der $\neq$ NULL $\wedge$ ultimo$\rightarrow$izq $\neq$ NULL $\wedge$ (ultimo$\rightarrow$der.clave $<$ ultimo.clave $\vee$ ultimo$\rightarrow$izq.clave $<$ ultimo.clave))} \Comment O(log(n))
-			\State siftDown(ultimo, c) \Comment O(1)
+			\State siftDown(ultimo, c)\Comment O(1)
 		\EndWhile
 		
 		\medskip
 		\Statex \underline{Complejidad:} O(log(n))
-			\Statex \underline{Justificacion: Se elimina el primer elemento del heap, se reemplaza la raiz por el último elemento, luego se utiliza la función sift-down para volver a tener la propiedad de heap. El ciclo itera como máximo log(n) veces, que es la altura del heap (sólo se puede llevar hasta el fondo).}   
+			\Statex \underline{Justificacion:} Se elimina el primer elemento del heap, se reemplaza la raiz por el último elemento, luego se utiliza la función sift-down para volver a tener la propiedad de heap. El ciclo itera como máximo log(n) veces, que es la altura del heap (sólo se puede llevar hasta el fondo).  
 	\end{algorithmic}
 \end{algorithm}
 
@@ -181,31 +186,40 @@
 		
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Se obtiene el significado de la raiz del heap.}   
+			\Statex \underline{Justificacion:}Se obtiene el significado de la raiz del heap.
 	\end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}[H]{\textbf{BuscarPadreInsertar}(\In {c}{colaPrioridadMin($\sigma$)})}
 	\begin{algorithmic}[1]
 		
-		\If {c.padreAgregar$\rightarrow$der $\neq$ NULL}
-			\State puntero(nodoHeap($\sigma$)) aux $\leftarrow$ c.padreAgregar
-			\While {aux $\neq$ c.raiz $\wedge$ aux$\rightarrow$padre$\rightarrow$der = aux}
-				\State aux $\leftarrow$ aux$\rightarrow$padre			
+		\If {c.padreAgregar$\rightarrow$der $\neq$ NULL}\Comment O(1)
+			\State puntero(nodoHeap($\sigma$)) aux $\leftarrow$ c.padreAgregar\Comment O(1)
+			\,	
+			\While {aux $\neq$ c.raiz $\wedge$ aux$\rightarrow$padre$\rightarrow$der = aux}\Comment O(log(n))\,
+				\Comment Buscamos el padre hacia la izquierda hasta no poder avanzar
+				\State aux $\leftarrow$ aux$\rightarrow$padre\Comment O(1)		
 			\EndWhile
-			\If {aux $\neq$ c.raiz}
-				\State aux $\leftarrow$ aux$\rightarrow$padre
-				\State aux $\leftarrow$ aux$\rightarrow$der
+			\,			
+			\If {aux $\neq$ c.raiz}\Comment O(1)\,
+				\Comment Nos movemos al subárbol hermano
+				\State aux $\leftarrow$ aux$\rightarrow$padre\Comment O(1)
+				\State aux $\leftarrow$ aux$\rightarrow$der\Comment O(1)
 			\EndIf
-			\While {aux$\rightarrow$izq $\neq$ NULL}
-				\State aux $\leftarrow$ aux$\rightarrow$izq
+			\,			
+			\While {aux$\rightarrow$izq $\neq$ NULL}\Comment O(1)\,
+				\Comment Bajamos a la izquierda hasta no poder avanzar.
+				\State aux $\leftarrow$ aux$\rightarrow$izq\Comment O(1)
 			\EndWhile
-			\State c.padreAgregar $\leftarrow$ aux
+			\,
+			\State c.padreAgregar $\leftarrow$ aux\Comment O(1)
 		\EndIf
 		
 		\medskip
 		\Statex \underline{Complejidad:} O(log(n))
-			\Statex \underline{Se obtiene nodo al cual hay que agregarle hojas para mantener la propiedad de heap al encolar. En el peor caso se recorre dos veces la altura del heap, es decir 2log(n) operaciones, dando una complejidad O(log(n)).}   
+			\Statex \underline{Justificacion:}Se obtiene nodo al cual hay que agregarle hojas para mantener la propiedad de heap al encolar.\,
+			     Subimos hacia la izquierda mientras los subárboles estén completos para encontrar el subárbol "hermano" al cual hay que agregarle el elemento a encolar. Luego bajamos hacia la izquierda para encontrar el padre de la futura hoja. En caso de que el árbol total sea completo se sube hasta la raíz y se baja hacia el elemento más a la izquierda.
+			\,   En el peor caso se recorre dos veces la altura del heap, es decir 2log(n) operaciones, dando una complejidad O(log(n)). 
 	\end{algorithmic}
 \end{algorithm}
 
@@ -213,19 +227,74 @@
 \begin{algorithm}[H]{\textbf{siftUp}(\In {c}{colaPrioridadMin($\sigma$)}, \In {n}{puntero(nodoHeap($\sigma$))})}
 	\begin{algorithmic}[1]
 		
-		\State puntero(nodoHeap($\sigma$)) aux $\leftarrow$ n
-		
-		\If {aux$\rightarrow$izq = aux}
-			aux $\leftarrow$ aux$\rightarrow$padre
-			
-		\EndIf		
-		
+		\State puntero(nodoHeap($\sigma$)) aux $\leftarrow$ NULL\Comment O(1)
+		\Comment Se crea un nodo auxiliar para poder hacer el intercambio de posicion entre los nodos
+		\,
+		\If {n$\rightarrow$der.clave < n.clave}\Comment O(1)
+			\State aux$\rightarrow$der $\leftarrow$ n$\rightarrow$der$\rightarrow$der\Comment O(1)
+			\State aux$\rightarrow$izq $\leftarrow$ n$\rightarrow$der$\rightarrow$izq\Comment O(1)
+			\State aux$\rightarrow$padre $\leftarrow$ n$\rightarrow$der\Comment O(1)
+			\,
+			\State n$\rightarrow$der$\rightarrow$der $\leftarrow$ n$\rightarrow$der\Comment O(1)
+			\State n$\rightarrow$der$\rightarrow$izq $\leftarrow$ aux\Comment O(1)
+			\State n$\rightarrow$der$\rightarrow$padre $\leftarrow$ n$\rightarrow$padre\Comment O(1)
+			\,
+		\Else
+			\State aux$\rightarrow$der $\leftarrow$ n$\rightarrow$izq$\rightarrow$der\Comment O(1)
+			\State aux$\rightarrow$izq $\leftarrow$ n$\rightarrow$izq$\rightarrow$izq\Comment O(1)
+			\State aux$\rightarrow$padre $\leftarrow$ n$\rightarrow$izq\Comment O(1)
+			\,
+			\State n$\rightarrow$izq$\rightarrow$der $\leftarrow$ n$\rightarrow$der\Comment O(1)
+			\State n$\rightarrow$izq$\rightarrow$izq $\leftarrow$ aux\Comment O(1)
+			\State n$\rightarrow$izq$\rightarrow$padre $\leftarrow$ n$\rightarrow$padre\Comment O(1)
+			\,		
+		\EndIf
+		\,
+		\State n $\leftarrow$ aux\Comment O(1)
 		
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{.}   
+			\Statex \underline{Justificacion:}Se intercambia un nodo con uno de sus hijos que tenga clave menor. Pese a que no tiene precondiciones, es llamado en un contexto en el cual no se puede indefinir. Es una secuencia de asignaciones, todas O(1), por lo tanto el algoritmo tiene complejidad O(1).
 	\end{algorithmic}
 \end{algorithm}
+
+
+
+\begin{algorithm}[H]{\textbf{siftDown}(\In {c}{colaPrioridadMin($\sigma$)}, \In {n}{puntero(nodoHeap($\sigma$))})}
+	\begin{algorithmic}[1]
+		
+		\State puntero(nodoHeap($\sigma$)) aux $\leftarrow$ NULL\Comment O(1) $\,$
+		\Comment Se crea un nodo auxiliar para poder hacer el intercambio de posicion entre los nodos
+		
+		\If {n$\rightarrow$padre$\rightarrow$izq = n}\Comment O(1)
+			\State aux$\rightarrow$der $\leftarrow$ n$\rightarrow$padre$\rightarrow$der\Comment O(1)
+			\State aux$\rightarrow$izq $\leftarrow$ n$\rightarrow$padre\Comment O(1)
+			
+		\Else
+			\State aux$\rightarrow$der $\leftarrow$ n$\rightarrow$padre\Comment O(1)
+			\State aux$\rightarrow$izq $\leftarrow$ n$\rightarrow$padre$\rightarrow$izq\Comment O(1)
+		\EndIf
+				
+			
+			
+		\If {n$\rightarrow$padre = c.raiz}\Comment O(1)
+			\State aux$\rightarrow$padre $\leftarrow$ NULL\Comment O(1)
+		\Else
+			\State aux$\rightarrow$padre $\leftarrow$ n$\rightarrow$padre$\rightarrow$padre\Comment O(1)
+		\EndIf
+		
+		\State n$\rightarrow$padre$\rightarrow$der $\leftarrow$ n$\rightarrow$der\Comment O(1)
+		\State n$\rightarrow$padre$\rightarrow$izq $\leftarrow$ n$\rightarrow$izq\Comment O(1)
+		\State n$\rightarrow$padre$\rightarrow$padre $\leftarrow$ aux\Comment O(1)
+		
+		\State n $\leftarrow$ aux\Comment O(1)
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Se intercambia un nodo con su padre. Pese a que no tiene precondiciones, es llamado en un contexto en el cual no se puede indefinir. Es una secuencia de asignaciones, todas O(1), por lo tanto el algoritmo tiene complejidad O(1). 
+	\end{algorithmic}
+\end{algorithm}
+
 
 
 \end{Algoritmos}

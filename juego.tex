@@ -285,16 +285,26 @@
 		\State nat i $\gets$ 4 \Comment O(1)
 		\While {i $>$ 0} \Comment O(1)
 			\State AgregarAtras(ls, <latitud(c)+i, longitud(c)>) \Comment O(1)
+			\If{latitud(c)-i$>$0}
 			\State AgregarAtras(ls, <latitud(c)-i, longitud(c)>) \Comment O(1)
+			\EndIf			
 			\State AgregarAtras(ls, <latitud(c), longitud(c)+i>) \Comment O(1)
+			\If{longitud(c)-i $>$0}
 			\State AgregarAtras(ls, <latitud(c), longitud(c)-i>) \Comment O(1)
+			\EndIf			
 			\State i $\gets$ i - 1 \Comment O(1)
 		\EndWhile
 		\State i $\gets$ 3
 		\While {i > 0} \Comment O(1)
+			\If{longitud(c)-(i-1)$>$0}
 			\State AgregarAtras(ls, <latitud(c)+3, longitud(c)-(i-1)>) \Comment O(1)
+			\EndIf
+			\If{latitud(c)-(i-1)>0}			
 			\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)+3>) \Comment O(1)
+			\EndIf
+			\If{latitud(c)-3>0 $\wedge$ longitud(c)-(i-1)}			
 			\State AgregarAtras(ls, <latitud(c)-3, longitud(c)-(i-1)>) \Comment O(1)
+			\EndIf
 			\State AgregarAtras(ls, <latitud(c)-(i-1), longitud(c)-3>) \Comment O(1)
 			\State AgregarAtras(ls, <latitud(c)-3, longitud(c)+(i-1)>) \Comment O(1)
 			\State AgregarAtras(ls, <latitud(c)+(i-1), longitud(c)-3>) \Comment O(1)
@@ -379,6 +389,7 @@
 		\If{HayPokemonCerca(c, g)} \Comment O(log $\#$(elementosEnColaDeC))
 			\State itDicc(jugador, itColaPrioridad(cantPokemon)) itPosicion $\gets$ DefinirRapido(g.mapaInfo[c].jugadores, j, Encolar(g.mapaInfo[posPokemonCerca(c, g)].jugEspe, g.jugadores[j].cantTotalPoke, j)) \Comment O(log $\#$(elementosEnColaDeC))
 			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)			
+			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)		
 		\Else
 			\State itDicc(jugador, itColaPrioridad(cantPokemon)) itPosicion $\gets$ DefinirRapido(g.mapaInfo[c].jugadores, j, NULL) \Comment O(1)
 			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)			
@@ -417,6 +428,42 @@
 		\Statex \underline{Justificacion:}
 	\end{algorithmic}
 \end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iConectarse}(\In {j}{jugador}, \In {c}{coordenada}, \Inout {g}{Game})}
+	\begin{algorithmic}[1]
+		\State g.jugadores[j].conectado $\gets$ true \Comment O(1)
+		\State g.jugadores[j].pos $\gets$ c \Comment O(1)
+		\If{HayPokemonCerca(c, g)} \Comment O(log $\#$(elementosEnColaDeC))
+			\State itDicc(jugador, itColaPrioridad(cantPokemon)) itPosicion $\gets$ DefinirRapido(g.mapaInfo[c].jugadores, j, Encolar(g.mapaInfo[posPokemonCerca(c, g)].jugEspe, g.jugadores[j].cantTotalPoke, j)) \Comment O(log $\#$(elementosEnColaDeC))
+			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)			
+			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)		
+		\Else
+			\State itDicc(jugador, itColaPrioridad(cantPokemon)) itPosicion $\gets$ DefinirRapido(g.mapaInfo[c].jugadores, j, NULL) \Comment O(1)
+			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)			
+		\EndIf		
+		\medskip
+		\Statex \underline{Complejidad:} O(log $\#$(elementosEnColaDeC))
+		\Statex \underline{Justificacion:}A la hora de conectarse, primero veo si en la coordenada c hay un pokemon cerca, si lo hay agrego el jugador a la cola de prioridad de la coordenada del pokemon eso me cuesta O(log $\#$(elementosEnCola)), si no hay pokemon cerca simplemente no existe el iterado. Luego cargo los datos necesarios para el jugador  
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iDesconectarse}(\In {j}{jugador}, \Inout {g}{Game})}
+	\begin{algorithmic}[1]
+		\State g.jugadores[j].conectado $\gets$ false \Comment O(1)
+		\If{SiguienteSignificado(g.jugadores[j].posicionMapa) $\neq$ NULL} \Comment O(log $\#$(elementosEnCola))
+			\State Borrar(SiguienteSignificado(g.jugadores[j].posicionMapa)) \Comment O(log $\#$(elementosEnCola))
+			\State EleminarSiguiente(g.jugadores[j].posicionMapa) \Comment O(1)
+			\State g.jugadores[j].posicionMapa $\gets$ NULL \Comment O(1)		
+		\Else
+			\State EleminarSiguiente(g.jugadores[j].posicionMapa) \Comment O(1)
+			\State g.jugadores[j].posicionMapa $\gets$ NULL \Comment O(1)
+		\EndIf		
+		\medskip
+		\Statex \underline{Complejidad:} O(log $\#$(elementosEnCola))
+		\Statex \underline{Justificacion:}Cuando un jugador se desconecta, primero actualizo su flag de conectado a false y despues veo si esta en alguna cola de prioridad, si lo está elimino el nodo al que apunta (reordeno la cola) y despues borro el diccionario en donde está definido y pongo a null el iterador. Si está en una cola la complejidad (para reordenoar) toma O(log $\#$(elementosEnCola)) sino toma O(1)  
+	\end{algorithmic}
+\end{algorithm}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % OBSERVADORES BASICOS
