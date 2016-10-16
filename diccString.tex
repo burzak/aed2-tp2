@@ -47,7 +47,7 @@
 \InterfazFuncion{Borrar}{\In {s}{string}, \Inout {d}{diccString($\sigma$)}}{}
 [d $=$ d$_0$]
 {d $=$ Borrar(s, d$_0$)}
-[O(|L|), siendo L la máxima longitud de las claves en el diccionario]
+[O(|L|+ k), siendo L la máxima longitud de las claves en el diccionario y k la cant de claves en el dicc]
 [Borra la clave, si es prefijo de alguna otra clave solo borra el significado]\\
 
 \InterfazFuncion{Claves}{\In {d}{diccString($\sigma$)}}{lista(string)}
@@ -276,10 +276,16 @@ El iterador del diccionario utiliza un iterador a lista porque desde el Trie no 
 			\State borrarNodo(hastaDondeEliminar)	\Comment O(|s|)
 			\State padreHDE$\rightarrow$hijos[ord(s[iHDE])] $\leftarrow$ NULL \Comment O(1)
 		\EndIf
-				
+		\State itLista(string) itlis $\gets$ CrearIt(d.Arbolito) \Comment O(1)
+		\While{HaySiguiente(itlis) $\wedge$ Siguiente(itlis) $\neq$ s} \Comment O($\#$(ClavesDicc))
+			\State Avanzar(it) \Comment O(1)		
+		\EndWhile		
+		\If{HaySiguiente(it)} \Comment O(1)
+			\State EliminarSiguiente(itlis) \Comment O(1)		
+		\EndIf		
 		\medskip
-		\Statex \underline{Complejidad:} O(|s|)
-			\Statex \underline{Justificacion:}Recorre la clave, guardando cuál es el último nodo "útil" del camino, para eliminar toda la parte de la palabra que vaya a quedar sin una definición asociada. $\newline$ Si la palabra tiene hijos, sólo se le elimina el significado. $\newline$ Como en peor caso como máximo se recorre la palabra más larga (varias veces, pero de manera independiente, entonces el orden de la complejidad no aumenta), la complejidad final es O(|s|).
+		\Statex \underline{Complejidad:} O(|s| + $\#$(ClavesDicc))
+			\Statex \underline{Justificacion:}Recorre la clave, guardando cuál es el último nodo "útil" del camino, para eliminar toda la parte de la palabra que vaya a quedar sin una definición asociada. $\newline$ Si la palabra tiene hijos, sólo se le elimina el significado. $\newline$ Como en peor caso como máximo se recorre la palabra más larga (varias veces, pero de manera independiente, entonces el orden de la complejidad no aumenta), la complejidad final es O(|s|). Luego busco y elimino la clave de la lista de calves del diccionario
 	\end{algorithmic}
 \end{algorithm}
 
