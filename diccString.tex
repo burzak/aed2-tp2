@@ -11,49 +11,53 @@
 
 \subsection{Interfaz}
 
+\parbox {1,7cm}{{\bf Género}} diccString\\
+{\bf se explica con:}  \tadNombre{String}, \tadNombre{Bool}, \tadNombre{Lista(String)}, \tadNombre{Nat}\\
+\medskip
+
 \bf{Operaciones del modulo}
 
-\InterfazFuncion{Vacio}{}{DiccString($\sigma$)}
+\InterfazFuncion{Vacio}{}{diccString($\sigma$)}
 {res = Vacio()}
 [O(1)]
 [Crea un diccionario vacio]\\
 
-\InterfazFuncion{Significado}{\In {s}{string}, \In {d}{DiccString($\sigma$)}}{$\sigma$}
+\InterfazFuncion{Significado}{\In {s}{string}, \In {d}{diccString($\sigma$)}}{$\sigma$}
 [Definido(s, d)]
 {res = Significado(s, d)}
 [O(|L|), siendo L la máxima longitud de las claves en el dicc]
 [Devuelve el significado del diccionario]\\
 
-\InterfazFuncion{Definido}{\In {s}{string}, \In {d}{DiccString($\sigma$)}}{bool}
+\InterfazFuncion{Definido}{\In {s}{string}, \In {d}{diccString($\sigma$)}}{bool}
 {res = Definido(s, d)}
 [O(|L|), siendo L la máxima longitud de las claves en el dicc]
 [Verifica si una clave existe o no en el diccionario]\\
 
-\InterfazFuncion{Vacio?}{\In {d}{DiccString($\sigma$)}}{bool}
+\InterfazFuncion{Vacio?}{\In {d}{diccString($\sigma$)}}{bool}
 {res = Vacio?(d)}
 [O(1)]
 [Chequea si un diccionario es vacio]\\
 
-\InterfazFuncion{Definir}{\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{DiccString($\sigma$)}}{}
+\InterfazFuncion{Definir}{\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{diccString($\sigma$)}}{}
 [d $\igobs$ d$_0$]
 {d = Definir(s, c, d$_0$)}
 [O(|L|), siendo L la máxima longitud de las claves del diccionario]
 [Define una clave en el diccionario]\\
 
-\InterfazFuncion{Borrar}{\In {s}{string}, \Inout {d}{DiccString($\sigma$)}}{}
+\InterfazFuncion{Borrar}{\In {s}{string}, \Inout {d}{diccString($\sigma$)}}{}
 [d $=$ d$_0$]
 {d $=$ Borrar(s, d$_0$)}
 [O(|L|), siendo L la máxima longitud de las claves en el diccionario]
 [Borra la clave, si es prefijo de alguna otra clave solo borra el significado]\\
 
-\InterfazFuncion{Claves}{\In {d}{DiccString($\sigma$)}}{lista(string)}
+\InterfazFuncion{Claves}{\In {d}{diccString($\sigma$)}}{lista(string)}
 {res $\igobs$ claves(d)}
 [O(1)]
 [Devuelve un conjunto con las claves del diccionario]\\
 
 \bf{Operaciones del iterador}
 
-\InterfazFuncion{CrearIt}{\In {d}{DiccString($\sigma$)}}{itString}
+\InterfazFuncion{CrearIt}{\In {d}{diccString($\sigma$)}}{itString}
 {res $\igobs$ CrearItUni(claves(d))}
 [O(1)]
 [Crea un iterador no modificable al principio de las claves del diccionario]
