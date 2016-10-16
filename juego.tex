@@ -93,10 +93,17 @@
 [Conjunto de jugadores expulsados del juego]
 \\
 
-\InterfazFuncion{PosConPok\'emons}{\In {g}{Juego}}{Conj(coor)}
+\InterfazFuncion{PosConPokemons}{\In {g}{Juego}}{Conj(coor)}
 {res $\igobs$ posConPok\'emons(g)}
-[O(J)]
+[O(1)]
 [Conjunto de coordenadas con Pok\'emones]
+\\
+
+\InterfazFuncion{PokemonEnPos}{\In {c}{Coordenada}, \In {g}{Juego}}{Pokemon}
+[c $\in$ posConPokemons(g)]
+{res $\igobs$ pokemonEnPos}
+[O(1)]
+[Devolvemos el Pokemon en la Coordenada]
 \\
 
 
@@ -484,7 +491,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iPosConPok\'emons}(\In {g}{Game}) $\to$ res: conj(coordenada)}
+\begin{algorithm}[H]{\textbf{iPosConPokemons}(\In {g}{Game}) $\to$ res: conj(coordenada)}
 	\begin{algorithmic}[1]
 		\State res $\gets$ g.coordenadasConPokemons \Comment O(1)
 		\medskip
@@ -492,6 +499,16 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 		\Statex \underline{Justificacion:} Devolvemos el conjunto de coordenadas con Pokemones. La asignaci\'on al ser de un tipo \textbf{no} primitivo tanto res como g.coordenadasConPokemons referencian a la misma estructura f\'isica (del apunte de dise\~no)
 	\end{algorithmic}
 \end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iPokemonEnPos}(\In {c}{coordenada}, \In {g}{Game}) $\to$ res: conj(coordenada)}
+	\begin{algorithmic}[1]
+		\State res $\gets$ g.mapainfo[Altitud(c)][Longitud(c)].pokemon \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:} El acceso a mapainfo que es una matriz es O(1) y tenemos solo una asignaci\'on
+	\end{algorithmic}
+\end{algorithm}
+
 
 
 
