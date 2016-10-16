@@ -66,6 +66,27 @@
 [Dice si un jugador esta conectado o no]
 \\
 
+\InterfazFuncion{Sanciones}{\In {j}{Jugador}, \In {g}{Juego}}{Nat}
+[j $\in$ jugadores(g)]
+{res $\igobs$ sanciones(g)}
+[O(1)]
+[La cantidad de sanciones que tiene un jugador]
+\\
+
+\InterfazFuncion{Posicion}{\In {j}{Jugador}, \In {g}{Juego}}{Coordenada}
+[j $\in$ jugadores(g) $\impluego$ estaConectado(j, g)]
+{res $\igobs$ posicion(j, g)}
+[O(1)]
+[Posici\'on actual del jugador cuando se encuentra conectado]
+\\
+
+\InterfazFuncion{Pokemons}{\In {j}{Jugador}, \In {g}{Juego}}{Iter(<Pokemon, Nat>)}
+[j $\in$ jugadores(g)]
+{res $\igobs$ pok\'emons(j, g)}
+[O(1)]
+[Devuelve un iterador <Pokemon, Nat>]
+\\
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -309,8 +330,32 @@
 	\end{algorithmic}
 \end{algorithm}
 
+\begin{algorithm}[H]{\textbf{iSanciones}(\In {j}{jugador}, \In {g}{Game}) $\to$ res: nat}
+	\begin{algorithmic}[1]
+		\State res $\gets$ g.jugadores[j].sanciones \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:} Es una asignaci\'on, un acceso de O(1) a un vector por el id del jugador y ah\'i guardamos una tupla con informaci\'on del jugador, en particular la cantidad de sanciones que tiene
+	\end{algorithmic}
+\end{algorithm}
 
+\begin{algorithm}[H]{\textbf{iPosicion}(\In {j}{jugador}, \In {g}{Game}) $\to$ res: coordenada}
+	\begin{algorithmic}[1]
+		\State res $\gets$ g.jugadores[j].pos \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:} Es una asignaci\'on, un acceso de O(1) a un vector por el id del jugador y ah\'i guardamos una tupla con informaci\'on del jugador, en particular la posici\'on actual del jugador cuando esta conectado
+	\end{algorithmic}
+\end{algorithm}
 
+\begin{algorithm}[H]{\textbf{iPokemons}(\In {j}{jugador}, \In {g}{Game}) $\to$ res: itDicc($<Pokemon, cantidad>$)}
+	\begin{algorithmic}[1]
+		\State res $\gets$ CrearIt(Siguiente(g.jugadores[j].pokemons)) \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:} Dentro de jugadores guardamos un iterador a Dicc(<Pokemon, Cantidad>) que est\'a guardado en Game. De esta forma en el vector de jugadores guardamos estructuras simples de copiar, esto era necesario por la complejidad del agregar jugador (ver AgregarJugador). Tanto la asignaci\'on y la creaci\'on del iterador y el siguiente del iterador de lista son todos O(1)
+	\end{algorithmic}
+\end{algorithm}
 
 
 
