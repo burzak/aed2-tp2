@@ -67,16 +67,10 @@ ancho y alto representan el tama\~no del mapa, para calcularlo buscamos la coord
 \subsubsection{Invariante de representación}
 
 \textbf{Informal}\\
-
-Vale para todo par de natruales
-
-\textbf{Formal}\\
-
-\Rep[casillero e][e]{true}
+(1)Existe una coordenada en coordenadas tal que, dicha coordenada toma como su latitud al alto, y Existe una coordenada en coordenadas que su longitud es el ancho del mapa (puede ser la misma coordenada)\\
+(2)relacionCoordenadas tiene como dimension el ancho*alto de alto y tambien de largo, ademas para toda celda de esta matriz se tiene la relacion de camino entre 2 coordenadas, dichas coordenadas tienen que existir en coordenadas del mapa 
 
 \subsubsection{Predicado de abtraccion}
-
-\AbsFc[estr]{Coordenada}[e]{($\forall$ s:casillero)(Abs(s) $\igobs$ c:Coordenada) | (s.latitud = latitud(c) $\wedge$ s.longitud = longitud(c))}
 
 \end{Representacion}
 
