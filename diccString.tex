@@ -85,6 +85,9 @@
 
 \Titulo{Representacion del modulo}
 \subsection{Justificacion}
+En el diccionario sobre Trie lo representamos con Nodo apuntando a nodo donde guardamos cada char de la palabra en cada nodo. Y tenemos una estructura extra llamada Arbolito que su única finalidad es tener un Puntero a la ra\'iz de Trie y guardamos una lista de las claves creadas. La lista de claves la creamos para poder iterar sobre el Trie de forma m\'as conveniente, donde nos permite poder devolver un iterador en O(1), avanzar en las claves en O(1) y cuando piden el actual hacemos la busqueda sobre el Trie con la clave actual teniendo una complejidad de O(|clave mas larga|).
+Este iterador no es modificable ya que no queremos permitir poder borrar por parte del usuario dado que nunca borramos pokemons del juego ya siempre guardamos el dato de los pokemones totales agregados de cada tipo (sin importar si fueron o no atrapados).
+Con este iterador podemos cumplir con la complejidad que nos piden en la funci\'on pokemons devolviendo en O(1) el iterador a tupla$<$pokemon, cantidad$>$.
 	\begin{Estructura}{diccString}[Arbolito]
 		\begin{Tupla}[Arbolito]
 			\tupItem{raiz}{puntero(nodo($\sigma$))}
@@ -113,6 +116,7 @@
 
 \Titulo {Representacion del iterador}
 \subsection{Justificacion}
+El iterador del diccionario utiliza un iterador a lista porque desde el Trie no podemos acceder a la representaci\'on interna de claves. Entonces usamos un iterador para poder recorrer esa lista de forma eficiente.
 
 \begin{Estructura}{itString}[iter]
 	\begin{Tupla}[iter]
