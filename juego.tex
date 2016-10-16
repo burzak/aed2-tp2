@@ -252,6 +252,26 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \bf{Informal}
 
+(1)Para todos los pokemons de un jugador dado, estos existen en el diccionario pokemons del juego y ademas la cantidad de los mismos es menor o igual a la cantidad total definida en el diccionario de pokemon del juego\\
+
+(2)CantidadTotalPokemons del juego es igual a la suma de la cantTotal de cada clave del dicc Pokemons\\
+
+(3)Tanto mapa como mapaInfo toman la coordenada con el alto mas grande y el ancho mas grande para definir su tamaño\\
+
+(4)Para toda coordenada en coordenadaConPokemon, existe un pokemon cuya cantSalvaje es 1. Dicho de otra manera la suma de la cantidad de coordenadas es igual a la suma de pokemons libres del dicc Pokemons del juego, para toda coordenada del conj existe una relacion con un pokemon del dicc\\
+
+(5)Toda coordenada donde esta un jugador (infoJugador.pos) esa coordenada existe en mapa y en mapaInfo\\
+
+(6)La parte de la tupla jug en InfoJugador corresponde con el índice del vector jugadores por el cual accedo a esa tupla\\
+
+(7)Para todo elemento de la colaDePrioridad de infoCoordenada, para todo nodo de la cola existe un elemento en el dicc Jugadores de la misma estructura. Además para cada elemento en el dicc jugadores de infoCoordenada, para cualquier coordenada, existe un elemento en el vector Jugadores (jugador no expulsado)\\
+
+(8)Para toda infoCoordenada el pokemon existe en el diccPokemon del juego y ademas la coordenada por la cual se filtra el arreglo de arreglos mapaInfo esta en coordenadaConPokemons \\
+
+(9)Para todo elemento de la lista de pokemons de jugadores existe un jugador (no expulsado) para el cual se corresponde, ademas la suma de la cant de todas las claves del diccionario es igual a CantTotalPoke de infoJugador para ese jugador\\
+
+(10)La coordenada del jugador se corresponde con PosicionMapa de infoJugador\\
+
 
 \subsubsection{Predicado de abtraccion}
 
@@ -269,16 +289,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 \subsection{Invariante de representacion}
 
 \textbf{Informal}
-(1)Para todos los pokemons de un jugador dado, estos existen en el diccionario pokemons del juego y ademas la cantidad de los mismos es menor o igual a la cantidad total definida en el diccionario de pokemon del juego\\
-(2)CantidadTotalPokemons del juego es igual a la suma de la cantTotal de cada clave del dicc Pokemons\\
-(3)Tanto mapa como mapaInfo toman la coordenada con el alto mas grande y el ancho mas grande para definir su tamaño\\
-(4)Para toda coordenada en coordenadaConPokemon, existe un pokemon cuya cantSalvaje es 1. Dicho de otra manera la suma de la cantidad de coordenadas es igual a la suma de pokemons libres del dicc Pokemons del juego, para toda coordenada del conj existe una relacion con un pokemon del dicc\\
-(5)Toda coordenada donde esta un jugador (infoJugador.pos) esa coordenada existe en mapa y en mapaInfo\\
-(6)La parte de la tupla jug en InfoJugador corresponde con el índice del vector jugadores por el cual accedo a esa tupla\\
-(7)Para todo elemento de la colaDePrioridad de infoCoordenada, para todo nodo de la cola existe un elemento en el dicc Jugadores de la misma estructura. Además para cada elemento en el dicc jugadores de infoCoordenada, para cualquier coordenada, existe un elemento en el vector Jugadores (jugador no expulsado)\\
-(8)Para toda infoCoordenada el pokemon existe en el diccPokemon del juego y ademas la coordenada por la cual se filtra el arreglo de arreglos mapaInfo esta en coordenadaConPokemons \\
-(9)Para todo elemento de la lista de pokemons de jugadores existe un jugador (no expulsado) para el cual se corresponde, ademas la suma de la cant de todas las claves del diccionario es igual a CantTotalPoke de infoJugador para ese jugador\\
-(10)La coordenada del jugador se corresponde con PosicionMapa de infoJugador\\
+
 
 
 \subsection{Predicado de abstraccion}
