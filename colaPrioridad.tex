@@ -66,6 +66,23 @@
 
 \bf{Funciones Auxiliares, no exportadoas}
 
+\InterfazFuncion{BuscarPadreInsertar}{\Inout {c}{colaPrioridadMin}}{}
+{Conserva la propiedad de heap}
+[O(log(n))]
+[Encuentra el nodo al cual hay que insertarle el próximo hijo]\\
+
+\InterfazFuncion{SiftUp}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{}
+[$\neg EVacia?(Desencolar(c))$]
+{No necesariamente conserva la propiedad de heap}
+[O(1)]
+[Mueve hacia arriba en la cola de prioridad a p si su padre es de menor prioridad]\\
+
+\InterfazFuncion{SiftDown}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{}
+[$\neg EVacia?(Desencolar(c))$]
+{No necesariamente conserva la propiedad de heap}
+[O(1)]
+[Mueve hacia abajo en la cola de prioridad a p si alguno de sus hijos es de mayor prioridad]\\
+
 \InterfazFuncion{Eliminar}{\Inout {it}{iterCola}}{}
 [HayMas?(it) $\wedge$ it $=$ it$_0$]
 {it $=$ Eliminar(it$_0$)}
@@ -187,7 +204,7 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iDesencolar}(\Inout {c}{colaMin}}
+\begin{algorithm}[H]{\textbf{iDesencolar}(\Inout {c}{colaMin}})
 	\begin{algorithmic}[1]
 
 		\State puntero(nodoHeap($\sigma$)) ultimo $\leftarrow$ NULL\Comment O(1)
