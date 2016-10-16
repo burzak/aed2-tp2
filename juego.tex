@@ -409,21 +409,16 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \begin{algorithm}[H]{\textbf{iMoverse}(\In {j}{jugador}, \In {c}{coordenada}, \Inout {g}{Game})}
 	\begin{algorithmic}[1]
-		\State ActualizarJugador(j, c, g) \Comment O(log $\#$(elementosEnColaDeC) + log $\#$(elementosColaDeCordenadaDelJugador) + $\#$(pokemonsDiccDeJugador)*|P|)
-			
-		
+		\State VerCapturas(j, c, g) \Comment O($\#$(elementosEnConj) * |PenJ|)
+		\State ActualizarJugador(j, c, g) \Comment O(log $\#$(elementosEnColaDeC) +  $\#$(pokemonsDiccDeJugador)*|P|)
 		\medskip
-		\Statex \underline{Complejidad:} 
-		\Statex \underline{Justificacion:}
+		\Statex \underline{Complejidad:}O($\#$(elementosEnConj) * |PenJ| + log $\#$(elementosEnColaDeC) + $\#$(pokemonsDiccDeJugador)*|P|) = O(($\#$(pokemonsDiccDeJugador + $\#$(elementosEnConj)) * |P|) + log $\#$(elementosEnColaDeC)) = O((PC + PS) * |P| + log(EC))
+		\Statex \underline{Justificacion:}Primero veo que $\#$(elementosEnConj) son los pokemons salvajes que quedan en el juego porque esa complejidad viene de recorrer el conjunto de coordenadas de pokemons en el mapa, entonces $\#$(elementosEnConj) = PS, luego $\#$(pokemonsDiccDeJugador) es la complejidad de recorrer todas las claves del diccionario donde guardo la informacion de los pokemons de cada jugador, entonces esta complejidad esta dada por PC que es la máxima cantidad de pokemons atrapados por un jugador. Luego tengo log $\#$(elementosEnColaDeC) que viene de la parte de mover el jugador y actualizar los heap, en este caso esta complejidad se engloba por log(EC) siendo EC la máxima cantidad de jugadores esperando capturar un pokemon y por último quedan |PenJ| y |P| estas complejidad se engloban por |P$'$| siendo P$'$ la máxima longitud de un nombre de un pokemon en el juego. Luego la complejidad final queda O((PC + PS)*|P$'$| + log(EC)), aprovechando que |PenJ| y |P| estan contenidas en |P$'$|   
 	\end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}[H]{\textbf{iActualizarJugadorYCoordenadas}(\In {j}{jugador}, \In {c}{coordenada}, \Inout {g}{Game})}
 	\begin{algorithmic}[1]
-		\If {SiguienteSignificado(g.jugadores[j].posicionMapa) $\neq$ NULL} \Comment O(log $\#$(elementosColaDeCordenadaDelJugador))
-			\State Borrar(SiguienteSignificado(g.jugadores[j].posicionMapa)) \Comment O(log $\#$(elementosColaDeCordenadaDelJugador))
-			\State EleminarSiguiente(g.jugadores[j].posicionMapa) \Comment O(1)							\State g.jugadores[j].posicionMapa $=$ NULL \Comment O(1)
-		\EndIf		
 		\If{distEuclidia(c, g.jugadores[j].pos) $>$ 100 $\vee$ $\neg$(hayCamino(c, g.jugadores[j].pos, g.mapa))} \Comment O(1)
 			\State g.jugadores[j].sanciones $\gets$ g.jugadores[j].sanciones +1 \Comment O(1)
 			\If(g.jugadores[j].sanciones $\geq$ 4) \Comment O(1)
@@ -432,11 +427,9 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 		\EndIf
 		\If {g.jugadores[j].expulsado $=$ true} \Comment O($\#$(pokemonsDicc)*|P|)
 			\State g.cantidadTotPokemons $\gets$ g.cantidadTotPokemons - g.jugadores[j].cantTotalPoke \Comment O(1)
-			\State itDicc(pokemon, nat) itPokemons $\gets$ CrearIt(Siguiente(g.jugadores[j].pokemons)) \Comment O(1)
-			\While{HaySiguiente(itPokemons)} \Comment O($\#$(pokemonsDicc)*|P|)
-				\State Significado(g.pokemones, SiguienteClave(itPokemons)).cantTotal - SiguienteSignificado(itPokemons) \Comment O(|P|)
-				\If {Significado(g.pokemones, SiguienteClave(it.Pokemons)).cantTotal = 0} \Comment O(|P|)
-					\State Borrar(g.pokemons, SiguienteClave(it.Pokemons)) \Comment O(|P|)					\EndIf				
+			\State itLista(string) itPokemons $\gets$ CrearIt(Claves(Siguiente(g.jugadores[j].pokemons))) \Comment O(1)
+			\While{HayMas?(itPokemons)} \Comment O($\#$(pokemonsDicc)*|P|)
+				\State Significado(g.pokemons, Siguiente(itPokemons).cantTotal - Significado(g.jugadores[j].pokemons, Siguiente(itPokemons)) \Comment O(|P|+|P|) $=$ O(|P|)
 				\State EliminarSiguiente(itPokemons) \Comment O(1)		
 			\EndWhile
 			\State EliminarSiguiente(g.jugadores[j].pokemons) \Comment O(1)
@@ -467,8 +460,8 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 			\State g.jugadores[j].posicionMapa $\gets$ itPosicion \Comment O(1)			
 		\EndIf
 		\medskip
-		\Statex \underline{Complejidad:} O(log $\#$(elementosEnColaDeC) + log $\#$(elementosColaDeCordenadaDelJugador) + $\#$(pokemonsDicc)*|P|), donde P es la máxima longitud de las claves de diccionario
-		\Statex \underline{Justificacion:}Primero Borro lo que apunta el iterador de cola de prioridad, esto me cuesta O(log $\#$(elementos de la Cola que apunta J)) y borro el it a diccionario y le asigno null (podria quedar apuntando a otro elemento de la lista). Luego chequeo si el jugador cometió una infracción, si lo hizo le sumo una sanción. Entonces veo si lo tengo que expulsar, si lo hago resto su cantidad de pokemons al total de pokemons en el juego porque desaparecen, despues por cada pokemon del diccionario del jugador, resto su cantidad a su respectivo pokemon en el diccString (resto a su cantidadTotal en el diccString), esto me toma O($\#$(elementos del dicc) * |P|). Si no lo tengo que expulsar simplemente defino su nueva coordenada y veo si tengo que agregarlo a una nueva cola de prioridad o no, si tengo que hacerlo tengo que revalanciar la cola eso me cuesta O(log $\#$(elementos de la cola en la coordenada c)), sino es constante. Entonces la complejidad final es O(log $\#$(elementosEnColaDeC) + log $\#$(elementosColaDeCordenadaDelJugador) + $\#$(pokemonsDicc)*|P|). Para chequear que la complejidad cumple la pedida (La función la uso en moverse) veo que $\#$(elementos del diccionario de pokemons del jugador) es a lo sumo PC (máxima cantidad de pokemons atrapados por un jugador), cuando lo multiplico por |P|, veo que la complejidad está contenida en O((PS + PC) * |P|). Para la otra parte de la complejidad veo que log $\#$(elementos de la cola de C) y log $\#$(elementos de la cola de J) se acotan por log (EC) (donde EC es la máxima cantidad de jugadores esperando capturar un pokemon) esto pasa porque ambas colas están contempladas en la complejidad, pasaría, en peor caso, O(2*log(EC)) que quedaría O(log(EC)), entonces la complejidad de esta función está contenida en la pedida.
+		\Statex \underline{Complejidad:} O(log $\#$(elementosEnColaDeC) + $\#$(pokemonsDicc)*|P|), donde P es la máxima longitud de las claves de diccionario
+		\Statex \underline{Justificacion:}Primero chequeo si el jugador cometió una infracción, si lo hizo le sumo una sanción. Entonces veo si lo tengo que expulsar, si lo hago resto su cantidad de pokemons al total de pokemons en el juego porque desaparecen, despues por cada pokemon del diccionario del jugador, resto su cantidad a su respectivo pokemon en el diccString (resto a su cantidadTotal en el diccString), esto me toma O($\#$(elementos del dicc) * |P|). Si no lo tengo que expulsar simplemente defino su nueva coordenada y veo si tengo que agregarlo a una nueva cola de prioridad o no, si tengo que hacerlo tengo que revalanciar la cola eso me cuesta O(log $\#$(elementos de la cola en la coordenada c)), sino es constante. Entonces la complejidad final es O(log $\#$(elementosEnColaDeC) + $\#$(pokemonsDicc)*|P|). Para chequear que la complejidad cumple la pedida (La función la uso en moverse) veo que $\#$(elementos del diccionario de pokemons del jugador) es a lo sumo PC (máxima cantidad de pokemons atrapados por un jugador), cuando lo multiplico por |P|, veo que la complejidad está contenida en O((PS + PC) * |P|). Para la otra parte de la complejidad veo que log $\#$(elementos de la cola de C) se acota por log (EC) (donde EC es la máxima cantidad de jugadores esperando capturar un pokemon) esto pasa porque la cola está contemplada en la complejidad, pasaría, en peor caso, O(log(EC)), entonces la complejidad de esta función está contenida en la pedida.
 	\end{algorithmic}
 \end{algorithm}
 
@@ -476,7 +469,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 	\begin{algorithmic}[1]
 		\State coordenada coordeJ $\gets$ g.jugadores[j].pos \Comment O(1)
 		\State itConj(coordenadas) itPokeCoordenadas $\gets$ g.coordenadasPokemons \Comment O(1)
-		\While{HaySiguiente(itPokeCoordenadas)} \Comment O($\#$(elementosEnConj) * |PenJ| + log $\#$(elementosCola)))
+		\While{HaySiguiente(itPokeCoordenadas)} \Comment O($\#$(elementosEnConj) * |PenJ|)
 			\If{Siguiente(itPokeCoordenadas) $neq$ coordeJ} \Comment O(1)
 				\State g.mapaInfo[Siguiente(itPokeCoordenadas)].MovimientosRestantes $\gets$ g.mapaInfo[Siguiente(itPokeCoordenadas)].MovimientosRestantes +1 \Comment O(1)
 				\If{g.mapaInfo[Siguiente(itPokeCoordenadas)].MovimientosRestantes $\geq$ 10} \Comment O(1) 
@@ -485,10 +478,9 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 					\State g.mapaInfo[Siguiente(itPokeCoordenadas)].MovimientosRestantes $\gets$ 0 \Comment O(1)									
 					\State Significado(g.pokemons, g.mapaInfo[Siguiente(itPokeCoordenadas)].pokemon).cantSalvaje $\gets$ Significado(g.pokemons, g.mapaInfo[Siguiente(itPokeCoordenadas)].pokemon).cantSalvaje -1 \Comment O(|P|)		
 					\State jugador jug $\gets$ Proximo(g.mapaInfo[Siguiente(itPokeCoordenada)].jugEspe) \Comment O(1)
-					\If{Definido?(Siguiente(g.jugadores[jug].pokemons), g.mapaInfo[Siguiente(itPokeCoordenadas)].pokemon)} \Comment O(|PenJ|))									\State Significado(Siguiente(g.jugadores[jug].pokemons), g.mapaInfo[Siguiente(itPokeCoordenadas)].pokemon) $\gets$ Significado(Siguiente(g.jugadores[jug].pokemons), g.mapaInfo[Siguiente(itPokeCoordenadas)].pokemon)	+1 \Comment O(|PenJ|)								\Else
-						\State DefinirRapido(Siguiente(g.jugadores[jug].pokemons), g.mapaInfo[Siguiente(itPokeCoordenadas)].pokemon, 1) \Comment O(1)
+					\If{Definido?(Siguiente(g.jugadores[jug].pokemons), g.mapaInfo[Siguiente(itPokeCoordenadas)].pokemon)} \Comment O(3*|PenJ|) = O(|PenJ|)												\State Significado(Siguiente(g.jugadores[jug].pokemons), g.mapaInfo[Siguiente(itPokeCoordenadas)].pokemon) $\gets$ Significado(Siguiente(g.jugadores[jug].pokemons), g.mapaInfo[Siguiente(itPokeCoordenadas)].pokemon)	+1 \Comment O(|PenJ|)											\Else
+						\State Definir(Siguiente(g.jugadores[jug].pokemons), g.mapaInfo[Siguiente(itPokeCoordenadas)].pokemon, 1) \Comment O(|PenJ|)
 					\EndIf 			
-					\State Borrar(SiguienteSignificado(g.jugadores[jug].posicionMapa)) \Comment O(log $\#$(elementosCola))					
 				\EndIf
 				\State EleminarSiguiente(itPokeCoordenada) \Comment O(1) 				
 			\Else
@@ -496,8 +488,8 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 			\EndIf
 		\EndWhile
 		\medskip
-		\Statex \underline{Complejidad:}O($\#$(elementosEnConj) * |PenJ| + log $\#$(elementosCola)))
-		\Statex \underline{Justificacion:}
+		\Statex \underline{Complejidad:}O($\#$(elementosEnConj) * |PenJ|)
+		\Statex \underline{Justificacion:}Recorro todas las coordenadas en donde hay pokemons y por cada una veo si se produce una captura (movimientosRestantes >= 10), si se podruce busco el jugador que lo captura (Pido tope a la colaDePrioridad) en O(log $\#$(elementosCola))) y Defino al pokemon en el diccionario de pokemons del jugador (O(|PenJ|)) y si ya estaba definido le modifico el significado en ambos casos me toma lo mismo en complejidad temporal, despues pongo el booleano yaSeAtrapo en true. Entonces la complejidad final es O($\#$(elementosEnConj) * |PenJ|). Para verla con el enunciado queda O(PS * |P|) 
 	\end{algorithmic}
 \end{algorithm}
 
