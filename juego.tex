@@ -113,11 +113,18 @@
 [Cantidad de movimientos restantes para que un Pokemon sea capturado]
 \\
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% OTRAS OPERACIONES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+\InterfazFuncion{JugadoresConectados}{\In {g}{Juego}}{Conj(Jugador)}
+{res $\igobs$ jugadoresConectados(g)}
+[O(J)]
+[Conjunto de jugadores conectados]
+\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
+% ITERADOR
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -527,6 +534,23 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Otras operaciones
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{algorithm}[H]{\textbf{iJugadoresConectados}(\In {g}{Game}) $\to$ res: conj(jugador)}
+	\begin{algorithmic}[1]
+		\State res $\gets$ Vac\'io() \Comment O(1)
+		\State tam $\gets$ Longitud(g.jugadores) \Comment O(1)
+		\State \textbf{for} n $\gets$ 0 \textbf{to} tam \Comment O(J)
+		\State \IF g.jugadores[n].conectado THEN AgregarRapido(res, g.jugadores[n].jug) ELSE FI \Comment O(copy($\alpha$))
+		\State \textbf{endfor}
+		\medskip
+		\Statex \underline{Complejidad:} O(J)
+		\Statex \underline{Justificacion:} El for se ejecuta J veces el agregar rapido tiene el costo de copiar el elemento J veces, pero al ser jugador un natural, el costo es O(1) luego el costo de la funci\'on es O(J)
+	\end{algorithmic}
+\end{algorithm}
 
 
 
