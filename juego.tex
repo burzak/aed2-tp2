@@ -135,6 +135,27 @@
 [Devuelve True s\'i y solo s\'i hay un Pokemon a radio 4 de la Coordenada]
 \\
 
+\InterfazFuncion{IndiceRareza}{\In {p}{Pokemon}, \In {g}{Juego}}{nat}
+[p $\in$ pokemons]
+{res $\igobs$ indiceRareza(p, g)}
+[O(|s|)]
+[Devuelve el índice de rareza del pokemon]
+\\
+
+\InterfazFuncion{CantPokemonsTotales}{\In {g}{Juego}}{nat}
+{res $\igobs$ cantPokemonsTotales(g)}
+[O(1)]
+[Devuelve la cantidad de pokemons existentes, tanto salvajes como capturados.]
+\\
+
+\InterfazFuncion{PosPokemonCercano}{\In {c}{Coordenada}, \In {g}{Juego}}{Coordenada}
+[hayPokemonCercano(c,g)]
+{res $\igobs$ posPokemonCercano(c, g)}
+[O(1)]
+[Devuelve True s\'i y solo s\'i hay un Pokemon a radio 4 de la Coordenada]
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ITERADOR
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
