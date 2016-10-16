@@ -101,9 +101,16 @@
 
 \InterfazFuncion{PokemonEnPos}{\In {c}{Coordenada}, \In {g}{Juego}}{Pokemon}
 [c $\in$ posConPokemons(g)]
-{res $\igobs$ pokemonEnPos}
+{res $\igobs$ pokemonEnPos(c, g)}
 [O(1)]
 [Devolvemos el Pokemon en la Coordenada]
+\\
+
+\InterfazFuncion{CantMovimientosParaCaptura}{\In {c}{Coordenada}, \In {g}{Juego}}{Nat}
+[c $\in$ posConPokemons(g)]
+{res $\igobs$ cantMovimientosParaCaptura(c, g)}
+[O(1)]
+[Cantidad de movimientos restantes para que un Pokemon sea capturado]
 \\
 
 
@@ -500,12 +507,21 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iPokemonEnPos}(\In {c}{coordenada}, \In {g}{Game}) $\to$ res: conj(coordenada)}
+\begin{algorithm}[H]{\textbf{iPokemonEnPos}(\In {c}{coordenada}, \In {g}{Game}) $\to$ res: pokemon}
 	\begin{algorithmic}[1]
 		\State res $\gets$ g.mapainfo[Altitud(c)][Longitud(c)].pokemon \Comment O(1)
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 		\Statex \underline{Justificacion:} El acceso a mapainfo que es una matriz es O(1) y tenemos solo una asignaci\'on
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iCantMovimientosParaCaptura}(\In {c}{coordenada}, \In {g}{Game}) $\to$ res: nat}
+	\begin{algorithmic}[1]
+		\State res $\gets$ 10 - g.mapainfo[Altitud(c)][Longitud(c)].MovimientosRestantes \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:} El acceso a mapainfo que es una matriz es O(1), tenemos solo una asignaci\'on y una resta
 	\end{algorithmic}
 \end{algorithm}
 
