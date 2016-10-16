@@ -179,7 +179,9 @@
 
 \begin{algorithm}[H]{\textbf{iAgregarJugador}(\In {g}{Game}) $\to$ res: itJuego($\sigma$)}
 	\begin{algorithmic}[1]
-		\State AgregarAtras (g.jugadroes, <false, false, 0, <0, 0>, NULL, NULL, 0>) \Comment O(longitud(g.jugadores) + copy(tupla))
+		\State Dicc(pokemon, nat) dicc $\gets$ Vacio() \Comment O(1)
+		\State itLista(Dicc(pokemon, cantidad)) it $\gets$ AgregarAtras(g.pokemonsDeJugadores, dicc) \Comment O(1) 
+		\State AgregarAtras (g.jugadroes, <false, false, 0, <0, 0>, it, NULL, 0>) \Comment O(longitud(g.jugadores) + copy(tupla))
 		\State   itJuego($\sigma$) it $\gets$ CrearIt(g) \Comment O(1)
 		\While {it.posicion $<$ Longitud(g.jugadores)} \Comment O(longitud(g.jugadores))
 			\State it.posicion $\gets$ it.posicion + 1 \Comment O(1)
@@ -191,7 +193,7 @@
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iAgregarPokemon}(\In {p}{string}, \In {c}{coordenada}, \In {g}{game})}
+\begin{algorithm}[H]{\textbf{iAgregarPokemon}(\In {p}{string}, \In {c}{coordenada}, \Inout {g}{game})}
 	\begin{algorithmic}[1]
 		\State AgregarRapido(g.coordenadasPokemons, c) \Comment O(copiar(c)) = O(1)
 		\If{$\neg$Definido(p, g.pokemons)} \Comment O(2*|p|) = O(|p|)
@@ -200,20 +202,31 @@
 			\State Definir(p, <Significado(p, g.pokemons).cantSalvaje +1, Significado(p, g.pokemons).cantAtrapados>, g.pokemons) \Comment O(|p|)
 		\EndIf
 		\State g.mapaInfo[c].hayPokemon $\gets$ true \Comment O(1)
-		\State g.mapaInfo[c].movimientosRestantes $\gets$ 0 \Comment O(1)
+		\State g.mapaInfo[c].jugEspe $\gets$ Vacio() \Comment O(1)
+		\State g.mapaInfo[c].yaSeCapturo $\gets$ flase \Comment O(1)
+ 		\State g.mapaInfo[c].movimientosRestantes $\gets$ 0 \Comment O(1)
 		\State lista(coordenada) lc $\gets$ Vacia() \Comment O(1)
 		\State lc $\gets$ CeldasValidas(g, c) \Comment O(1)
 		\State AgregarAtras(lc, c) \Comment O(1)
-		\State itLista(coordenadas) it $\gets$ CrearIt(lc) \Comment O(1)
-		\While{HaySiguiente(it)}
-			\State itDicc(jugador, EsperandoCapturar) it2 $\gets$ CrearIt(g.mapaInfo[Siguiente(it)].jugadores) \Comment O(1)
-			\While {HaySiguiente(it2)}
-				\State it
+		\State itLista(coordenadas) itCoordenadas $\gets$ CrearIt(lc) \Comment O(1)
+		\While{HaySiguiente(itCoordenadas)} \Comment O(#(jugadoresEnRadioDeCaptura)*log(#(jugadoresEnRadioDeCaptura))
+			\State itDicc(jugador, EsperandoCapturar) itJugadores $\gets$ CrearIt(g.mapaInfo[Siguiente(itCoordenadas)].jugadores) \Comment O(1)
+			\While {HaySiguiente(itJugadores)} \Comment O(#(jugadoresEnRadioDeCaptura)*log(#(jugadoresEnRadioDeCaptura))
+				\If{SiguienteSignificado(itJugadores) $\neq$ NULL}
+					\State Borrar(SiguienteSignificado(itJugadores))				
+				\EndIf
+				\State itColaPrioridad itCola $\gets$ Encolar(g.mapaInfo[c].jugEspe, g.jugadores[SiguienteClave(itJugadores)].cantTotPoke, SiguienteClave(itJugadores)) \Comment O(log (n), siendo n la cantidad de elementos en el arbol)
+				\State SiguienteSignficado(itJugadores) $\gets$ itCola \Comment O(1)
+				\State Avanzar(itJugadores) \Comment O(1)
 			\EndWhile
-		\EndWhile			
+			\If {EsVacio?(g.mapaInfo[Siguiente(itCoordena)].jugEspe)}
+				\State g.mapaInfo[Siguiente(itCoordena)].yaSeCapturo $\gets$ false \Comment O(1)			
+			\EndIf
+			\State Avanzar(itCoordenada) \Comment O(1)
+		\EndWhile
 		\medskip
-		\Statex \underline{Complejidad:} O(longitud(g.jugadores))
-		\Statex \underline{Justificacion:}  
+		\Statex \underline{Complejidad:} O((#(jugadoresEnRadioDeCaptura)*log(#(jugadoresEnRadioDeCaptura))) + |P|)
+		\Statex \underline{Justificacion:}Primero defino el pokemon en el diccString, si ya estaba sumo un 1 en la cant de pokemons salvajes, sino lo defino con un 1 en cant salvajes y 0 en atrapados, esto me toma |P| siendo P la máxima longitud de una clave del diccionario. Después me armo una lista con las coordenadas en el radio de captura esto toma tiempo constate porque son finitas cordenadas. Luego creo un iterador a esta lista para recorrerla, como tengo finitos elementos recorrerla es constante. Por cada coordenada me creo un it al diccionario de los jugadores en esa coordenada. Los recorro, recorrer a todos los jugadores en el radio es EC siendo EC la máxima cantidad de jugadores esperando capturar un pokemon, y por cada jugador pregunto si su iter a cola de prioridad esta definido (no supimos como hacerlo asi que lo consideramos como un puntero) si lo esta borra lo que esta apuntando, despues encolo el elemento a la cola de prioridad del pokemon, me guardo el iterador que me devuelve encolar, y asi para todos los jugadores de la coordena, despues de salir de este while que toma la cantidad de los jugadores de la coordenada, O(#jugadores en la coordenada), y por cada uno lo encolo a la cola eso me toma O(log n)(n la cantidad de elementos de la cola), entonces la complejidad final es O(#jugadores en la coordenada * log n). Esto lo hago para todas las coordenadas entonces me queda O(#JugadoresEsperandoCapturar * log(#JugadoresEsperandoCapturar)), luego antes de avanzar de coordenada, pregunto si el la que estoy parado su cola de prioridad esta vacía, si lo está pongo a false un booleano, este es el caso de que hubo alguna vez un pokemon en esa coordenada. Y despues de salir del while general termine todo entonces la complejidad final es O((#(jugadoresEnRadioDeCaptura)*log(#(jugadoresEnRadioDeCaptura))) + |P|) 
 	\end{algorithmic}
 \end{algorithm}
 
@@ -322,7 +335,7 @@
 			\EndIf
 		\State i $\gets$ i +1 \Comment O(1)		
 		\EndWhile
-		\State it.posicion $\gets$ i \Comment O(1)
+		\State it.posicion $\gets$ (i-1) \Comment O(1)
 		\medskip
 		\Statex \underline{Complejidad:} O(longitud(v))
 		\Statex \underline{Justificacion:}Recorre el vector y para en el primer elemento válido, que existe por la precondición de la función, luego actualiza la posición del iterador  
