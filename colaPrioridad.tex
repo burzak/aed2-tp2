@@ -16,140 +16,217 @@
 [O(1)]
 [Crea una cola de prioridad vacia]\\
 
-\InterfazFuncion{Significado}{\In {s}{string}, \In {d}{DiccString($\sigma$)}}{$\sigma$}
-[Definido(s, d)]
-{res = Significado(s, d)}
-[O(|L|), siendo L la máxima longitud de las claves en el dicc]
-[Devuelve el significado del diccionario]\\
-
-\InterfazFuncion{Definido}{\In {s}{string}, \In {d}{DiccString($\sigma$)}}{bool}
-{res = Definido(s, d)}
-[O(|L|), siendo L la máxima longitud de las claves en el dicc]
-[Verifica si una clave existe o no en el diccionario]\\
-
-\InterfazFuncion{Vacio?}{\In {d}{DiccString($\sigma$)}}{bool}
-{res = Vacio?(d)}
+\InterfazFuncion{EsVacia?}{\In {c}{colaPrioridadMin($\sigma$)}}{bool}
+{$res \igobs vacia?(c)$}
 [O(1)]
-[Chequea si un diccionario es vacio]\\
+[Devuelve verdadero si la lista es vacia.]\\
 
-\InterfazFuncion{Definir}{\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{DiccString($\sigma$)}}{}
-[d $\igobs$ d$_0$]
-{d = Definir(s, c, d$_0$)}
-[O(|L|), siendo L la máxima longitud de las claves del diccionario]
-[Define una clave en el diccionario]\\
+\InterfazFuncion{Proximo}{\In {c}{colaPrioridadMin($\sigma$)}}{$\sigma$}
+[$\neg EsVacia?(x)$]
+{$res \igobs proximo(c)$}
+[O(1)]
+[Devuelve el valor del primer elemento de la cola de prioridad]\\
 
-\InterfazFuncion{Borrar}{\In {s}{string}, \Inout {d}{DiccString($\sigma$)}}{}
-[d $=$ d$_0$]
-{d $=$ Borrar(s, d$_0$)}
-[O(|L|), siendo L la máxima longitud de las claves en el diccionario]
-[Borra la clave, si es prefijo de alguna otra clave solo borra el significado]
+\InterfazFuncion{Encolar}{\Inout {c}{colaPrioridadMin($\sigma$)}, \In {x}{$\sigma$}}{iterColaMin}
+{$res \igobs encolar(x,c)$}
+[O(log(n))]
+[Agrega un elemento a la cola de prioridad. Devuelve un iterador apuntando al elemento insertado]\\
+
+\InterfazFuncion{Desencolar}{\Inout {c}{colaPrioridadMin($\sigma$)}}{}
+[$\neg EsVacia?(x)$]
+{$res \igobs desencolar(c)$}
+[O(log(n))]
+[Elimina el proximo elemento de la cola de prioridad.]\\
+
+% FALTA BORRAR DEL ITERADOR
 
 \begin{Representacion}
 \subsection{Justificacion}
-	\begin{Estructura}{diccString}[puntero(nodo($\sigma$))]
-		\begin{Tupla}[nodo]
-			\tupItem{hijos}{arreglo[256] de puntero(nodo($\sigma$)}
-			\tupItem{significado}{puntero($\sigma$)}
+	\begin{Estructura}{colaPrioridadMin}[tupla(raiz: puntero(nodoHeap($\sigma$)), padreAgregar: puntero(nodoHeap($\sigma$)))]
+		\begin{Tupla}[nodoHeap]
+			\tupItem{padre}{puntero(nodoHeap($\sigma$))}
+			\tupItem{izq}{puntero(nodoHeap($\sigma$))}
+			\tupItem{der}{puntero(nodoHeap($\sigma$))}
+			\tupItem{clave}{$\kappa$}
+			\tupItem{significado}{$\beta$}
 		\end{Tupla}
 	\end{Estructura}
 \subsection{Invariante de representación}
 
 \textbf{Informal}
-(1)Para todo nodo, sus hijos no pueden tenerlo como hijo
-(2)Todas las hojas tienen significado
+(1)Para todo nodo, sus hijos no pueden tenerlo como hijo.
+(2)Todas las hojas tienen significado.
+(3)La raíz no tiene padre.
+(4)Árbol binario perfectamente balanceado e izquierdista.
+(5)La clave de cada nodo es menor o igual a la de sus hijos (si los tiene).
+(6)Todo subárbol es un heap.
 
 \subsection{Predicado de abtraccion}
 
-\AbsFc[puntero(nodo)]{dicc(string, $\sigma$)}[p]{ d : dicc(string,$\sigma$) | $(\forall s:string)\Big( \big(Def?(s,d)$ $\Longleftrightarrow (encontrarPalabra(s,p) \neq NULL$ $\yluego$ $encontrarPalabra(s,p)\to significado \neq NULL)\big)$ $\land$ $\big(*(encontrarPalabra(s,p)\to significado) = obtener(s,p)\big)\Big)$}
+%\AbsFc[puntero(nodo)]{dicc(string, $\sigma$)}[p]{ d : dicc(string,$\sigma$) | $(\forall s:string)\Big( \big(Def?(s,d)$ $\Longleftrightarrow (encontrarPalabra(s,p) \neq NULL$ $\yluego$ $encontrarPalabra(s,p)\to significado \neq NULL)\big)$ $\land$ $\big(*(encontrarPalabra(s,p)\to significado) = obtener(s,p)\big)\Big)$}
 
 
-~  
- \tadOperacion{encontrarPalabra}{string,puntero(nodo)}{puntero(nodo)}{}
-  \tadAxioma{encontrarPalabra($s$, $p$)}{\IF $vacia(s)$ $\lor$ $p=NULL$  THEN $p$ ELSE encontrarPalabra($fin(s)$, $p\to caracteres$[$ord(prim(s))$]) FI}
+%~  
+% \tadOperacion{encontrarPalabra}{string,puntero(nodo)}{puntero(nodo)}{}
+%  \tadAxioma{encontrarPalabra($s$, $p$)}{\IF $vacia(s)$ $\lor$ $p=NULL$  THEN $p$ ELSE encontrarPalabra($fin(s)$, $p\to caracteres$[$ord(prim(s))$]) FI}
 
 \subsection{Algoritmos}
 
 \begin{Algoritmos}
 
-\begin{algorithm}[H]{\textbf{iVacio}() $\to$ res: puntero(nodo($\sigma$))}
+\begin{algorithm}[H]{\textbf{iVacia}() $\to$ res: puntero(nodoHeap($\sigma$))}
 	\begin{algorithmic}[1]
-		\State a $\gets$ arreglo[256] de puntero(nodo($\sigma$)) \Comment O(256), creo un arreglo vacio de 256 posiciones, que guarda punteros a nodo
-		\State $res \gets <a, NULL>$ \Comment O(1)
+		%\State a $\gets$ puntero(nodoHeap($\sigma$)) \Comment O(1), creo un nodo vacío
+		\State $res \gets NULL$ \Comment O(1)
 		
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:} Crea un arreglo vacio, como siempre va a tener 256 posiciones para cualquier entrade la complejidad queda constante, y asigna 
+			\Statex \underline{Justificacion:} Crea un heap vacio, como siempre va a tener que crear una raíz vacía, la complejidad queda constante.
 	\end{algorithmic}
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iSignificado}(\In {s}{string}, \In {d}{puntero(nodo($\sigma$))}) $\to$ res: $\sigma$)}
+\begin{algorithm}[H]{\textbf{iEsVacia?}(\In {r}{puntero(nodoHeap($\sigma$))}) $\to$ res: bool)}
 	\begin{algorithmic}[1]
-		\State nat i $\gets$ Longitud(s) \Comment O(1)
-		\State puntero(nodo($\sigma$)) p $\gets$ d \Comment O(1)
-		\While{i $<$ Longitud(s)} \Comment O(|s|), longitud de s
-			\State p $\gets$ p $\to$ hijos[ord(s[i])] \Comment O(1)
-		 	\State i $\gets$ i +1 \Comment O(1)
-		 \EndWhile
-		 \State res $\gets$ *(p $\to$ significado) \Comment O(1)
-		\medskip
-		\Statex \underline{Complejidad:} O(|s|)
-			\Statex \underline{Justificacion:} Recorre toda la clave, usando un puntero. Cuando este llega al final devuelve el significado, ya que recorrio toda la clave por el DiccString.  
-	\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[H]{\textbf{iDefinido}(\In {s}{string}, \In {d}{puntero(nodo($\sigma$))}) $\to$ res: bool}
-	\begin{algorithmic}[1]
-		\State nat i $\gets$ Longitud(s) \Comment O(1)
-		\State puntero(nodo($\sigma$)) p $\gets$ d \Comment O(1)
-		\While{i $<$ Longitud(s) $\wedge$ p $\to$ hijos[ord(s[i])] $\neq$ NULL} \Comment O(|s|), longitud de s
-			\State p $\gets$ p $\to$ hijos[ord(s[i])] \Comment O(1)
-		 	\State i $\gets$ i +1 \Comment O(1)
-		 \EndWhile
-		 \State res $\gets$ (i $=$ Longitud(s)) $\wedge$ (p$\to$ significado $\neq$ NULL) \Comment O(1)
-		\medskip
-		\Statex \underline{Complejidad:} O(|s|)
-			\Statex \underline{Justificacion:} En el peor de los casos recorre toda la clave para verificar si esta definida o no.  
-	\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[H]{\textbf{iVacio?}(\In {d}{puntero(nodo($\sigma$))}) $\to$ res: bool}
-	\begin{algorithmic}[1]
-		\State bool b $\gets$ false \Comment O(1)
-		\State nat i $\gets$ 0 \Comment O(1)
-		\While{i $<$ 256 $\wedge$ $\neg$b} \Comment O(256), termina siendo O(1)
-			\If{d $\to$ hijos[i] $\neq$ NULL} \Comment O(1)
-				 b $\gets$ true \Comment O(1)
-			\EndIf
-		\EndWhile
-		\State res $\gets$ (d $=$ NULL) $\vee$ (i $=$ 256)\Comment O(1)
+		\State $res \gets r = NULL$ \Comment O(1)
+		
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:}Chequea si el DiccString es vacio, para esto verifica si la raiz es null o que ningun existe.
+			\Statex \underline{Justificacion:} Hace una comparación con la raíz para verificar que la cola de prioridad esté vacía.
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iDefinir}(\In {s}{string}, \In {c}{$\sigma$}, \Inout {d}{puntero(nodo($\sigma$))})}
+\begin{algorithm}[H]{\textbf{iEncolar}(\Inout {c}{colaPrioridadMin($\sigma$)}, \In {c}{$\sigma$}, \In {s}{$\sigma$}) $\to$ res: iter}
 	\begin{algorithmic}[1]
-		\State puntero(nodo($\sigma$)) p $\gets$ d \Comment O(1)
-		\State nat i $\gets$ 0 \Comment O(1)
-		\While{i $<$ Longitud(s)} \Comment O(|s|), longitud de s
-			\If{p$\to$ hijos[ord(s[i])] $=$ NULL} \Comment O(1) 
-				puntero(nodo($\sigma$)) $p_2$ $gets$ NULL \Comment O(1)
-				p$\to$ hijos[ord(s[i])] $\gets$ $p_2$ \Comment O(1)	
-				p $\gets$ p$\to$ hijos[ord(s[i])] \Comment O(1)
-				i $\gets$ i + 1 \Comment O(1)
-			\Else
-				p $\gets$ p$\to$ hijos[ord(s[i])] \Comment O(1)
-				i $\gets$ i + 1 \Comment O(1)
-			\EndIf
-		\EndWhile
-		p$\to$ significado $\gets$ c \Comment O(1)		
+
+		% Insertamos el elemento
+		\State BuscarPadreAgregar(c) \Comment O(log(n))
+		
+		\ puntero(nodoHeap($\sigma$)) nuevo $\leftarrow$ c.padreAgregar$\rightarrow$izq	\Comment O(1)
+
+		\State nuevo$\rightarrow$izq $\leftarrow$ NULL \Comment O(1)
+		\State nuevo$\rightarrow$der $\leftarrow$ NULL \Comment O(1)
+		\State nuevo.clave $\leftarrow$ c \Comment O(1)
+		\State nuevo.significado $\leftarrow$ b \Comment O(1)
+		\State nuevo$\rightarrow$padre $\leftarrow$ c.padreAgregar \Comment O(1)
+				
+		\If{c.padreAgregar$\rightarrow$izq = NULL} \Comment O(1)
+			\State c.padreAgregar$\rightarrow$izq $\leftarrow$ nuevo \Comment O(1)
+		\Else
+			\State c.padreAgregar$\rightarrow$der $\leftarrow$ nuevo \Comment O(1)
+		\EndIf
+
+		% Sift up
+				
+		\While{nuevo.clave < nuevo$\rightarrow$padre.clave} \Comment O(log(n))
+			\State siftUp(c, nuevo)	\Comment O(1)
+		\EndWhile			
+		\State res$\rightarrow$nuevo
+		
+		
 		\medskip
-		\Statex \underline{Complejidad:} O(|s|)
-			\Statex \underline{Justificacion:}Recorre la clave, si existe el nodo solo avanza a este sino crea una nuevo y avanza. Al final asigna el significado, como recorre la clave una vez la complejidad final es O(|s|)
+		\Statex \underline{Complejidad:} O(log(n))
+			\Statex \underline{Justificacion: Se agrega un elemento al fondo del heap, luego se utiliza la función sift-up para volver a la propiedad de heap. Ocurren varias operaciones independientes que tienen complejidad O(log(n)), por lo tanto tiene una complejidad O(log(n)).}  
 	\end{algorithmic}
 \end{algorithm}
+
+
+
+\begin{algorithm}[H]{\textbf{iDesencolar}(\Inout {c}{colaPrioridadMin($\sigma$)}}
+	\begin{algorithmic}[1]
+
+		\State puntero(nodoHeap($\sigma$)) ultimo $\leftarrow$ NULL \Comment O(1)
+
+		\If{c.padreAgregar$\rightarrow$der = NULL} \Comment O(1)
+			\State ultimo $\leftarrow$ c.padreAgregar$\rightarrow$izq \Comment O(1)
+			\State ultimo$\rightarrow$izq$\leftarrow$c.raiz$\rightarrow$izq \Comment O(1)
+			\State ultimo$\rightarrow$der$\leftarrow$c.raiz$\rightarrow$der \Comment O(1)
+			\State c.raiz$\leftarrow$ultimo \Comment O(1)
+			\State c.padreAgregar$\rightarrow$izq$\leftarrow$NULL \Comment O(1)
+		\Else
+			\State ultimo $\leftarrow$ c.padreAgregar$\rightarrow$der \Comment O(1)
+			\State ultimo$\rightarrow$izq$\leftarrow$c.raiz$\rightarrow$izq \Comment O(1)
+			\State ultimo$\rightarrow$der$\leftarrow$c.raiz$\rightarrow$der \Comment O(1)
+			\State c.raiz$\leftarrow$ultimo \Comment O(1)
+			\State c.padreAgregar$\rightarrow$der$\leftarrow$NULL \Comment O(1)
+		\EndIf
+		
+		%Ahora sift down
+		\While {ultimo$\rightarrow$der $\neq$ NULL $\wedge$ ultimo$\rightarrow$izq $\neq$ NULL $\wedge$ (ultimo$\rightarrow$der.clave $<$ ultimo.clave $\vee$ ultimo$\rightarrow$izq.clave $<$ ultimo.clave))} \Comment O(log(n))
+			\State siftDown(ultimo, c) \Comment O(1)
+		\EndWhile
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(log(n))
+			\Statex \underline{Justificacion: Se elimina el primer elemento del heap, se reemplaza la raiz por el último elemento, luego se utiliza la función sift-down para volver a tener la propiedad de heap. El ciclo itera como máximo log(n) veces, que es la altura del heap (sólo se puede llevar hasta el fondo).}   
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iProximo}(\In {c}{colaPrioridadMin($\sigma$)}) $\to$ res: $\sigma$}
+	\begin{algorithmic}[1]
+		
+		\State res$\leftarrow$c$\rightarrow$raiz.significado
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Se obtiene el significado de la raiz del heap.}   
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iProximo}(\In {c}{colaPrioridadMin($\sigma$)}) $\to$ res: $\sigma$}
+	\begin{algorithmic}[1]
+		
+		\State res$\leftarrow$c$\rightarrow$raiz.significado
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Se obtiene el significado de la raiz del heap.}   
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{BuscarPadreInsertar}(\In {c}{colaPrioridadMin($\sigma$)})}
+	\begin{algorithmic}[1]
+		
+		\If {c.padreAgregar$\rightarrow$der $\neq$ NULL}
+			\State puntero(nodoHeap($\sigma$)) aux $\leftarrow$ c.padreAgregar
+			\While {aux $\neq$ c.raiz $\wedge$ aux$\rightarrow$padre$\rightarrow$der = aux}
+				\State aux $\leftarrow$ aux$\rightarrow$padre			
+			\EndWhile
+			\If {aux $\neq$ c.raiz}
+				\State aux $\leftarrow$ aux$\rightarrow$padre
+				\State aux $\leftarrow$ aux$\rightarrow$der
+			\EndIf
+			\While {aux$\rightarrow$izq $\neq$ NULL}
+				\State aux $\leftarrow$ aux$\rightarrow$izq
+			\EndWhile
+			\State c.padreAgregar $\leftarrow$ aux
+		\EndIf
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(log(n))
+			\Statex \underline{Se obtiene nodo al cual hay que agregarle hojas para mantener la propiedad de heap al encolar. En el peor caso se recorre dos veces la altura del heap, es decir 2log(n) operaciones, dando una complejidad O(log(n)).}   
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{siftUp}(\In {c}{colaPrioridadMin($\sigma$)}, \In {n}{puntero(nodoHeap($\sigma$))})}
+	\begin{algorithmic}[1]
+		
+		\State puntero(nodoHeap($\sigma$)) aux $\leftarrow$ n
+		
+		\If {aux$\rightarrow$izq = aux}
+			aux $\leftarrow$ aux$\rightarrow$padre
+			
+		\EndIf		
+		
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{.}   
+	\end{algorithmic}
+\end{algorithm}
+
 
 \end{Algoritmos}
 
