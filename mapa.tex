@@ -107,12 +107,15 @@ Vale para todo par de natruales
 
 \begin{algorithm}[H]{\textbf{iPosExistente}(\In {c}{coordenada}, \In {m} {infomapa}) $\to$ res: bool}
 	\begin{algorithmic}[1]
+		\State res $\gets$ False \Comment O(1)
+		\If {Altitud(c) $<$ m.alto $\wedge$ Longitud(c) $<$ m.ancho} \Comment O(1)
 		\State pos $\gets$ m.ancho * Longitud(c) + m.alto * Latitud(c) \Comment O(1)
-		\State res $\gets$ m.relacionCoordenadas[pos][pos] \Comment O(1)
-
+		\State res $\gets$ m.relacionCoordenadas[pos][pos] == True \Comment O(1)
+		\Else
+		\EndIf
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:} Es solamente 2 asignaciones y un acceso de orden 1 a un arreglo. Esto funciona porque cuando calculo las relaciones entre las coordenas siempre definimos que una coordenada esta relacionada consigo misma.
+			\Statex \underline{Justificacion:} Son 3 asignaciones y un acceso de orden 1 a un arreglo. Esto funciona porque cuando calculo las relaciones entre las coordenas siempre definimos que una coordenada esta relacionada consigo misma.
 	\end{algorithmic}
 \end{algorithm}
 

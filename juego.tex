@@ -123,6 +123,12 @@
 [Conjunto de jugadores conectados]
 \\
 
+\InterfazFuncion{PuedoAgregarPokemon}{\In {c}{Coordenada}, \In {g}{Juego}}{Bool}
+{res $\igobs$ puedoAgregarPokemon(g)}
+[O(?)]
+[Devuelve True si se puede agregar un Pokemon en la coordenada]
+\\
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ITERADOR
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -549,6 +555,25 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 		\medskip
 		\Statex \underline{Complejidad:} O(J)
 		\Statex \underline{Justificacion:} El for se ejecuta J veces el agregar rapido tiene el costo de copiar el elemento J veces, pero al ser jugador un natural, el costo es O(1) luego el costo de la funci\'on es O(J)
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iPuedoAgregarPokemon}(\In {c}{Coordenada}, \In {g}{Game}) $\to$ res: Bool}
+	\begin{algorithmic}[1]
+		\State res $\gets$ True \Comment O(1)
+		\If {PosExistente(c, g.mapa)} \Comment O(1)
+			\State coordPokemons $\gets$ PosConPokemons(g) \Comment O(1)
+			\State iter $\gets$ CrearIt(coordPokemons) \Comment O(1)
+			\While {HaySiguiente(iter)} \Comment O(PS)
+				\State \IF DistEuclidea(Siguiente(iter), c) < 25 THEN res $\gets$ False ELSE FI \Comment O(1)
+				\State Avanzar(iter) \Comment O(1)
+			\EndWhile
+		\Else
+		\EndIf
+		\medskip
+		\Statex \underline{Complejidad:} O(PS)
+		\Statex \underline{Justificacion:} Son todas operaciones de O(1) pero el while se ejecuta PS veces ejecutando c\'odigo O(1) por lo tanto todo tiene complejidad O(PS)
 	\end{algorithmic}
 \end{algorithm}
 
