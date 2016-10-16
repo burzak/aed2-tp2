@@ -359,6 +359,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \begin{algorithm}[H]{\textbf{iCeldasValidas}(\In {g}{Game}, \In {c}{coordenada}) $\to$ res: lista(coordenada)}
 	\begin{algorithmic}[1]
+		\begin{scriptsize}
 		\State lista(coordenada) ls $\gets$ Vacia() \Comment O(1)
 		\State nat i $\gets$ 4 \Comment O(1)
 		\While {i $>$ 0} \Comment O(1)
@@ -425,9 +426,11 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 			\EndIf
 		\EndWhile
 		\State res $\gets$ ls \Comment O(1)
+		\If{} \EndIf
 		\medskip
 		\Statex \underline{Complejidad:} O(1))
 		\Statex \underline{Justificacion:}Como me estoy fijando un numero finito de coordenadas, y la cantidad que veo no varia porque no depende de la entrada, puedo decir que toma O(1) ver todas las celdas, luego recorro la lista para ver cuales son válidas y cuales no, que como son una cantidad constatnte de celdas recorrer la lista tambien es constante
+		\end{scriptsize}
 	\end{algorithmic}
 \end{algorithm}
 
