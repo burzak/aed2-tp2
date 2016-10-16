@@ -66,6 +66,23 @@
 
 \bf{Funciones Auxiliares, no exportadoas}
 
+\InterfazFuncion{BuscarPadreInsertar}{\Inout {c}{colaPrioridadMin}}{}
+{Conserva la propiedad de heap}
+[O(log(n))]
+[Encuentra el nodo al cual hay que insertarle el próximo hijo]\\
+
+\InterfazFuncion{SiftUp}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{}
+[$\neg EVacia?(Desencolar(c))$]
+{No necesariamente conserva la propiedad de heap}
+[O(1)]
+[Mueve hacia arriba en la cola de prioridad a p si su padre es de menor prioridad]\\
+
+\InterfazFuncion{SiftDown}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{}
+[$\neg EVacia?(Desencolar(c))$]
+{No necesariamente conserva la propiedad de heap}
+[O(1)]
+[Mueve hacia abajo en la cola de prioridad a p si alguno de sus hijos es de mayor prioridad]\\
+
 \InterfazFuncion{Eliminar}{\Inout {it}{iterCola}}{}
 [HayMas?(it) $\wedge$ it $=$ it$_0$]
 {it $=$ Eliminar(it$_0$)}
@@ -106,7 +123,7 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 (5)La clave de cada nodo es menor o igual a la de sus hijos (si los tiene).\\
 (6)Todo subárbol es un heap.\\
 
-\subsection{Predicado de abtraccion}
+\subsection{Predicado de abstracción}
 
 %\AbsFc[puntero(nodo)]{dicc(string, $\sigma$)}[p]{ d : dicc(string,$\sigma$) | $(\forall s:string)\Big( \big(Def?(s,d)$ $\Longleftrightarrow (encontrarPalabra(s,p) \neq NULL$ $\yluego$ $encontrarPalabra(s,p)\to significado \neq NULL)\big)$ $\land$ $\big(*(encontrarPalabra(s,p)\to significado) = obtener(s,p)\big)\Big)$}
 
@@ -114,15 +131,25 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 %~  
 % \tadOperacion{encontrarPalabra}{string,puntero(nodo)}{puntero(nodo)}{}
 %  \tadAxioma{encontrarPalabra($s$, $p$)}{\IF $vacia(s)$ $\lor$ $p=NULL$  THEN $p$ ELSE encontrarPalabra($fin(s)$, $p\to caracteres$[$ord(prim(s))$]) FI}
-\bf{Representacion del iterador}
 
-\subsection{Justificacion}
+\subsection{Representación del iterador}
+
+\subsection{Justificación}
+
+El iterador nos permite acceder a cualquier elemento del heap en tiempo constante, sin necesidad de hacer búsqueda exhaustiva. En particular nos interesa eliminar un elemento (cuando un jugador se aleja del pokemon) en tiempo O(log(n)).
+Este iterador en particular no tiene función avanzar porque sólo nos interesa que apunte siempre al mismo nodo.
+
 
 	\begin{Estructura}{iterCola}[iter]
 		\begin{Tupla}[iter]
 			\tupItem{Siguiente}{puntero(nodoHeap)}
 		\end{Tupla}
 	\end{Estructura}
+
+\subsection{Invariante de representación}
+\bf{Informal} $\newline$
+(1) True.
+
 
 \subsection{Algoritmos}
 
@@ -187,7 +214,7 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{iDesencolar}(\Inout {c}{colaMin}}
+\begin{algorithm}[H]{\textbf{iDesencolar}(\Inout {c}{colaMin}})
 	\begin{algorithmic}[1]
 
 		\State puntero(nodoHeap($\sigma$)) ultimo $\leftarrow$ NULL\Comment O(1)
