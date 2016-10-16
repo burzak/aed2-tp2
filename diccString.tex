@@ -11,7 +11,7 @@
 
 \subsection{Interfaz}
 
-\bf{Operacion del modulo}
+\bf{Operaciones del modulo}
 
 \InterfazFuncion{Vacio}{}{DiccString($\sigma$)}
 {res = Vacio()}
@@ -46,7 +46,40 @@
 [O(|L|), siendo L la máxima longitud de las claves en el diccionario]
 [Borra la clave, si es prefijo de alguna otra clave solo borra el significado]
 
+\InterfazFuncion{Claves}{\In {d}{DiccString($\sigma$)}}{lista(string)}
+{res $\igobs$ claves(d)}
+[O(1)]
+[Devuelve un conjunto con las claves del diccionario]
+
 \bf{Operaciones del iterador}
+
+\InterfazFuncion{CrearIt}{\In {d}{DiccString($\sigma$)}}{itString}
+{res $\igobs$ CrearItUni(claves(d))}
+[O(1)]
+[Crea un iterador no modificable al principio de las claves del diccionario]
+[]
+
+\InterfazFuncion{Actual}{\In {it}{itString}}{<string, nat>}
+[HayMas?(it)]
+{res $\igobs$ Actual(it)}
+[O(|P|), siendo P la clave mas larga del diccionario]
+[Devuelve una tupla <clave, significado>]
+
+\InterfazFuncion{HayMas?}{\In {it}{itString}}{bool}
+{res $\igobs$ HayMas?(it)}
+[O(1)]
+[Chequea si hay mas elementos para recorrer]
+
+\InterfazFuncion{Avanzar}{\Inout {it}{itString}}{}
+[it $\igobs$ it$_0$ $\wedge$ HayMas?(it)]
+{res $\igobs$ Avanzar(it)}
+[O(1)]
+[Avanza el iterador a la siguiente clave del diccionario]
+
+\InterfazFuncion{Siguientes}{\In {it}{itString}}{lista(string)}
+{res $\igobs$ Siguientes(it)}
+[O(n), siendo n la cantidad de claves del diccionario]
+[Devuelve una lista con las claves que aun no se recorrierron]
 
 \begin{Representacion}
 
@@ -55,7 +88,7 @@
 	\begin{Estructura}{diccString}[Arbolito]
 		\begin{Tupla}[Arbolito]
 			\tupItem{raiz}{puntero(nodo($\sigma$))}
-			\tupItem{claves}{conj(string)}\\
+			\tupItem{claves}{lista(string)}\\
 		\end{Tupla}
 		\begin{Tupla}[nodo]
 			\tupItem{hijos}{arreglo[256] de puntero(nodo($\sigma$)}
@@ -79,7 +112,21 @@
   \tadAxioma{encontrarPalabra($s$, $p$)}{\IF $vacia(s)$ $\lor$ $p=NULL$  THEN $p$ ELSE encontrarPalabra($fin(s)$, $p\to caracteres$[$ord(prim(s))$]) FI}
 
 \Titulo {Representacion del iterador}
+\subsection{Justificacion}
+
+\begin{Estructura}[itString]
+	\begin{Tupla}[itString]
+	\tupItem{siguiente}{itLista(string)}
+	\tupItem{arbol}{puntero(arbolito)}
+	\end{Tupla}
+\end{Estructura}
+
+\subsection{Invariante de representacion}
+
+\subsection{Predicado de abtraccion}
+
 \end{Representacion}
+
 \subsection{Algoritmos}
 
 \begin{Algoritmos}
@@ -158,13 +205,165 @@
 			\EndIf
 		\EndWhile
 		\State p$\to$ significado $\gets$ c \Comment O(1)		
-		\State AgregarRapido(d.claves, s) \Comment O(1)
+		\State AgregarAtras(d.claves, s) \Comment O(1)
 		\medskip
 		\Statex \underline{Complejidad:} O(|s|)
 			\Statex \underline{Justificacion:}Recorre la clave, si existe el nodo solo avanza a este sino crea una nuevo y avanza. Al final asigna el significado y lo agrega al conjunto, como recorre la clave una vez la complejidad final es O(|s|)
 	\end{algorithmic}
 \end{algorithm}
 
+\begin{algorithm}[H]{\textbf{iClaves}(\In {d}{Arbolito}) $\to$ res:lista(string))}
+	\begin{algorithmic}[1]
+		\State $res \gets$ d.claves\Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Devuelve el conjunto que es parte de la estructura.
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iBorrar}(\In {s}{string}, \Inout {d}{puntero(nodo($\sigma$))})}
+	\begin{algorithmic}[1]
+		
+		\State puntero(nodo($\sigma$)) aux $\leftarrow$ d	\Comment O(1) $\newline$ \Comment d apunta a la raíz.
+		\State puntero(nodo($\sigma$)) padreAux $\leftarrow$ d	\Comment O(1) $\newline$ \Comment Usamos padreAux y Aux para recorrer la estructura
+		\State puntero(nodo($\sigma$)) hastaDondeEliminar $\leftarrow$ NULL	\Comment O(1) $\newline$ \Comment hastaDondeEliminar, padreHDE y iHDE se usan para determinar desde dónde hay que eliminar.
+		\State puntero(nodo($\sigma$)) padreHDE $\leftarrow$ NULL \Comment O(1)
+		\State nat iHDE $\leftarrow$ 0	\Comment O(1)
+		\State nat i $\leftarrow$ 0		\Comment O(1)
+		
+		\While { i < longitud(s)}	\Comment O(|s|)
+			\If {aux$\rightarrow$significado = NULL $\wedge$ cantidadHijos(aux) = 1 $\wedge$ hastaDondeEliminar = NULL}	\Comment O(1)
+				\State hastaDondeEliminar $\leftarrow$ aux	\Comment O(1)
+				\State padreHDE $\leftarrow$ padreAux	\Comment O(1)
+				\State iHDE $\leftarrow$ i - 1	\Comment O(1)
+			\Else		
+				\If {(cantidadHijos(aux) > 1 $\vee$ aux$\rightarrow$significado $\neq$ NULL) $\wedge$ (i $\neq$ longitud(s) -1)}	\Comment O(1)
+					\State hastaDondeEliminar $\leftarrow$ NULL	\Comment O(1)
+					\State padreHDE $\leftarrow$ NULL	\Comment O(1)
+					\State iHDE $\leftarrow$ 0	\Comment O(1)
+				\EndIf	
+			\EndIf	
+			
+			\State padreAux $\leftarrow$ aux \Comment O(1)
+			
+			\If {cantidadHijos(padreAux) $>$ 1 $\wedge$ i = longitud(s)-1}	\Comment O(1)
+				\State padreHDE $\leftarrow$ padreAux	\Comment O(1)
+				\State hastaDondeEliminar $\leftarrow$ aux$\rightarrow$hijos[ord(s[i])]	\Comment O(1)
+				\State iHDE $\leftarrow$ i	\Comment O(1)
+			\EndIf
+			\State aux $\leftarrow$ aux$\rightarrow$hijos[ord(s[i])]	\Comment O(1)
+			
+			\State i $\leftarrow$ i + 1	\Comment O(1)
+		\EndWhile
+		
+		\If {hastaDondeEliminar = d $\wedge$ cantidadHijos(aux) = 0}	\Comment O(1)
+			\State borrarNodo(d)	\Comment O(|s|)
+			\State d $\leftarrow$ NULL	\Comment O(1)
+		\EndIf
+		
+		\If {cantidadHijos(aux) $>$ 0}	\Comment O(1)
+			\State aux$\rightarrow$significado $\leftarrow$ NULL	\Comment O(1)
+		\Else
+			\State borrarNodo(hastaDondeEliminar)	\Comment O(|s|)
+			\State padreHDE$\rightarrow$hijos[ord(s[iHDE])] $\leftarrow$ NULL \Comment O(1)
+		\EndIf
+				
+		\medskip
+		\Statex \underline{Complejidad:} O(|s|)
+			\Statex \underline{Justificacion:}Recorre la clave, guardando cuál es el último nodo "útil" del camino, para eliminar toda la parte de la palabra que vaya a quedar sin una definición asociada. $\newline$ Si la palabra tiene hijos, sólo se le elimina el significado. $\newline$ Como en peor caso como máximo se recorre la palabra más larga (varias veces, pero de manera independiente, entonces el orden de la complejidad no aumenta), la complejidad final es O(|s|).
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{cantidadHijos}(\In {p}{puntero(nodo($\sigma$))}) $\to$ res: nat}
+	\begin{algorithmic}[1]
+		\State nat res $\gets$ 0 \Comment O(1)
+		\State nat i $\gets$ 0	\Comment O(1)
+
+		\While {i $<$ 256}	\Comment O(256) $\in$ O(1)
+			\If {p$\to$hijos[ord(s[i])] $\neq$ NULL}	\Comment O(1)			
+				\State res $\gets$ res + 1	\Comment O(1)
+			\EndIf
+			\State i $\gets$ i + 1 	\Comment O(1)
+		\EndWhile	
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:} Como el arreglo tiene longitud constante, que no depende del input, recorrerlo siempre va a llevar la misma cantidad de operaciones, entonces es O(1).
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{borrarNodo}(\In {p}{puntero(nodo($\sigma$))}) $\to$ res: nat}
+	\begin{algorithmic}[1]
+
+		\If{p $\neq$ NULL} \Comment O(1)
+			\State nat i $\gets$ 0	\Comment O(1)
+			\While {i < 256} \Comment O(256) $\in$ O(1)
+				\If {p$\to$hijos[ord(s[i])] $\neq$ NULL} \Comment O(1)
+					\State borrarNodo(p$\to$hijos[ord(s[i])]) \Comment O(|s|-1)	
+				\EndIf
+				\State i $\gets$ i + 1 \Comment O(1)
+			\EndWhile
+			\State p $\gets$ NULL \Comment O(1)
+		\EndIf		
+		
+		\medskip
+		\Statex \underline{Complejidad:} O(|s|)
+\Statex \underline{Justificacion:} Como el arreglo tiene longitud constante, que no depende del input, recorrerlo siempre va a llevar la misma cantidad de operaciones, es O(1).$\newline$ La cantidad de veces que llamamos recursivamente a la función es en peor caso la longitud de la palabra más larga del diccionario, porque borrarNodo se llama cuando sólo hay una cadena por borrar. Por lo tanto la complejidad es O(|s|*1) $\in$ -O(|s|).
+	\end{algorithmic}
+\end{algorithm}
+
 \Titulo {Algoritmos del iterador}
+
+\begin{algorithm}[H]{\textbf{iCrearIt}(\In {d}{Arbolito}) $\to$ res:itString}
+	\begin{algorithmic}[1]
+		\State itLista(string) it $\gets$ CrearIt(*(d.claves))
+		\State $res \gets$ <it, d> \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Crea un iterador al primer elemento de las claves
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iHayMas?}(\In {it}{itString}) $\to$ res:bool}
+	\begin{algorithmic}[1]
+		\State $res \gets$ (HaySiguiente(it.siguiente))\Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Chequea si quedan elementos por recorrer
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iActual}(\In {it}{itString}) $\to$ res:<string, nat>}
+	\begin{algorithmic}[1]
+		\State $res \gets$ <Siguiente(it.siguiente), Significado(Siguiente(it.siguiente), *(it.arbol))\Comment O(|P|)
+		\medskip
+		\Statex \underline{Complejidad:} O(|P|)
+			\Statex \underline{Justificacion:}Devuelve la clave y el significado en una tupla. Para el obtener el significado, busca en el arbol a travez de la clave
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iAvanzar}(\Inout {it}{itString})}
+	\begin{algorithmic}[1]
+		\State Avanzar(it.siguiente) \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Chequea si quedan elementos por recorrer
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iSiguientes}(\In {it}{itString}) $\to$ res:lista(string)}
+	\begin{algorithmic}[1]
+		\State itLista(string) itLis $\gets$ CrearIt(it.arbol$\to$ claves) \Comment O(1)
+		\While {Siguiente(itLis) $\neq$ (it.siguiente)} \Comment O()
+			\State Avanzar(itLis) \Comment O(1)
+		\EndIf
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Chequea si quedan elementos por recorrer
+	\end{algorithmic}
+\end{algorithm}
+
 \end{Algoritmos}
 
