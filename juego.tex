@@ -87,6 +87,12 @@
 [Devuelve un iterador <Pokemon, Nat>]
 \\
 
+\InterfazFuncion{Expulsados}{\In {g}{Juego}}{Conj(Jugador)}
+{res $\igobs$ expulsados(g)}
+[O(J)]
+[Conjunto de jugadores expulsados del juego]
+\\
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -141,7 +147,8 @@
 	\end{Estructura}
 	
 	\begin{Tupla}[InfoJugador]
-		\tupItem{conectado}{Bool}
+		\tupItem{jug}{jugador}
+		\tupItem{\\conectado}{Bool}
 		\tupItem{\\expulsado}{Bool}
 		\tupItem{\\sanciones}{Nat}
 		\tupItem{\\pos}{Coordenada}
@@ -356,6 +363,20 @@
 		\Statex \underline{Justificacion:} Dentro de jugadores guardamos un iterador a Dicc(<Pokemon, Cantidad>) que est\'a guardado en Game. De esta forma en el vector de jugadores guardamos estructuras simples de copiar, esto era necesario por la complejidad del agregar jugador (ver AgregarJugador). Tanto la asignaci\'on y la creaci\'on del iterador y el siguiente del iterador de lista son todos O(1)
 	\end{algorithmic}
 \end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iExpulsados}(\In {g}{Game}) $\to$ res: conj(jugador)}
+	\begin{algorithmic}[1]
+		\State res $\gets$ Vac\'io() \Comment O(1)
+		\State tam $\gets$ Longitud(g.jugadores) \Comment O(1)
+		\State \textbf{for} n $\gets$ 0 \textbf{to} tam \Comment O(J)
+		\State \,\,\,\,AgregarRapido(res, g.jugadores[n].jug) \Comment O(copy(jugador))
+		\medskip
+		\Statex \underline{Complejidad:} O(J)
+		\Statex \underline{Justificacion:} El for se ejecuta J veces y como jugador es un nat, el costo de copiarlo es O(1) entonces la complejidad es O(J)
+	\end{algorithmic}
+\end{algorithm}
+
+
 
 
 
