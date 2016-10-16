@@ -93,6 +93,14 @@
 [Conjunto de jugadores expulsados del juego]
 \\
 
+\InterfazFuncion{PosConPok\'emons}{\In {g}{Juego}}{Conj(coor)}
+{res $\igobs$ posConPok\'emons(g)}
+[O(J)]
+[Conjunto de coordenadas con Pok\'emones]
+\\
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -143,12 +151,13 @@
 Game representa un Juego.\\
 En pokemons guardamos un diccionario sobre Trie y la clave es el Pokemon (string). Esto nos permite encontrar un pokemon en |P|. En el diccionario guardamos la cantidad de pokemones salvajes que hay y cuantos hubieron de ese tipo en total para poder calcular la rareza del pokemon en O(|P|) junto con cantidadTotPokemons que es el total de los Pokemons en el juego.
 En mapa guardamos el mapa con el que se crea el Juego.\\
+coordenadasConPokemons guardamos un conjunto de Coordenadas donde hay pokemones para poder devolver en posConPok\'emons en O(1).
 En jugadores de game guardamos un vector de InfoJugador (ver m\'as abajo). Como en InfoCoordenada guardamos una lista de jugadores en cada coordenada y cuando expulsamos un jugador debemos borrar de forma eficiente en esa lista guardamos un iterador al jugador en diccionario para poder cumplir con los ordenes de mover.\\
 mapainfo es una matriz de InfoCoordenadas donde cada dimensi\'on es la latitud y longitud de una coordenada.\\
 cantidadTotPokemones guardamos el total de pokemones del juego.\\
 coordenaadasPokemons es un diccionario $<$Coordenada, Pokemon$>$ donde guardamos el Pokemon que cada coordenada del Mapa tiene.\\
 pokemonsDeJugadores es una lista donde guardamos los Pokemones que atrapó cada jugador. (\textbf{**}) Esto lo tuvimos que guardar fuera de InfoJugador porque ten\'iamos un problema de complejidad al agregar un jugador nuevo. Como usabamos un Vector de jugadores el agregar es O(J + copy($\alpha$)) y guardar los Pokemones que atrapo el jugador hacía que el copy no fuera O(1), entonces guardamos un iterador a esta lista en InfoJugador.\\
-InfoCoordenada representa la informaci\'on perteneciente a cada coordenada en el Mapa. Guardamos si en esta posici\'on hay pokemon, si ya se capturo un pokemon en esta coordenada que lo usamos para saber si quedo un heap no valido. En jugEspe usamos un min heap de $<$Jugador, CantidadPokemonesAtrapados$>$ para cuando se capture un Pokemon poder seleccionar el jugador que lo atrapa en O(log n) porque lo desencolamos del heap. Era necesario esta complejidad para poder cumplir la complejidad de mover. En MovimientosRestantes guardamos la cantidad de movimientos restantes para atrapar el Pokemon.\\
+InfoCoordenada representa la informaci\'on perteneciente a cada coordenada en el Mapa. Guardamos si en esta posici\'on hay pokemon y que pokemon, si ya se capturo un pokemon en esta coordenada que lo usamos para saber si quedo un heap no valido. En jugEspe usamos un min heap de $<$Jugador, CantidadPokemonesAtrapados$>$ para cuando se capture un Pokemon poder seleccionar el jugador que lo atrapa en O(log n) porque lo desencolamos del heap. Era necesario esta complejidad para poder cumplir la complejidad de mover. En MovimientosRestantes guardamos la cantidad de movimientos restantes para atrapar el Pokemon.\\
 InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jugador (para no depender solamente del la posici\'on del vector que algunas veces lo recorremos pero no lo tenemos), si esta conectado, expulsado, sanciones, en pos la posici\'on actual, pokemons atrapados, la posici\'on en el mapa, cantTotalPoke es cantidad total de pokemones que atrapo. En pokemons guardamos un iterador  de lista que se guarda en Game, se explic\'o en (\textbf{**}). En posicionMapa guardamos un iterador a la cola de prioridad (heap) de la coordenada en caso de estar esperando para atrapar un pokemon, esto lo hicimos para poder eliminarlo de forma f\'acil del heap (cuando se mueve, se elimina, etc) y poder cumplir las complejidades de mover.
 
 
@@ -159,6 +168,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 			\tupItem{\\jugadores}{Vector(InfoJugador)}
 			\tupItem{\\mapaInfo}{Arreglo de Arreglo de InfoCoordenada}
 			\tupItem{\\cantidadTotPokémons}{Nat}
+			\tupItem{\\coordenadasConPokemons}{Conj(Coordenada)}
 			\tupItem{\\coordenadasPokemons}{Dicc(Coordenada, pokemon)}
 			\tupItem{\\pokemonsDeJugadores}{Lista(Dicc(pokemon: string, cant: nat))}
 		\end{Tupla}
@@ -177,6 +187,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 	
 	
 	\begin{Tupla}[InfoCoordenada]
+		\tupItem{pokemon}{Pokemon}
 		\tupItem{\\jugEspe}{ColaDePrioridad(cantPokemon)}
 		\tupItem{\\hayPokemon}{Bool}
 		\tupItem{\\yaSeCapturo}{Bool}
@@ -470,6 +481,15 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 		\medskip
 		\Statex \underline{Complejidad:} O(J)
 		\Statex \underline{Justificacion:} El for se ejecuta J veces y como jugador es un nat, el costo de copiarlo es O(1) entonces la complejidad es O(J)
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iPosConPok\'emons}(\In {g}{Game}) $\to$ res: conj(coordenada)}
+	\begin{algorithmic}[1]
+		\State res $\gets$ g.coordenadasConPokemons \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+		\Statex \underline{Justificacion:} Devolvemos el conjunto de coordenadas con Pokemones. La asignaci\'on al ser de un tipo \textbf{no} primitivo tanto res como g.coordenadasConPokemons referencian a la misma estructura f\'isica (del apunte de dise\~no)
 	\end{algorithmic}
 \end{algorithm}
 
