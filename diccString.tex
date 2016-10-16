@@ -44,12 +44,12 @@
 [d $=$ d$_0$]
 {d $=$ Borrar(s, d$_0$)}
 [O(|L|), siendo L la máxima longitud de las claves en el diccionario]
-[Borra la clave, si es prefijo de alguna otra clave solo borra el significado]
+[Borra la clave, si es prefijo de alguna otra clave solo borra el significado]\\
 
 \InterfazFuncion{Claves}{\In {d}{DiccString($\sigma$)}}{lista(string)}
 {res $\igobs$ claves(d)}
 [O(1)]
-[Devuelve un conjunto con las claves del diccionario]
+[Devuelve un conjunto con las claves del diccionario]\\
 
 \bf{Operaciones del iterador}
 
@@ -57,29 +57,29 @@
 {res $\igobs$ CrearItUni(claves(d))}
 [O(1)]
 [Crea un iterador no modificable al principio de las claves del diccionario]
-[]
+[]\\
 
 \InterfazFuncion{Actual}{\In {it}{itString}}{<string, nat>}
 [HayMas?(it)]
 {res $\igobs$ Actual(it)}
 [O(|P|), siendo P la clave mas larga del diccionario]
-[Devuelve una tupla <clave, significado>]
+[Devuelve una tupla <clave, significado>]\\
 
 \InterfazFuncion{HayMas?}{\In {it}{itString}}{bool}
 {res $\igobs$ HayMas?(it)}
 [O(1)]
-[Chequea si hay mas elementos para recorrer]
+[Chequea si hay mas elementos para recorrer]\\
 
 \InterfazFuncion{Avanzar}{\Inout {it}{itString}}{}
 [it $\igobs$ it$_0$ $\wedge$ HayMas?(it)]
 {res $\igobs$ Avanzar(it)}
 [O(1)]
-[Avanza el iterador a la siguiente clave del diccionario]
+[Avanza el iterador a la siguiente clave del diccionario]\\
 
 \InterfazFuncion{Siguientes}{\In {it}{itString}}{lista(string)}
 {res $\igobs$ Siguientes(it)}
 [O(n), siendo n la cantidad de claves del diccionario]
-[Devuelve una lista con las claves que aun no se recorrierron]
+[Devuelve una lista con las claves que aun no se recorrierron]\\
 
 \begin{Representacion}
 
@@ -88,11 +88,11 @@
 	\begin{Estructura}{diccString}[Arbolito]
 		\begin{Tupla}[Arbolito]
 			\tupItem{raiz}{puntero(nodo($\sigma$))}
-			\tupItem{claves}{lista(string)}\\
+			\tupItem{claves}{lista(string)}
 		\end{Tupla}
 		\begin{Tupla}[nodo]
 			\tupItem{hijos}{arreglo[256] de puntero(nodo($\sigma$)}
-			\tupItem{significado}{puntero($\sigma$)}\\
+			\tupItem{significado}{puntero($\sigma$)}
 		\end{Tupla}
 	\end{Estructura}
 \subsection{Invariante de representación}
@@ -114,8 +114,8 @@
 \Titulo {Representacion del iterador}
 \subsection{Justificacion}
 
-\begin{Estructura}[itString]
-	\begin{Tupla}[itString]
+\begin{Estructura}{itString}[iter]
+	\begin{Tupla}[iter]
 	\tupItem{siguiente}{itLista(string)}
 	\tupItem{arbol}{puntero(arbolito)}
 	\end{Tupla}
@@ -221,7 +221,7 @@
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]{\textbf{iBorrar}(\In {s}{string}, \Inout {d}{puntero(nodo($\sigma$))})}
+\begin{algorithm}[H]{\textbf{iBorrar}(\In {s}{string}, \Inout {d}{Arbolito})}
 	\begin{algorithmic}[1]
 		
 		\State puntero(nodo($\sigma$)) aux $\leftarrow$ d	\Comment O(1) $\newline$ \Comment d apunta a la raíz.
@@ -356,12 +356,18 @@
 \begin{algorithm}[H]{\textbf{iSiguientes}(\In {it}{itString}) $\to$ res:lista(string)}
 	\begin{algorithmic}[1]
 		\State itLista(string) itLis $\gets$ CrearIt(it.arbol$\to$ claves) \Comment O(1)
-		\While {Siguiente(itLis) $\neq$ (it.siguiente)} \Comment O()
+		\While {Siguiente(itLis) $\neq$ (it.siguiente)} \Comment O($\#$(elementosDeClaves))
 			\State Avanzar(itLis) \Comment O(1)
-		\EndIf
+		\EndWhile
+		\State lista(string) li $\gets$ Vacia() \Comment O(1)
+		\While(HaySiguiente(itLis)) \Comment O($\#$(elementosDeClaves))
+			\State AgregarAtras(li, Siguiente(itLis)) \Comment O(1)
+			\State Avanzar(itLis) \Comment O(1) 		
+		\EndWhile
+		\State res $\gets$ li \Comment O(1)
 		\medskip
-		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:}Chequea si quedan elementos por recorrer
+		\Statex \underline{Complejidad:} O($\#$(elementosDeClaves))
+			\Statex \underline{Justificacion:}Devuelve los elementos que quedan por recorrer, O(2*$\#$(elementosDeClaves)) = O($\#$(elementosDeClaves))
 	\end{algorithmic}
 \end{algorithm}
 
