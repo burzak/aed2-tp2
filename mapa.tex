@@ -52,9 +52,9 @@
 
 \begin{Representacion}
 \subsubsection{Justificación}
-infomapa representa el el tad Mapa. La componente coordenadas representa todas las coordenadas que fueron agregadas al mapa.
+infomapa representa el tad Mapa. La componente coordenadas representa todas las coordenadas que fueron agregadas al mapa.
 relacionCoordenadas representa que coordenadas estan conectadas con cuales. Es una matriz donde la primer dimension representa cada coordenada y la segunda dimensi\'on representa las coordenadas con las que est\'an relacionadas. La idea es guardar en la intercepci\'on entre dos coordenadas (cada una en una dimensi\'on distinta) un True en caso si están relacionadas. Esta matriz nos permite verificar en O(1) si dos coordenadas estan relacionadas o no.
-ancho y alto representan el tama\~no del mapa, para calcularlo buscamos la coordenada con la longitud/altitud mayor y lo guardamos. Fue necesario guardar estos datos ya que los necesitamos para calcular la posici\'on de cada coordenada en relacionCoordenadas en cada dimensi\'on.
+ancho y alto representan el tama\~no del mapa, para calcularlo buscamos la coordenada con la longitud/latitud mayor y lo guardamos. Fue necesario guardar estos datos ya que los necesitamos para calcular la posici\'on de cada coordenada en relacionCoordenadas en cada dimensi\'on.
 
 	\begin{Estructura}{Mapa}[infomapa]
 		\begin{Tupla}[infomapa]
@@ -103,7 +103,7 @@ ancho y alto representan el tama\~no del mapa, para calcularlo buscamos la coord
 \begin{algorithm}[H]{\textbf{iPosExistente}(\In {c}{coordenada}, \In {m} {infomapa}) $\to$ res: bool}
 	\begin{algorithmic}[1]
 		\State res $\gets$ False \Comment O(1)
-		\If {Altitud(c) $<$ m.alto $\wedge$ Longitud(c) $<$ m.ancho} \Comment O(1)
+		\If {Latitud(c) $<$ m.alto $\wedge$ Longitud(c) $<$ m.ancho} \Comment O(1)
 		\State pos $\gets$ m.ancho * Longitud(c) + m.alto * Latitud(c) \Comment O(1)
 		\State res $\gets$ m.relacionCoordenadas[pos][pos] == True \Comment O(1)
 		\Else
