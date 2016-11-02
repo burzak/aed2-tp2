@@ -82,9 +82,10 @@
 
 \InterfazFuncion{Pokemons}{\In {j}{Jugador}, \In {g}{juego}}{Iter(<Pokemon, Nat>)}
 [j $\in$ jugadores(g)]
-{res $\igobs$ pok\'emons(j, g)}
+{res $\igobs$ CrearIt(pok\'emons(j, g))}
 [O(1)]
 [Devuelve un iterador <Pokemon, Nat>]
+[Crea un iterador a la primera posicion del conjunto, el iterador se invalida si se borrar el elemento que le sigue al que este apunta, el iterador no puede borrar ya que se no modificable.]
 \\
 
 \InterfazFuncion{Expulsados}{\In {g}{juego}}{Conj(Jugador)}
@@ -213,7 +214,7 @@ mapainfo es una matriz de InfoCoordenadas donde cada dimensi\'on es la latitud y
 cantidadTotPokemones guardamos el total de pokemones del juego.\\
 coordenaadasPokemons es un diccionario $<$Coordenada, Pokemon$>$ donde guardamos el Pokemon que cada coordenada del Mapa tiene.\\
 pokemonsDeJugadores es una lista donde guardamos los Pokemones que atrapó cada jugador. (\textbf{**}) Esto lo tuvimos que guardar fuera de InfoJugador porque ten\'iamos un problema de complejidad al agregar un jugador nuevo. Como usabamos un Vector de jugadores el agregar es O(J + copy($\alpha$)) y guardar los Pokemones que atrapo el jugador hacía que el copy no fuera O(1), entonces guardamos un iterador a esta lista en InfoJugador.\\
-InfoCoordenada representa la informaci\'on perteneciente a cada coordenada en el Mapa. Guardamos si en esta posici\'on hay pokemon y que pokemon, si ya se capturo un pokemon en esta coordenada que lo usamos para saber si quedo un heap no valido. En jugEspe usamos un min heap de $<$Jugador, CantidadPokemonesAtrapados$>$ para cuando se capture un Pokemon poder seleccionar el jugador que lo atrapa en O(log n) porque lo desencolamos del heap. Era necesario esta complejidad para poder cumplir la complejidad de mover. En MovimientosRestantes guardamos la cantidad de movimientos restantes para atrapar el Pokemon.\\
+InfoCoordenada representa la informaci\'on perteneciente a cada coordenada en el Mapa. Guardamos si en esta posici\'on hay pokemon y que pokemon, si ya se capturo un pokemon en esta coordenada que lo usamos para saber si quedo un heap no valido. En jugEspe usamos una colaDePrioriada($\sigma$) para cuando se capture un Pokemon poder seleccionar el jugador que lo atrapa en O(log n) porque lo desencolamos del heap. Era necesario esta complejidad para poder cumplir la complejidad de mover. En MovimientosRestantes guardamos la cantidad de movimientos restantes para atrapar el Pokemon.\\
 InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jugador (para no depender solamente del la posici\'on del vector que algunas veces lo recorremos pero no lo tenemos), si esta conectado, expulsado, sanciones, en pos la posici\'on actual, pokemons atrapados, la posici\'on en el mapa, cantTotalPoke es cantidad total de pokemones que atrapo. En pokemons guardamos un iterador  de lista que se guarda en Game, se explic\'o en (\textbf{**}). En posicionMapa guardamos un iterador a la cola de prioridad (heap) de la coordenada en caso de estar esperando para atrapar un pokemon, esto lo hicimos para poder eliminarlo de forma f\'acil del heap (cuando se mueve, se elimina, etc) y poder cumplir las complejidades de mover.
 
 

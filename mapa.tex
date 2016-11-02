@@ -40,16 +40,6 @@
 [Devuelve true si existe esa coordenada]
 \\
 
-\ttitulo{No exportable, operaciones auxiliares}
-
-\InterfazFuncion{CoordenadasConectadasA}{\In {c}{Coordenada}, \In {m}{mapa}}{Conj(Coordenada)}
-[$c \in coordenadas(m)$]
-{$(\forall c_1: Coordenada) c_1 \in res \wedge c_1 \in coordenadas(m) \impluego hayCamino(c, c_1, m)$}
-[O(n$^2$)]
-[Devuelve un conjunto de coordenadas a las cuales hayCamino]
-\\
-
-
 \begin{Representacion}
 \subsubsection{Justificación}
 infomapa representa el tad Mapa. La componente coordenadas representa todas las coordenadas que fueron agregadas al mapa.
@@ -71,11 +61,28 @@ ancho y alto representan el tama\~no del mapa, para calcularlo buscamos la coord
 (1)Existe una coordenada en coordenadas tal que, dicha coordenada toma como su latitud al alto, y Existe una coordenada en coordenadas que su longitud es el ancho del mapa (puede ser la misma coordenada)\\
 (2)relacionCoordenadas tiene como dimension el ancho*alto de alto y tambien de largo, ademas para toda celda de esta matriz se tiene la relacion de camino entre 2 coordenadas, dichas coordenadas tienen que existir en coordenadas del mapa 
 
+\textbf{Formal}\\
+\Rep[infoMapa $\quad$ M][M]{(1)($\exists$ $c_1$ :Coordenada)($c_1$ $\in$ M.coordenadas) $\impluego$ latitud($c_1$) = M.alto $\wedge$ ($\exists$ $c_2$ :Coordenada)($c_2$ $\in$ M.coordenadas) $\impluego$ longitud($c_2$) = M.ancho $\wedge$ (2) }
+
+
 \subsubsection{Predicado de abtraccion}
+
+\AbsFc[infoMapa]{Mapa}[M]{ mapa :Mapa | M.coordenadas = Coordenadas(mapa)}
 
 \end{Representacion}
 
 \subsection{Algoritmos}
+
+
+\ttitulo{No exportable, operaciones auxiliares}
+
+\InterfazFuncion{CoordenadasConectadasA}{\In {c}{Coordenada}, \In {m}{mapa}}{Conj(Coordenada)}
+[$c \in coordenadas(m)$]
+{$(\forall c_1: Coordenada) c_1 \in res \wedge c_1 \in coordenadas(m) \impluego hayCamino(c, c_1, m)$}
+[O(n$^2$)]
+[Devuelve un conjunto de coordenadas a las cuales hayCamino]
+\\
+
 \begin{Algoritmos}
 
 \begin{algorithm}[H]{\textbf{iCrearMapa}() $\to$ res: mapainfo}
