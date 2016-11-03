@@ -90,8 +90,7 @@
 
 \subsection{Justificacion}
 En el diccionario sobre Trie lo representamos con Nodo apuntando a nodo donde guardamos cada char de la palabra en cada nodo. Y tenemos una estructura extra llamada Arbolito que su única finalidad es tener un Puntero a la ra\'iz de Trie y guardamos una lista de las claves creadas. La lista de claves la creamos para poder iterar sobre el Trie de forma m\'as conveniente, donde nos permite poder devolver un iterador en O(1), avanzar en las claves en O(1) y cuando piden el actual hacemos la busqueda sobre el Trie con la clave actual teniendo una complejidad de O(|clave mas larga|).
-Este iterador no es modificable ya que no queremos permitir poder borrar por parte del usuario dado que nunca borramos pokemons del juego ya siempre guardamos el dato de los pokemones totales agregados de cada tipo (sin importar si fueron o no atrapados).
-Con este iterador podemos cumplir con la complejidad que nos piden en la funci\'on pokemons devolviendo en O(1) el iterador a tupla$<$pokemon, cantidad$>$.
+	
 	\begin{Estructura}{diccString}[Arbolito]
 		\begin{Tupla}[Arbolito]
 			\tupItem{raiz}{puntero(nodo($\sigma$))}
@@ -102,14 +101,21 @@ Con este iterador podemos cumplir con la complejidad que nos piden en la funci\'
 			\tupItem{significado}{puntero($\sigma$)}
 		\end{Tupla}
 	\end{Estructura}
+
 \subsection{Invariante de representación}
 
-\textbf{Informal}
+\textbf{Informal}\\
 (1)Para todo nodo, sus hijos no pueden tenerlo como hijo
 (2)Todas las hojas tienen significado
 (3)Para todo elem en claves, elem esta definido en el diccionarioy viceversa
 
+\textbf{Formal}\\
+
+\Rep[Arbolito][A]{}
+
 \subsection{Predicado de abtraccion}
+
+\AbsFc[Arbolito]{diccString}[A]{ dicc :Diccionario(Clave, Significado)| }
 
 \AbsFc[puntero(nodo)]{dicc(string, $\sigma$)}[p]{ d : dicc(string,$\sigma$) | $(\forall s:string)\Big( \big(Def?(s,d)$ $\Longleftrightarrow (encontrarPalabra(s,p) \neq NULL$ $\yluego$ $encontrarPalabra(s,p)\to significado \neq NULL)\big)$ $\land$ $\big(*(encontrarPalabra(s,p)\to significado) = obtener(s,p)\big)\Big)$}
 

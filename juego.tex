@@ -214,7 +214,7 @@ mapainfo es una matriz de InfoCoordenadas donde cada dimensi\'on es la latitud y
 cantidadTotPokemones guardamos el total de pokemones del juego.\\
 coordenaadasPokemons es un diccionario $<$Coordenada, Pokemon$>$ donde guardamos el Pokemon que cada coordenada del Mapa tiene.\\
 pokemonsDeJugadores es una lista donde guardamos los Pokemones que atrapó cada jugador. (\textbf{**}) Esto lo tuvimos que guardar fuera de InfoJugador porque ten\'iamos un problema de complejidad al agregar un jugador nuevo. Como usabamos un Vector de jugadores el agregar es O(J + copy($\alpha$)) y guardar los Pokemones que atrapo el jugador hacía que el copy no fuera O(1), entonces guardamos un iterador a esta lista en InfoJugador.\\
-InfoCoordenada representa la informaci\'on perteneciente a cada coordenada en el Mapa. Guardamos si en esta posici\'on hay pokemon y que pokemon, si ya se capturo un pokemon en esta coordenada que lo usamos para saber si quedo un heap no valido. En jugEspe usamos una colaDePrioriada($\sigma$) para cuando se capture un Pokemon poder seleccionar el jugador que lo atrapa en O(log n) porque lo desencolamos del heap. Era necesario esta complejidad para poder cumplir la complejidad de mover. En MovimientosRestantes guardamos la cantidad de movimientos restantes para atrapar el Pokemon.\\
+InfoCoordenada representa la informaci\'on perteneciente a cada coordenada en el Mapa. Guardamos si en esta posici\'on hay pokemon y que pokemon, si ya se capturo un pokemon en esta coordenada que lo usamos para saber si quedo un heap no valido. En jugEspe usamos una colaDePrioriada($\sigma$), donde $\sigma$ es tupla <cantPokemons, Jugador> ordenamos por la primera parte de la tupla de forma que la tupla mas prioritaria sea la del jugador que menor cantidad de pokemons tenga, sirve para cuando se capture un Pokemon poder seleccionar el jugador de forma eficiente. Era necesario esta complejidad para poder cumplir la complejidad de mover. En MovimientosRestantes guardamos la cantidad de movimientos restantes para atrapar el Pokemon.\\
 InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jugador (para no depender solamente del la posici\'on del vector que algunas veces lo recorremos pero no lo tenemos), si esta conectado, expulsado, sanciones, en pos la posici\'on actual, pokemons atrapados, la posici\'on en el mapa, cantTotalPoke es cantidad total de pokemones que atrapo. En pokemons guardamos un iterador  de lista que se guarda en Game, se explic\'o en (\textbf{**}). En posicionMapa guardamos un iterador a la cola de prioridad (heap) de la coordenada en caso de estar esperando para atrapar un pokemon, esto lo hicimos para poder eliminarlo de forma f\'acil del heap (cuando se mueve, se elimina, etc) y poder cumplir las complejidades de mover.
 
 
@@ -244,7 +244,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 	
 	\begin{Tupla}[InfoCoordenada]
 		\tupItem{pokemon}{Pokemon}
-		\tupItem{\\jugEspe}{ColaDePrioridad(cantPokemon)}
+		\tupItem{\\jugEspe}{ColaDePrioridad($\sigma$)}
 		\tupItem{\\hayPokemon}{Bool}
 		\tupItem{\\yaSeCapturo}{Bool}
 		\tupItem{\\jugadores}{Dicc(jugador: nat, EsperandoCapturar: itColaDePrioridad(cantPokemon))}
@@ -253,13 +253,13 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \subsubsection{Invariante de representación}
 
-\ttitulo{Informal}
+\textbf{Informal}
 
 (1)Para todos los pokemons de un jugador dado, estos existen en el diccionario pokemons del juego y ademas la cantidad de los mismos es menor o igual a la cantidad total definida en el diccionario de pokemon del juego\\
 
 (2)CantidadTotalPokemons del juego es igual a la suma de la cantTotal de cada clave del dicc Pokemons\\
 
-(3)Tanto mapa como mapaInfo toman la coordenada con el alto mas grande y el ancho mas grande para definir su tamaño\\
+(3)El tamaño de mapaInfo es igual al del mapa, y tienen las mismcas coordenadas\\
 
 (4)Para toda coordenada en coordenadaConPokemon, existe un pokemon cuya cantSalvaje es 1. Dicho de otra manera la suma de la cantidad de coordenadas es igual a la suma de pokemons libres del dicc Pokemons del juego, para toda coordenada del conj existe una relacion con un pokemon del dicc\\
 
@@ -267,7 +267,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 (6)La parte de la tupla jug en InfoJugador corresponde con el índice del vector jugadores por el cual accedo a esa tupla\\
 
-(7)Para todo elemento de la colaDePrioridad de infoCoordenada, para todo nodo de la cola existe un elemento en el dicc Jugadores de la misma estructura. Además para cada elemento en el dicc jugadores de infoCoordenada, para cualquier coordenada, existe un elemento en el vector Jugadores (jugador no expulsado)\\
+(7)Para todo elemento de la colaDePrioridad de infoCoordenada, para todo nodo de la cola existe un elemento en el dicc Jugadores de la misma estructura. Además para cada elemento en el dicc jugadores de infoCoordenada, para cualquier coordenada, existe un elemento en el vector Jugadores (jugador no expulsado), los jugadores en la cola estan ordenados de forma creciente por la cantidad de pokemons que tienen, es decir que el jugador que esta primero en la cola es el jugador que menos pokemons tiene de toda la cola\\
 
 (8)Para toda infoCoordenada el pokemon existe en el diccPokemon del juego y ademas la coordenada por la cual se filtra el arreglo de arreglos mapaInfo esta en coordenadaConPokemons \\
 
@@ -275,12 +275,20 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 (10)La coordenada del jugador se corresponde con PosicionMapa de infoJugador\\
 
+\textbf{Formal}
+
+\Rep[Game $\quad$ G][G]{(1)($\forall$ j: Jugador)(0 $\leq$ j $\leq$ Longitud(G.jugadores)) $\impluego$ ($\forall$ p: Pokemons)(Definido?(p, Siguiente(G.jugadores[j].pokemons))) $\impluego$ Definido?(p, G.pokemons) $\yluego$ Significado(p, Siguiente(G.jugadores[j].pokemons)) $\leq$ Significado(p, G.pokemons).cantTotal $\wedge$ (2) SumarDicc(claves(G.pokemons), G.pokemons) $=$ G.cantidadTotPokemons $\wedge$  (3) ($\forall$ i, j :nat)(Definido?(G.mapaInfo, [i, j])) $\impluego$ ($\exists$ c :Coordenada)(c $\in$ Coordenadas(G.mapa)) $\impluego$ i $=$ Latitud(c) $\wedge$ j $=$ Longitud(c) $\wedge$ (4) }
+
+\tadOperacion{SumarDicc}{Conj(string)/cs, Dicc(stirng, $<$nat, nat$>$)/d}{nat}{($\forall$ x:cs) (Definido?(x, d))}
+
+\tadAxioma{SumarDicc(cs, d)}{\IF $\emptyset$(cs) THEN 0 ELSE $\pi_2$(Significado(DameUno(cs), d)) + SumarDicc(SinUno(cs), d) FI}
+
 \subsubsection{Predicado de abtraccion}
 
 \ttitulo{Representacion del iterador}
 
 \subsection{Justificacion}
-	El objetivo del iterador era poder devolver un iterador a la lista de jugadores en O(1) pudiendo siguiente no ser O(1). Creamos el iterados ya que en la lista de jugadores guardamos los jugadores que est\'an jugando como los expulsados y con el iterador recorremos los jugadores no expulsado. Guardamos la ultima posici\'on donde estamos paradon con y el puntero al Vector real de los jugadores
+	El objetivo del iterador era poder devolver un iterador a la lista de jugadores en O(1) pudiendo siguiente no ser O(1). Creamos el iterados ya que en la lista de jugadores guardamos los jugadores que est\'an jugando como los expulsados y con el iterador recorremos los jugadores no expulsado. Guardamos la ultima posici\'on donde estamos paradon con posicion y el puntero al Vector real de los jugadores
 	
 	\begin{Estructura}{itJugador}[iter]
 		\begin{Tupla}[iter]
@@ -290,12 +298,16 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 	\end{Estructura}
 \subsection{Invariante de representacion}
 
-\textbf{Informal}
-(1)Posicion no puede ser mayor a la longitud del vector
-(2)Tiene que cumplir el invariante de vector
-(3)Posicion existe como indice del vector
+\textbf{Informal}\\
+(1)Tiene que cumplir el invariante de vector
+(2)Posicion existe como indice del vector
+
+\textbf{Formal}\\
+\Rep[iter I][I]{(1) Rep(*I.vector) $\wedge$ (2) 0 $\leq$ I.posicion $<$ Longitud(*I.vector)}
 
 \subsection{Predicado de abstraccion}
+
+\AbsFc[iter]{itJugador}[I]{ it :Iterador Unidireccional| Siguientes(I) = Siguientes(it)}
 
 \end{Representacion}
 \subsection{Algoritmos}
