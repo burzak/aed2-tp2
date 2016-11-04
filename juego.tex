@@ -277,13 +277,19 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \textbf{Formal}
 
-\Rep[Game $\quad$ G][G]{(1)($\forall$ j: Jugador)(0 $\leq$ j $\leq$ Longitud(G.jugadores)) $\impluego$ ($\forall$ p: Pokemons)(Definido?(p, Siguiente(G.jugadores[j].pokemons))) $\impluego$ Definido?(p, G.pokemons) $\yluego$ Significado(p, Siguiente(G.jugadores[j].pokemons)) $\leq$ Significado(p, G.pokemons).cantTotal $\wedge$ (2) SumarDicc(claves(G.pokemons), G.pokemons) $=$ G.cantidadTotPokemons $\wedge$  (3) ($\forall$ i, j :nat)(Definido?(G.mapaInfo, [i, j])) $\impluego$ ($\exists$ c :Coordenada)(c $\in$ Coordenadas(G.mapa)) $\impluego$ i $=$ Latitud(c) $\wedge$ j $=$ Longitud(c) $\wedge$ (4) }
+\Rep[Game $\quad$ G][G]{(1)($\forall$ j: Jugador)(0 $\leq$ j $\leq$ Longitud(G.jugadores)) $\impluego$ ($\forall$ p: Pokemons)(Definido?(p, Siguiente(G.jugadores[j].pokemons))) $\impluego$ Definido?(p, G.pokemons) $\yluego$ Significado(p, Siguiente(G.jugadores[j].pokemons)) $\leq$ Significado(p, G.pokemons).cantTotal $\wedge$ (2) SumarDicc(claves(G.pokemons), G.pokemons) $=$ G.cantidadTotPokemons $\wedge$  (3) ($\forall$ i, j :nat)(Definido?(G.mapaInfo, [i, j])) $\impluego$ ($\exists$ c :Coordenada)(c $\in$ Coordenadas(G.mapa)) $\impluego$ i $=$ Latitud(c) $\wedge$ j $=$ Longitud(c) $\wedge$ (4) $\#$(G.coordenadaConPokemons) = (pokemonsSalvajes(claves(G.pokemons), G.pokemons)) $\wedge$ (5) ($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ PosExistente(G.jugadores[i].pos, G.mapa) $\wedge$ Definido?(G.mapaInfo, G.jugadores[i].pos) $\wedge$ (6)  ($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ i = G.jugadores[i].jug $\wedge$ (7) }
 
-\tadOperacion{SumarDicc}{Conj(string)/cs, Dicc(stirng, $<$nat, nat$>$)/d}{nat}{($\forall$ x:cs) (Definido?(x, d))}
+\tadOperacion{pokemonsSalvajes}{conj(pokemons) cp, dicc(pokemons, <nat, nat> d)}{nat}{($\forall$ p: Pokemon) (p $\in$ cp) $\impluego$ (Definido?(x, d))}
+
+\tadAxioma{pokemonsSalvajes(cp, d)}{\IF $\emptyset$(cp) THEN 0 ELSE $\pi_1$(Significado(DameUno(cp), d)) + pokemonsSalvajes(SinUno(cp), d) FI}
+
+\tadOperacion{SumarDicc}{Conj(string)/cs, Dicc(stirng, $<$nat, nat$>$)/d}{nat}{($\forall$ s: Sting)(s $\in$ cs) $\impluego$ (Definido?(x, d))}
 
 \tadAxioma{SumarDicc(cs, d)}{\IF $\emptyset$(cs) THEN 0 ELSE $\pi_2$(Significado(DameUno(cs), d)) + SumarDicc(SinUno(cs), d) FI}
 
 \subsubsection{Predicado de abtraccion}
+
+\AbsFc[Game]{juego}[g]{ j :Juego| g.mapa = mapa(j) $\wedge$ g.jugadores = jugadores(j) $\wedge$ ($\forall$ j :Jugador)(j ) }
 
 \ttitulo{Representacion del iterador}
 
