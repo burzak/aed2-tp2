@@ -277,7 +277,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \textbf{Formal}
 
-\Rep[Game $\quad$ G][G]{(1)($\forall$ j: Jugador)(0 $\leq$ j $\leq$ Longitud(G.jugadores)) $\impluego$ ($\forall$ p: Pokemons)(Definido?(p, Siguiente(G.jugadores[j].pokemons))) $\impluego$ Definido?(p, G.pokemons) $\yluego$ Significado(p, Siguiente(G.jugadores[j].pokemons)) $\leq$ Significado(p, G.pokemons).cantTotal $\wedge$ (2) SumarDicc(claves(G.pokemons), G.pokemons) $=$ G.cantidadTotPokemons $\wedge$  (3) ($\forall$ i, j :nat)(Definido?(G.mapaInfo, [i, j])) $\impluego$ ($\exists$ c :Coordenada)(c $\in$ Coordenadas(G.mapa)) $\impluego$ i $=$ Latitud(c) $\wedge$ j $=$ Longitud(c) $\wedge$ (4) $\#$(G.coordenadaConPokemons) = (pokemonsSalvajes(claves(G.pokemons), G.pokemons)) $\wedge$ (5) ($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ PosExistente(G.jugadores[i].pos, G.mapa) $\wedge$ Definido?(G.mapaInfo, G.jugadores[i].pos) $\wedge$ (6)  ($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ i = G.jugadores[i].jug $\wedge$ (7) }
+\Rep[Game $\quad$ G][G]{(1)(($\forall$ j: Jugador)(0 $\leq$ j $\leq$ Longitud(G.jugadores)) $\impluego$ ($\forall$ p: Pokemons)(Definido?(p, Siguiente(G.jugadores[j].pokemons))) $\impluego$ Definido?(p, G.pokemons) $\yluego$ Significado(p, Siguiente(G.jugadores[j].pokemons)) $\leq$ Significado(p, G.pokemons).cantTotal )$\wedge$ (2) (SumarDicc(claves(G.pokemons), G.pokemons) $=$ G.cantidadTotPokemons) $\wedge$  (3) (($\forall$ i, j :nat)(Definido?(G.mapaInfo, [i, j])) $\impluego$ ($\exists$ c :Coordenada)(c $\in$ Coordenadas(G.mapa)) $\impluego$ i $=$ Latitud(c) $\wedge$ j $=$ Longitud(c)) $\wedge$ (4) ($\#$(G.coordenadaConPokemons) = (pokemonsSalvajes(claves(G.pokemons), G.pokemons))) $\wedge$ (5) (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ PosExistente(G.jugadores[i].pos, G.mapa) $\wedge$ Definido?(G.mapaInfo, G.jugadores[i].pos)) $\wedge$ (6)  (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ i = G.jugadores[i].jug) $\wedge$ (7) }
 
 \tadOperacion{pokemonsSalvajes}{conj(pokemons) cp, dicc(pokemons, <nat, nat> d)}{nat}{($\forall$ p: Pokemon) (p $\in$ cp) $\impluego$ (Definido?(x, d))}
 
@@ -289,7 +289,15 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \subsubsection{Predicado de abtraccion}
 
-\AbsFc[Game]{juego}[g]{ j :Juego| g.mapa = mapa(j) $\wedge$ g.jugadores = jugadores(j) $\wedge$ ($\forall$ j :Jugador)(j ) }
+\AbsFc[Game]{juego}[g]{ j :Juego| (g.mapa = mapa(j)) $\wedge$ (g.jugadores = jugadores(j)$\cup$expulsados(j) $\yluego$ ($\forall$ x :Jugador)(x $\in$ j.jugadores) $\impluego$ estaConectado(x, j) = g.jugadores[x].conectado $\wedge$ sanciones(x, j) = g.jugadores[x].sanciones $\wedge$ posicion(x, j) = g.jugadores[x].pos $\wedge$ deDiccAMulti(claves(Siguiente(g.jugadores[x].pokemons)), Siguiente(g.jugadores[x].pokemons)) = pokemons(x, j)) $\wedge$ (g.coordenadasConPokemons = j.posConPokemon $\yluego$ ($\forall$ c: coordenada)(c $in$ j.posConPokemons) $\impluego$ g.mapaInfo[c].pokemon = pokemonEnPos(c, j) $\wedge$ g.mapaInfo[c].MovimientosRestantes = cantMovimientosParaCapturar(c, j))}
+
+\tadOperacion{deDiccAMulti}{conj(pokemon)/cp, dicc(pokemon, cantidad) d}{multiconj(pokemon)}{($\forall$ p: Pokemon) (p $\in$ cp) $\impluego$ (Definido?(x, d))}
+
+\tadAxioma{deDiccAMulti(cp, d)}{\IF $\emptyset$(cp) THEN $\emptyset$ ELSE agregarATodos(Significado(DameUno(cp), d), DameUno(cp)) $\cup$ deDiccAMulti(SinUno(cp), d) FI}
+
+\tadOperacion{agregarATodos}{nat, pokemon}{multiconj(pokemon)}{}
+
+\tadAxioma{agregarATodos(n, p)}{\IF 0?(n) THEN $\emptyset$ ELSE Ag(p, agregarATodos(n-1, p)) FI}
 
 \ttitulo{Representacion del iterador}
 
