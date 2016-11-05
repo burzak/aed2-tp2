@@ -193,14 +193,6 @@
 [O(n), siendo n la cantidad de elementos del vector]
 [Devuelve los elementos del vector posteriores al iterador, puede no haber ninguno]\\
 
-\ttitulo{No exportable, operaciones auxiliares}
-
-\InterfazFuncion{CeldasValidas}{\In {g}{juego}, \In {c}{coordenada}}{lista(coordenadas)}
-[c $\in$ coordenadas(mapa(g))]
-{($\forall c_1$: coordenada)(esta?($c_1$, res)$\impluego$(distEuclidea($c_1$, c)$\leq$2  $\wedge$ posExistente($c_1$, mapa(g)))}
-[O(1)]
-[Devuelve una lista con las coordenas a una distancia no mayor de 2 de la coordenada c y que ademas existan en el mapa del juego]
-
 \begin{Representacion}
 \ttitulo{ del modulo}
 
@@ -273,11 +265,9 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 (9)Para todo elemento de la lista de pokemons de jugadores existe un jugador (no expulsado) para el cual se corresponde, ademas la suma de la cant de todas las claves del diccionario es igual a CantTotalPoke de infoJugador para ese jugador\\
 
-(10)La coordenada del jugador se corresponde con PosicionMapa de infoJugador\\
-
 \textbf{Formal}
 
-\Rep[Game $\quad$ G][G]{(1)(($\forall$ j: Jugador)(0 $\leq$ j $\leq$ Longitud(G.jugadores)) $\impluego$ ($\forall$ p: Pokemons)(Definido?(p, Siguiente(G.jugadores[j].pokemons))) $\impluego$ Definido?(p, G.pokemons) $\yluego$ Significado(p, Siguiente(G.jugadores[j].pokemons)) $\leq$ Significado(p, G.pokemons).cantTotal )$\wedge$ (2) (SumarDicc(claves(G.pokemons), G.pokemons) $=$ G.cantidadTotPokemons) $\wedge$  (3) (($\forall$ i, j :nat)(Definido?(G.mapaInfo, [i, j])) $\impluego$ ($\exists$ c :Coordenada)(c $\in$ Coordenadas(G.mapa)) $\impluego$ i $=$ Latitud(c) $\wedge$ j $=$ Longitud(c)) $\wedge$ (4) ($\#$(G.coordenadaConPokemons) = (pokemonsSalvajes(claves(G.pokemons), G.pokemons))) $\wedge$ (5) (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ PosExistente(G.jugadores[i].pos, G.mapa) $\wedge$ Definido?(G.mapaInfo, G.jugadores[i].pos)) $\wedge$ (6)  (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ i = G.jugadores[i].jug) $\wedge$ (7) }
+\Rep[Game $\quad$ G][G]{(1)(($\forall$ j: Jugador)(0 $\leq$ j $\leq$ Longitud(G.jugadores)) $\impluego$ ($\forall$ p: Pokemons)(Definido?(p, Siguiente(G.jugadores[j].pokemons))) $\impluego$ Definido?(p, G.pokemons) $\yluego$ Significado(p, Siguiente(G.jugadores[j].pokemons)) $\leq$ Significado(p, G.pokemons).cantTotal )$\wedge$ (2) (SumarDicc(claves(G.pokemons), G.pokemons) $=$ G.cantidadTotPokemons) $\wedge$  (3) (($\forall$ i, j :nat)(Definido?(G.mapaInfo, [i, j])) $\impluego$ ($\exists$ c :Coordenada)(c $\in$ Coordenadas(G.mapa)) $\impluego$ i $=$ Latitud(c) $\wedge$ j $=$ Longitud(c)) $\wedge$ (4) ($\#$(G.coordenadaConPokemons) = (pokemonsSalvajes(claves(G.pokemons), G.pokemons))) $\wedge$ (5) (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ PosExistente(G.jugadores[i].pos, G.mapa) $\wedge$ Definido?(G.mapaInfo, G.jugadores[i].pos)) $\wedge$ (6)  (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ i = G.jugadores[i].jug) $\wedge$ (7) $\wedge$ (8) (($\forall$ c: Coordenada)(Definido?(c, G.mapaInfo)) $\impluego$ G.mapaInfo[c].hayPokemon $\impluego$ Definido(G.mapaInfo[c].pokemon, G.pokemons) $\wedge$ c $\in$ G.coordenadasConPokemons) $\wedge$ (9) (($\forall$ j: jugador)(0 $\leq$ j $<$ Longitud(G.jugadores) $\yluego$ G.jugadores[j].expulsado = false)  $\impluego$ SumaPokemon(claves(Siguiente(G.jugadores[j].pokemons)), Siguiente(G.jugadores[j].pokemons)) = G.jugadores[j].cantTotalPoke)} 
 
 \tadOperacion{pokemonsSalvajes}{conj(pokemons) cp, dicc(pokemons, <nat, nat> d)}{nat}{($\forall$ p: Pokemon) (p $\in$ cp) $\impluego$ (Definido?(x, d))}
 
@@ -286,6 +276,11 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 \tadOperacion{SumarDicc}{Conj(string)/cs, Dicc(stirng, $<$nat, nat$>$)/d}{nat}{($\forall$ s: Sting)(s $\in$ cs) $\impluego$ (Definido?(x, d))}
 
 \tadAxioma{SumarDicc(cs, d)}{\IF $\emptyset$(cs) THEN 0 ELSE $\pi_2$(Significado(DameUno(cs), d)) + SumarDicc(SinUno(cs), d) FI}
+
+\tadOperacion{SumarPokemon}{Conj(string)/cs, Dicc(stirng, nat)/d}{nat}{($\forall$ s: Sting)(s $\in$ cs) $\impluego$ (Definido?(x, d))}
+
+\tadAxioma{SumarPokemon(cs, d)}{\IF $\emptyset$(cs) THEN 0 ELSE Significado(DameUno(cs), d) + SumarPokemon(SinUno(cs), d) FI}
+
 
 \subsubsection{Predicado de abtraccion}
 
@@ -324,6 +319,15 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 \AbsFc[iter]{itJugador}[I]{ it :Iterador Unidireccional| Siguientes(I) = Siguientes(it)}
 
 \end{Representacion}
+
+\ttitulo{No exportable, operaciones auxiliares}
+
+\InterfazFuncion{CeldasValidas}{\In {g}{juego}, \In {c}{coordenada}}{lista(coordenadas)}
+[c $\in$ coordenadas(mapa(g))]
+{($\forall c_1$: coordenada)(esta?($c_1$, res)$\impluego$(distEuclidea($c_1$, c)$\leq$2  $\wedge$ posExistente($c_1$, mapa(g)))}
+[O(1)]
+[Devuelve una lista con las coordenas a una distancia no mayor de 2 de la coordenada c y que ademas existan en el mapa del juego]
+
 \subsection{Algoritmos}
 
 \begin{Algoritmos}

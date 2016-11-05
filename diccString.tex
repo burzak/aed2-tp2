@@ -107,11 +107,17 @@ En el diccionario sobre Trie lo representamos con Nodo apuntando a nodo donde gu
 \textbf{Informal}\\
 (1)Para todo nodo, sus hijos no pueden tenerlo como hijo
 (2)Todas las hojas tienen significado
-(3)Para todo elem en claves, elem esta definido en el diccionarioy viceversa
+(3)Para todo elem en claves, elem esta definido en el diccionario y viceversa
 
 \textbf{Formal}\\
 
-\Rep[Arbolito][A]{}
+\Rep[Arbolito][A]{(2) ($\forall$ n: nodo)(EstaEnElDicc(n, A) $\yluego$ EsHoja(n)) $\impluego$ n.significado $\neq$ NULL $\wedge$ (3) ($\forall$ s: string)(esta?(s, A.claves)) $\impluego$ Definido(s, A) $\wedge$ ($\forall$ s: string)(Definido(s, A)) $\impluego$ esta?(s, A.claves)}
+
+\tadOperacion{EsHoja}{nodo}{bool}{}
+
+\tadAxioma{EsHoja(n)}{Vacio?(n.hijos)}
+
+
 
 \subsection{Predicado de abtraccion}
 
@@ -138,7 +144,16 @@ El iterador del diccionario utiliza un iterador a lista porque desde el Trie no 
 
 \subsection{Invariante de representacion}
 
+\textbf{Informal}
+(1) Debe cumplir el invariante de diccstring
+(2)	Debe cumplir el invariante de itLista
+
+\textbf{Formal}
+\Rep[iter I][I]{(1) Rep(*I.arbol) $\wedge$ (2) Rep(I.siguiente)}  
+
 \subsection{Predicado de abtraccion}
+
+\AbsFc[iter]{itString}[I]{ it :Iterador Unidireccional| Siguientes(I) = Siguientes(it)}
 
 \end{Representacion}
 
