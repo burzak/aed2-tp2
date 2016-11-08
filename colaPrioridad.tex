@@ -71,33 +71,6 @@ $\newline$
 [O(1)]
 [Devuelve el jugador apuntado por el iterador]\\
 
-\ttitulo{Funciones Auxiliares, no exportadoas}
-
-\InterfazFuncion{BuscarPadreInsertar}{\Inout {c}{colaPrioridadMin}}{}
-{Conserva la propiedad de heap}
-[O(log(n))]
-[Encuentra el nodo al cual hay que insertarle el próximo hijo]\\
-
-\InterfazFuncion{SiftUp}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{}
-[$\neg EVacia?(Desencolar(c))$]
-{No necesariamente conserva la propiedad de heap}
-[O(1)]
-[Mueve hacia arriba en la cola de prioridad a p si su padre es de menor prioridad]\\
-
-\InterfazFuncion{SiftDown}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{}
-[$\neg EVacia?(Desencolar(c))$]
-{No necesariamente conserva la propiedad de heap}
-[O(1)]
-[Mueve hacia abajo en la cola de prioridad a p si alguno de sus hijos es de mayor prioridad]\\
-
-\InterfazFuncion{Eliminar}{\Inout {it}{iterCola}}{}
-[HayMas?(it) $\wedge$ it $=$ it$_0$]
-{it $=$ Eliminar(it$_0$)}
-[O(1)]
-[Borra el nodo apuntado por el iterador y pone el iterador a NULL]\\
-
-
-
 \begin{Representacion}
 
 \subsection{Justificacion}
@@ -124,20 +97,18 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 
 \textbf{Informal}\\
 (1)Para todo nodo, sus hijos no pueden tenerlo como hijo.\\
-(2)Todas las hojas tienen significado.\\
-(3)La raíz no tiene padre.\\
-(4)Árbol binario perfectamente balanceado e izquierdista.\\
-(5)La clave de cada nodo es menor o igual a la de sus hijos (si los tiene).\\
-(6)Todo subárbol es un heap.\\
+(2)La raíz no tiene padre.\\
+(3)Árbol binario perfectamente balanceado e izquierdista.\\
+(4)La clave de cada nodo es menor o igual a la de sus hijos (si los tiene).\\
+(5)Todo subárbol es un heap.\\
+
+\textbf{Formal}
+\Rep[colaMin C][C]{(2) C.raiz->padre = NULL $\wedge$ (3) ($\forall$ p: nodoHeap($\sigma$)) p.der $\neq$ NULL $\Rightarrow$ p.izq $\neq$ NULL $\wedge$ (4) ($\forall$ p: nodoHeap($\sigma$)) p.clave $>$ p.izq->clave $\wedge$ p.clave $>$ p.der->clave }
+
 
 \subsection{Predicado de abstracción}
 
-%\AbsFc[puntero(nodo)]{dicc(string, $\sigma$)}[p]{ d : dicc(string,$\sigma$) | $(\forall s:string)\Big( \big(Def?(s,d)$ $\Longleftrightarrow (encontrarPalabra(s,p) \neq NULL$ $\yluego$ $encontrarPalabra(s,p)\to significado \neq NULL)\big)$ $\land$ $\big(*(encontrarPalabra(s,p)\to significado) = obtener(s,p)\big)\Big)$}
-
-
-%~  
-% \tadOperacion{encontrarPalabra}{string,puntero(nodo)}{puntero(nodo)}{}
-%  \tadAxioma{encontrarPalabra($s$, $p$)}{\IF $vacia(s)$ $\lor$ $p=NULL$  THEN $p$ ELSE encontrarPalabra($fin(s)$, $p\to caracteres$[$ord(prim(s))$]) FI}
+\AbsFc[colaM]{colaMin}[C]{ cola :Cola($\sigma$)| EsVacia?(C) = vacia(cola) $\yluego$ (Proximo(C) = proximo(cola) $\wedge$ Desencolar(C) = desencolar(cola))}
 
 \subsection{Representación del iterador}
 
@@ -155,10 +126,42 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 
 \subsection{Invariante de representación}
 \ttitulo{Informal} $\newline$
-(1) True.
+(1) True \\
 
+\ttitulo{Formal}
+
+\Rep[iterCola It][It]{true}
+
+\subsection{Predicado de abstraccion}
+
+No es posible hacerlo porque el iterador no puede avanzar, el iterador solo esta hecho para ser usado como un puntero con la ventaja de no revelar la estructura interna. Su finalidad es permitir un borrado rapido ya que no se tiene que buscar el elemento a borrar.
 
 \subsection{Algoritmos}
+
+\ttitulo{Funciones Auxiliares, no exportadoas}
+
+\InterfazFuncion{BuscarPadreInsertar}{\Inout {c}{colaPrioridadMin}}{}
+{Conserva la propiedad de heap}
+[O(log(n))]
+[Encuentra el nodo al cual hay que insertarle el próximo hijo]\\
+
+\InterfazFuncion{SiftUp}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{}
+[$\neg EVacia?(Desencolar(c))$]
+{No necesariamente conserva la propiedad de heap}
+[O(1)]
+[Mueve hacia arriba en la cola de prioridad a p si su padre es de menor prioridad]\\
+
+\InterfazFuncion{SiftDown}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{}
+[$\neg EVacia?(Desencolar(c))$]
+{No necesariamente conserva la propiedad de heap}
+[O(1)]
+[Mueve hacia abajo en la cola de prioridad a p si alguno de sus hijos es de mayor prioridad]\\
+
+\InterfazFuncion{Eliminar}{\Inout {it}{iterCola}}{}
+[HayMas?(it) $\wedge$ it $=$ it$_0$]
+{it $=$ Eliminar(it$_0$)}
+[O(1)]
+[Borra el nodo apuntado por el iterador y pone el iterador a NULL]\\
 
 \begin{Algoritmos}
 

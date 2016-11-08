@@ -82,13 +82,18 @@
 
 \InterfazFuncion{Pokemons}{\In {j}{Jugador}, \In {g}{juego}}{Iter(<Pokemon, Nat>)}
 [j $\in$ jugadores(g)]
-{res $\igobs$ CrearIt(pok\'emons(j, g))}
+{res $\igobs$ CrearIt(deMulticonjAConj(pok\'emons(j, g)))}
 [O(1)]
 [Devuelve un iterador <Pokemon, Nat>]
-[Crea un iterador a la primera posicion del conjunto, el iterador se invalida si se borrar el elemento que le sigue al que este apunta, el iterador no puede borrar ya que se no modificable.]
+[Crea un iterador a la primera posicion del conjunto, el iterador es no modificable por ende si se borra en el conjunto se invalida.]
 \\
 
-\InterfazFuncion{Expulsados}{\In {g}{juego}}{Conj(Jugador)}
+\tadOperacion{deMulticonjAConj}{multiconj(pokemon)}{conj(<pokemon, nat>)}{}
+
+\tadAxioma{deMulticonjAConj(mp)}{\IF $\emptyset$(mp) THEN $\emptyset$ ELSE Ag(<DameUno(mp), $\#$(DameUno(mp), mp)>, deMulticonjAConj(SinUno(mp))) FI}
+
+
+\InterfazFuncion{\\Expulsados}{\In {g}{juego}}{Conj(Jugador)}
 {res $\igobs$ expulsados(g)}
 [O(J)]
 [Conjunto de jugadores expulsados del juego]
@@ -259,7 +264,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 (6)La parte de la tupla jug en InfoJugador corresponde con el índice del vector jugadores por el cual accedo a esa tupla\\
 
-(7)Para todo elemento de la colaDePrioridad de infoCoordenada, para todo nodo de la cola existe un elemento en el dicc Jugadores de la misma estructura. Además para cada elemento en el dicc jugadores de infoCoordenada, para cualquier coordenada, existe un elemento en el vector Jugadores (jugador no expulsado), los jugadores en la cola estan ordenados de forma creciente por la cantidad de pokemons que tienen, es decir que el jugador que esta primero en la cola es el jugador que menos pokemons tiene de toda la cola\\
+(7)Para todo elemento de la colaDePrioridad de infoCoordenada, para todo nodo de la cola existe un elemento en el dicc Jugadores de la misma estructura. Además para cada elemento en el dicc jugadores de infoCoordenada, para cualquier coordenada, existe un elemento en el vector Jugadores (jugador no expulsado), los jugadores en la cola estan ordenados de forma creciente por la cantidad de pokemons que tienen, es decir que el jugador que esta primero en la cola es el jugador que menos pokemons tiene de toda la cola. Esos pokemons se corresponden con la cantTotal de pokemons que tiene dicho jugador en infoJugador.\\
 
 (8)Para toda infoCoordenada el pokemon existe en el diccPokemon del juego y ademas la coordenada por la cual se filtra el arreglo de arreglos mapaInfo esta en coordenadaConPokemons \\
 
