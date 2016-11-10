@@ -103,12 +103,12 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 (5)Todo subárbol es un heap.\\
 
 \textbf{Formal}
-\Rep[colaMin C][C]{C.raiz = NULLL $\vee$ (2) C.raiz->padre = NULL $\wedge$ (3) ($\forall$ p: nodoHeap($\sigma$)) p.der $\neq$ NULL $\Rightarrow$ p.izq $\neq$ NULL $\wedge$ (4) ($\forall$ p: nodoHeap($\sigma$))(((p.izq $\neq$ NuLL) $\impluego$ p.clave $>$ p.izq->clave) $\wedge$ ((p.der $\neq$ NULL) $\impluego$ p.clave $>$ p.der->clave)) $\wedge$ (5) Rep(C.raiz->izq) $\wedge$ Rep(C.raiz->der)}
+\Rep[colaMin C][C]{C.raiz = NULLL $\vee$ ((2) C.raiz->padre = NULL $\wedge$ (3) ($\forall$ p: nodoHeap($\sigma$)) p.der $\neq$ NULL $\Rightarrow$ p.izq $\neq$ NULL $\wedge$ (4) ($\forall$ p: nodoHeap($\sigma$))(((p.izq $\neq$ NuLL) $\impluego$ p.clave $>$ p.izq->clave) $\wedge$ ((p.der $\neq$ NULL) $\impluego$ p.clave $>$ p.der->clave)) $\wedge$ (5) Rep(C.raiz->izq) $\wedge$ Rep(C.raiz->der))}
 
 
 \subsection{Predicado de abstracción}
 
-\AbsFc[colaM]{colaMin}[C]{ cola :Cola($\sigma$)| EsVacia?(C) = vacia(cola) $\yluego$ (Proximo(C) = proximo(cola) $\wedge$ Desencolar(C) = desencolar(cola))}
+\AbsFc[colaM]{colaMin}[C]{ cola :Cola($\sigma$)| EsVacia?(C) = vacia(cola) $\oluego$ (Proximo(C) = proximo(cola) $\wedge$ Desencolar(C) = desencolar(cola))}
 
 \subsection{Representación del iterador}
 

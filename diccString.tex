@@ -111,7 +111,7 @@ En el diccionario sobre Trie lo representamos con Nodo apuntando a nodo donde gu
 
 \textbf{Formal}\\
 
-\Rep[Arbolito][A]{(2) ($\forall$ n: nodo)(EstaEnElDicc(n, A) $\yluego$ EsHoja(n)) $\impluego$ n.significado $\neq$ NULL $\wedge$ (3) ($\forall$ s: string)(esta?(s, A.claves)) $\impluego$ Definido(s, A) $\wedge$ ($\forall$ s: string)(Definido(s, A)) $\impluego$ esta?(s, A.claves)}
+\Rep[Arbolito][A]{(2) ($\forall$ n: nodo)(EstaEnElDicc(n, A) $\Rightarrow$ EsHoja(n)) $\Rightarrow$ n.significado $\neq$ NULL $\wedge$ (3) ($\forall$ s: string)(esta?(s, A.claves)) $\Rightarrow$ Definido(s, A) $\wedge$ ($\forall$ s: string)(Definido(s, A)) $\Rightarrow$ esta?(s, A.claves)}
 
 \tadOperacion{EsHoja}{nodo}{bool}{}
 

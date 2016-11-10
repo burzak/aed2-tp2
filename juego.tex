@@ -207,11 +207,11 @@
 [Crea un iterador no modificable al principio de los pokemons del jugador j]
 [Como es un iterador no modificable puede invalidarse si se borra en la estructura]\\
 
-\InterfazFuncion{Actual}{\In {it}{itPokemon}}{$\sigma$}
+\InterfazFuncion{Actual}{\In {it}{itPokemon}}{<Pokemon, Cantidad>}
 [HayMas?(it)]
 {res $\igobs$ Actual(it)}
 [O(|P|), siendo P la clave mas larga del diccionario]
-[Devuelve una tupla <clave, significado>]\\
+[Devuelve una tupla con un pokemon del jugador y su cantidad]\\
 
 \InterfazFuncion{HayMas?}{\In {it}{itPokemon}}{bool}
 {res $\igobs$ HayMas?(it)}
@@ -224,7 +224,7 @@
 [O(1)]
 [Avanza el iterador a la siguiente clave del diccionario]\\
 
-\InterfazFuncion{Siguientes}{\In {it}{itPokemon}}{lista(string)}
+\InterfazFuncion{Siguientes}{\In {it}{itPokemon}}{lista($\sigma$)}
 {res $\igobs$ Siguientes(it)}
 [O(n), siendo n la cantidad de claves del diccionario]
 [Devuelve una lista con las claves que aun no se recorrierron]\\
@@ -376,7 +376,7 @@ $\pi_2(T_1) <  \pi_2(T_2)$.
 
 \subsection{Invariante de representacion}
 
-\ttitulo{Formal}
+\ttitulo{Formal}\\
 true
 
 \ttitulo{Informal}
