@@ -103,7 +103,7 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 (5)Todo subárbol es un heap.\\
 
 \textbf{Formal}
-\Rep[colaMin C][C]{(2) C.raiz->padre = NULL $\wedge$ (3) ($\forall$ p: nodoHeap($\sigma$)) p.der $\neq$ NULL $\Rightarrow$ p.izq $\neq$ NULL $\wedge$ (4) ($\forall$ p: nodoHeap($\sigma$)) p.clave $>$ p.izq->clave $\wedge$ p.clave $>$ p.der->clave }
+\Rep[colaMin C][C]{(2) C.raiz->padre = NULL $\wedge$ (3) ($\forall$ p: nodoHeap($\sigma$)) p.der $\neq$ NULL $\Rightarrow$ p.izq $\neq$ NULL $\wedge$ (4) ($\forall$ p: nodoHeap($\sigma$)) p.clave $>$ p.izq->clave $\wedge$ p.clave $>$ p.der->clave}
 
 
 \subsection{Predicado de abstracción}
@@ -134,7 +134,7 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 
 \subsection{Predicado de abstraccion}
 
-No es posible hacerlo porque el iterador no puede avanzar, el iterador solo esta hecho para ser usado como un puntero con la ventaja de no revelar la estructura interna. Su finalidad es permitir un borrado rapido ya que no se tiene que buscar el elemento a borrar.
+\AbsFc[iter]{iterCola}[I]{ it :iterador Unidireccional| Actual(I) $\bullet$ <> = Siguientes(it)}
 
 \subsection{Algoritmos}
 

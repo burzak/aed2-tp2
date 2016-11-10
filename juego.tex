@@ -2,7 +2,7 @@
 
 \subsection{Interfaz}
 
-\parbox {1,7cm}{{\bf Género}} juego, itJugadores \\
+\parbox {1,7cm}{{\bf Género}} juego, itJugadores, itPokemon \\
 {\bf se explica con:}  \tadNombre{Mapa}, \tadNombre{Conjunto ($\sigma$)} , \tadNombre{Secuencia($\sigma$)}, \tadNombre{Bool}, \tadNombre{Pokemon}, \tadNombre{Jugador}, \tadNombre{Nat}\\
 \medskip
 
@@ -80,7 +80,7 @@
 [Posici\'on actual del jugador cuando se encuentra conectado]
 \\
 
-\InterfazFuncion{Pokemons}{\In {j}{Jugador}, \In {g}{juego}}{Iter(<Pokemon, Nat>)}
+\InterfazFuncion{Pokemons}{\In {j}{Jugador}, \In {g}{juego}}{ItPokemon}
 [j $\in$ jugadores(g)]
 {res $\igobs$ CrearIt(deMulticonjAConj(pok\'emons(j, g)))}
 [O(1)]
@@ -167,9 +167,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\ttitulo{Operaciones del iterador}\\
+\ttitulo{Operaciones del iterador Jugador}\\
 
-\InterfazFuncion{CrearIt}{\In {g}{game}}{itJugador}
+\InterfazFuncion{CrearIt}{\In {g}{Juego}}{itJugador}
 {res = CrearItUni(v)}
 [O(1)]
 [Crea un iterador unidireccional no modificable al principio del vector, no necesariamente es un elemento válido por ende no se puede usar Actual sin Avanzar]
@@ -197,6 +197,37 @@
 {res $\igobs$ Siguientes(it)}
 [O(n), siendo n la cantidad de elementos del vector]
 [Devuelve los elementos del vector posteriores al iterador, puede no haber ninguno]\\
+
+\ttitulo{Operaciones del iterador Pokemons}
+
+\InterfazFuncion{CrearIt}{\In {g}{Juego}, \In {j}{jugador}}{itPokemon}
+[j $\in$ jugadores(g)]
+{res $\igobs$ CrearItUni(g)}
+[O(1)]
+[Crea un iterador no modificable al principio de los pokemons del jugador j]
+[Como es un iterador no modificable puede invalidarse si se borra en la estructura]\\
+
+\InterfazFuncion{Actual}{\In {it}{itPokemon}}{<string, nat>}
+[HayMas?(it)]
+{res $\igobs$ Actual(it)}
+[O(|P|), siendo P la clave mas larga del diccionario]
+[Devuelve una tupla <clave, significado>]\\
+
+\InterfazFuncion{HayMas?}{\In {it}{itPokemon}}{bool}
+{res $\igobs$ HayMas?(it)}
+[O(1)]
+[Chequea si hay mas elementos para recorrer]\\
+
+\InterfazFuncion{Avanzar}{\Inout {it}{itPokemon}}{}
+[it $\igobs$ it$_0$ $\wedge$ HayMas?(it)]
+{res $\igobs$ Avanzar(it)}
+[O(1)]
+[Avanza el iterador a la siguiente clave del diccionario]\\
+
+\InterfazFuncion{Siguientes}{\In {it}{itPokemon}}{lista(string)}
+{res $\igobs$ Siguientes(it)}
+[O(n), siendo n la cantidad de claves del diccionario]
+[Devuelve una lista con las claves que aun no se recorrierron]\\
 
 \begin{Representacion}
 \ttitulo{ del modulo}
@@ -264,7 +295,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 (6)La parte de la tupla jug en InfoJugador corresponde con el índice del vector jugadores por el cual accedo a esa tupla\\
 
-(7)Para todo elemento de la colaDePrioridad de infoCoordenada, para todo nodo de la cola existe un elemento en el dicc Jugadores de la misma estructura. Además para cada elemento en el dicc jugadores de infoCoordenada, para cualquier coordenada, existe un elemento en el vector Jugadores (jugador no expulsado), los jugadores en la cola estan ordenados de forma creciente por la cantidad de pokemons que tienen, es decir que el jugador que esta primero en la cola es el jugador que menos pokemons tiene de toda la cola. Esos pokemons se corresponden con la cantTotal de pokemons que tiene dicho jugador en infoJugador.\\
+(7)Para todo elemento de la colaDePrioridad de infoCoordenada, para todo nodo de la cola existe un elemento en el dicc Jugadores de la misma estructura o alguna otra coordenada dentro del radio de captura. Además para cada elemento en el dicc jugadores de infoCoordenada, para cualquier coordenada, existe un elemento en el vector Jugadores (jugador no expulsado), los jugadores en la cola estan ordenados de forma creciente por la cantidad de pokemons que tienen, es decir que el jugador que esta primero en la cola es el jugador que menos pokemons tiene de toda la cola. Esos pokemons se corresponden con la cantTotal de pokemons que tiene dicho jugador en infoJugador.\\
 
 (8)Para toda infoCoordenada el pokemon existe en el diccPokemon del juego y ademas la coordenada por la cual se filtra el arreglo de arreglos mapaInfo esta en coordenadaConPokemons \\
 
@@ -272,7 +303,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \textbf{Formal}
 
-\Rep[Game $\quad$ G][G]{(1)(($\forall$ j: Jugador)(0 $\leq$ j $\leq$ Longitud(G.jugadores)) $\impluego$ ($\forall$ p: Pokemons)(Definido?(p, Siguiente(G.jugadores[j].pokemons))) $\impluego$ Definido?(p, G.pokemons) $\yluego$ Significado(p, Siguiente(G.jugadores[j].pokemons)) $\leq$ Significado(p, G.pokemons).cantTotal )$\wedge$ (2) (SumarDicc(claves(G.pokemons), G.pokemons) $=$ G.cantidadTotPokemons) $\wedge$  (3) (($\forall$ i, j :nat)(Definido?(G.mapaInfo, [i, j])) $\impluego$ ($\exists$ c :Coordenada)(c $\in$ Coordenadas(G.mapa)) $\impluego$ i $=$ Latitud(c) $\wedge$ j $=$ Longitud(c)) $\wedge$ (4) ($\#$(G.coordenadaConPokemons) = (pokemonsSalvajes(claves(G.pokemons), G.pokemons))) $\wedge$ (5) (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ PosExistente(G.jugadores[i].pos, G.mapa) $\wedge$ Definido?(G.mapaInfo, G.jugadores[i].pos)) $\wedge$ (6)  (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ i = G.jugadores[i].jug) $\wedge$ (7) $\wedge$ (8) (($\forall$ c: Coordenada)(Definido?(c, G.mapaInfo)) $\impluego$ G.mapaInfo[c].hayPokemon $\impluego$ Definido(G.mapaInfo[c].pokemon, G.pokemons) $\wedge$ c $\in$ G.coordenadasConPokemons) $\wedge$ (9) (($\forall$ j: jugador)(0 $\leq$ j $<$ Longitud(G.jugadores) $\yluego$ G.jugadores[j].expulsado = false)  $\impluego$ SumaPokemon(claves(Siguiente(G.jugadores[j].pokemons)), Siguiente(G.jugadores[j].pokemons)) = G.jugadores[j].cantTotalPoke)} 
+\Rep[Game $\quad$ G][G]{(1)(($\forall$ j: Jugador)(0 $\leq$ j $\leq$ Longitud(G.jugadores)) $\impluego$ ($\forall$ p: Pokemons)(Definido?(p, Siguiente(G.jugadores[j].pokemons))) $\impluego$ Definido?(p, G.pokemons) $\yluego$ Significado(p, Siguiente(G.jugadores[j].pokemons)) $\leq$ Significado(p, G.pokemons).cantTotal )$\wedge$ (2) (SumarDicc(claves(G.pokemons), G.pokemons) $=$ G.cantidadTotPokemons) $\wedge$  (3) (($\forall$ i, j :nat)(Definido?(G.mapaInfo, [i, j])) $\impluego$ ($\exists$ c :Coordenada)(c $\in$ Coordenadas(G.mapa)) $\impluego$ i $=$ Latitud(c) $\wedge$ j $=$ Longitud(c)) $\wedge$ (4) ($\#$(G.coordenadaConPokemons) = (pokemonsSalvajes(claves(G.pokemons), G.pokemons))) $\wedge$ (5) (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ PosExistente(G.jugadores[i].pos, G.mapa) $\wedge$ Definido?(G.mapaInfo, G.jugadores[i].pos)) $\wedge$ (6)  (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ i = G.jugadores[i].jug) $\wedge$ (7) ($\forall$ c: Coordenada)(c $\in$ G.coordenadasConPokemons) $\impluego$ ($\forall$ x: G.mapaInfo[c].jugEspe)($\exists$ j:jugadores)(0 $\neq$ j < Longitud(G.jugadores) $\yluego$ distEuclidea(c, G.jugadores[j].pos) < 25 $\wedge$ hayCamino(c, G.jugadores[j].pos)) $\impluego$ x = <G.jugadores[j].cantTotalPoke, j> $\wedge$ (8) (($\forall$ c: Coordenada)(Definido?(c, G.mapaInfo)) $\impluego$ G.mapaInfo[c].hayPokemon $\impluego$ Definido(G.mapaInfo[c].pokemon, G.pokemons) $\wedge$ c $\in$ G.coordenadasConPokemons) $\wedge$ (9) (($\forall$ j: jugador)(0 $\leq$ j $<$ Longitud(G.jugadores) $\yluego$ G.jugadores[j].expulsado = false)  $\impluego$ SumaPokemon(claves(Siguiente(G.jugadores[j].pokemons)), Siguiente(G.jugadores[j].pokemons)) = G.jugadores[j].cantTotalPoke)} 
 
 \tadOperacion{pokemonsSalvajes}{conj(pokemons) cp, dicc(pokemons, <nat, nat> d)}{nat}{($\forall$ p: Pokemon) (p $\in$ cp) $\impluego$ (Definido?(x, d))}
 
@@ -299,7 +330,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 
 \tadAxioma{agregarATodos(n, p)}{\IF 0?(n) THEN $\emptyset$ ELSE Ag(p, agregarATodos(n-1, p)) FI}
 
-\ttitulo{Representacion del iterador}
+\ttitulo{Representacion del iterador jugador}
 
 \subsection{Justificacion}
 	El objetivo del iterador era poder devolver un iterador a la lista de jugadores en O(1) pudiendo siguiente no ser O(1). Creamos el iterados ya que en la lista de jugadores guardamos los jugadores que est\'an jugando como los expulsados y con el iterador recorremos los jugadores no expulsado. Guardamos la ultima posici\'on donde estamos paradon con posicion y el puntero al Vector real de los jugadores
@@ -313,15 +344,37 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 \subsection{Invariante de representacion}
 
 \textbf{Informal}\\
-(1)Tiene que cumplir el invariante de vector
-(2)Posicion existe como indice del vector
+(1)Posicion existe como indice del vector
 
 \textbf{Formal}\\
-\Rep[iter I][I]{(1) Rep(*I.vector) $\wedge$ (2) 0 $\leq$ I.posicion $<$ Longitud(*I.vector)}
+\Rep[iter I][I]{(1) 0 $\leq$ I.posicion $<$ Longitud(*I.vector)}
 
 \subsection{Predicado de abstraccion}
 
 \AbsFc[iter]{itJugador}[I]{ it :Iterador Unidireccional| Siguientes(I) = Siguientes(it)}
+
+\ttitulo{Representacion del iterador pokemon}
+
+\subsection{Justificacion}
+	La idea del iterador es ocultar (encapsular) al iterador del DiccString
+	
+		\begin{Estructura}{itPokemon}[iter]
+			\begin{Tupla}[iter]
+			\tupItem{iterador}{itString}
+			\end{Tupla}
+		\end{Estructura}
+
+\subsection{Invariante de representacion}
+
+\ttitulo{Formal}
+true
+
+\ttitulo{Informal}
+\Rep[iter I][I]{true}
+
+\subsection{Predicado de abstraccion}
+
+\AbsFc[iter]{itPokemon}[I]{ it :Iterador Unidireccional| Siguientes(I) = Siguientes(it)}
 
 \end{Representacion}
 
@@ -822,7 +875,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 % Iterador
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\ttitulo {Algoritmos del iterador}
+\ttitulo {Algoritmos del iterador jugadores}
 
 \begin{algorithm}[H]{\textbf{iCrearIt}(\In {g}{game}) $\to$ res: iter))}
 	\begin{algorithmic}[1]
@@ -892,6 +945,55 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 		\medskip
 		\Statex \underline{Complejidad:} O(longitud(v))
 		\Statex \underline{Justificacion:}Para devolver una lista con los elementos que quedan por recorrer, recorro todo el vector viendo que elementos son válidos y si un elemento es válido lo agrego a una lista.
+	\end{algorithmic}
+\end{algorithm}
+
+\ttitulo {Algoritmos del iterador pokemons}
+
+\begin{algorithm}[H]{\textbf{iCrearIt}(\In {g}{game}, \In {j}{jugador}) $\to$ res:iter}
+	\begin{algorithmic}[1]
+		\State $res \gets$ CrearIt(Siguiente(g.jugadores[j].pokemons)) \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Crea un iterador al diccionario que contiene los pokemons del jugadro pasado por parametros
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iHayMas?}(\In {it}{itPokemon}) $\to$ res:bool}
+	\begin{algorithmic}[1]
+		\State $res \gets$ HayMas?(it.iterador)\Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Chequea si quedan elementos por recorrer
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{iActual}(\In {it}{itPokemon}) $\to$ res:<string, nat>}
+	\begin{algorithmic}[1]
+		\State $res \gets$ Actual(it.iterador) \Comment O(|P|)
+		\medskip
+		\Statex \underline{Complejidad:} O(|P|)
+			\Statex \underline{Justificacion:}Devuelve la clave y el significado en una tupla. Para el obtener el significado, busca en el arbol a travez de la clave
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iAvanzar}(\Inout {it}{itPokemon})}
+	\begin{algorithmic}[1]
+		\State Avanzar(it.iterador) \Comment O(1)
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Avanza al siguiente elemento a recorrer
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{iSiguientes}(\In {it}{itPokemon}) $\to$ res:lista(string)}
+	\begin{algorithmic}[1]
+		\State res $\gets$ Siguientes(it.iterador) \Comment O($\#$(elementosDeClaves))
+		\medskip
+		\Statex \underline{Complejidad:} O($\#$(elementosDeClaves))
+			\Statex \underline{Justificacion:}Devuelve los elementos que quedan por recorrer, O(2*$\#$(elementosDeClaves)) = O($\#$(elementosDeClaves))
 	\end{algorithmic}
 \end{algorithm}
 

@@ -63,7 +63,7 @@ ancho y alto representan el tama\~no del mapa, para calcularlo buscamos la coord
 (2)relacionCoordenadas tiene como dimension el ancho*alto de alto y tambien de largo, ademas para toda celda de esta matriz se tiene la relacion de camino entre 2 coordenadas, dichas coordenadas tienen que existir en coordenadas del mapa 
 
 \textbf{Formal}\\
-\Rep[infoMapa $\quad$ M][M]{(1)($\exists$ $c_1$ :Coordenada)($c_1$ $\in$ M.coordenadas) $\impluego$ latitud($c_1$) = M.alto $\wedge$ ($\exists$ $c_2$ :Coordenada)($c_2$ $\in$ M.coordenadas) $\impluego$ longitud($c_2$) = M.ancho $\wedge$ (2) Tam(M.relacionCoordenadas) = M.ancho*M.alto $\wedge$ ($\forall$ i, j: nat)(Definido?(M.relacionCoordenadas, [i, j])) $\impluego$ <i, j> $\in$ M.coordenadas}
+\Rep[infoMapa $\quad$ M][M]{(1)($\exists$ $c_1$ :Coordenada)($c_1$ $\in$ M.coordenadas) $\impluego$ latitud($c_1$) = M.alto $\wedge$ ($\exists$ $c_2$ :Coordenada)($c_2$ $\in$ M.coordenadas) $\impluego$ longitud($c_2$) = M.ancho $\wedge$ (2) ($forall$ i, j: nat)(Definido?(M.coordenadas, [i, j]))$\impluego$ ($forall$ k, l: nat)(k <i $\wedge$ l <j)$\impluego$ Definido?(M.coordenadas, [k, l]) $\wedge$ ($\forall$ i, j: nat)(Definido?(M.relacionCoordenadas, [i, j])) $\impluego$ <i, j> $\in$ M.coordenadas}
 
 
 \subsubsection{Predicado de abtraccion}
