@@ -207,7 +207,7 @@
 [Crea un iterador no modificable al principio de los pokemons del jugador j]
 [Como es un iterador no modificable puede invalidarse si se borra en la estructura]\\
 
-\InterfazFuncion{Actual}{\In {it}{itPokemon}}{<string, nat>}
+\InterfazFuncion{Actual}{\In {it}{itPokemon}}{$\sigma$}
 [HayMas?(it)]
 {res $\igobs$ Actual(it)}
 [O(|P|), siendo P la clave mas larga del diccionario]
@@ -272,7 +272,7 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 	
 	\begin{Tupla}[InfoCoordenada]
 		\tupItem{pokemon}{Pokemon}
-		\tupItem{\\jugEspe}{ColaDePrioridad(T)}
+		\tupItem{\\jugEspe}{ColaDePrioridad(T, menorT)}
 		\tupItem{\\hayPokemon}{Bool}
 		\tupItem{\\yaSeCapturo}{Bool}
 		\tupItem{\\jugadores}{Dicc(jugador: nat, EsperandoCapturar: itColaDePrioridad(T, menorT))}
@@ -313,17 +313,17 @@ $\pi_2(T_1) <  \pi_2(T_2)$.
 
 \textbf{Formal}
 
-\Rep[Game $\quad$ G][G]{(1)(($\forall$ j: Jugador)(0 $\leq$ j $\leq$ Longitud(G.jugadores)) $\impluego$ ($\forall$ p: Pokemons)(Definido?(p, Siguiente(G.jugadores[j].pokemons))) $\impluego$ Definido?(p, G.pokemons) $\yluego$ Significado(p, Siguiente(G.jugadores[j].pokemons)) $\leq$ Significado(p, G.pokemons).cantTotal )$\wedge$ (2) (SumarDicc(claves(G.pokemons), G.pokemons) $=$ G.cantidadTotPokemons) $\wedge$  (3) (($\forall$ i, j :nat)(Definido?(G.mapaInfo, [i, j])) $\impluego$ ($\exists$ c :Coordenada)(c $\in$ Coordenadas(G.mapa)) $\impluego$ i $=$ Latitud(c) $\wedge$ j $=$ Longitud(c)) $\wedge$ (4) ($\#$(G.coordenadaConPokemons) = (pokemonsSalvajes(claves(G.pokemons), G.pokemons))) $\wedge$ (5) (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ PosExistente(G.jugadores[i].pos, G.mapa) $\wedge$ Definido?(G.mapaInfo, G.jugadores[i].pos)) $\wedge$ (6)  (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ i = G.jugadores[i].jug) $\wedge$ (7) ($\forall$ c: Coordenada)(c $\in$ G.coordenadasConPokemons) $\impluego$ ($\forall$ x: G.mapaInfo[c].jugEspe)($\exists$ j:jugadores)(0 $\neq$ j < Longitud(G.jugadores) $\yluego$ distEuclidea(c, G.jugadores[j].pos) < 25 $\wedge$ hayCamino(c, G.jugadores[j].pos)) $\impluego$ x = <G.jugadores[j].cantTotalPoke, j> $\wedge$ (8) (($\forall$ c: Coordenada)(Definido?(c, G.mapaInfo)) $\impluego$ G.mapaInfo[c].hayPokemon $\impluego$ Definido(G.mapaInfo[c].pokemon, G.pokemons) $\wedge$ c $\in$ G.coordenadasConPokemons) $\wedge$ (9) (($\forall$ j: jugador)(0 $\leq$ j $<$ Longitud(G.jugadores) $\yluego$ G.jugadores[j].expulsado = false)  $\impluego$ SumaPokemon(claves(Siguiente(G.jugadores[j].pokemons)), Siguiente(G.jugadores[j].pokemons)) = G.jugadores[j].cantTotalPoke)} 
+\Rep[Game $\quad$ G][G]{(1)(($\forall$ j: Jugador)(0 $\leq$ j $\leq$ Longitud(G.jugadores)) $\impluego$ ($\forall$ p: Pokemons)(Definido?(p, Siguiente(G.jugadores[j].pokemons))) $\Rightarrow$ Definido?(p, G.pokemons) $\yluego$ Significado(p, Siguiente(G.jugadores[j].pokemons)) $\leq$ Significado(p, G.pokemons).cantTotal )$\wedge$ (2) (SumarDicc(claves(G.pokemons), G.pokemons) $=$ G.cantidadTotPokemons) $\wedge$  (3) (($\forall$ i, j :nat)(Definido?(G.mapaInfo, [i, j])) $\Rightarrow$ ($\exists$ c :Coordenada)(c $\in$ Coordenadas(G.mapa)) $\Rightarrow$ i $=$ Latitud(c) $\wedge$ j $=$ Longitud(c)) $\wedge$ (4) ($\#$(G.coordenadaConPokemons) = (pokemonsSalvajes(claves(G.pokemons), G.pokemons))) $\wedge$ (5) (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ PosExistente(G.jugadores[i].pos, G.mapa) $\wedge$ Definido?(G.mapaInfo, G.jugadores[i].pos)) $\wedge$ (6)  (($\forall$ i :Jugador)(0 $\leq$ j $<$ Longitud(G.jugadores)) $\impluego$ i = G.jugadores[i].jug) $\wedge$ (7) ($\forall$ c: Coordenada)(c $\in$ G.coordenadasConPokemons) $\impluego$ ($\forall$ x: G.mapaInfo[c].jugEspe)($\exists$ j:jugadores)(0 $\neq$ j < Longitud(G.jugadores) $\yluego$ distEuclidea(c, G.jugadores[j].pos) < 25 $\wedge$ hayCamino(c, G.jugadores[j].pos)) $\impluego$ x = <G.jugadores[j].cantTotalPoke, j> $\wedge$ (8) (($\forall$ c: Coordenada)(Definido?(c, G.mapaInfo)) $\impluego$ G.mapaInfo[c].hayPokemon $\impluego$ Definido(G.mapaInfo[c].pokemon, G.pokemons) $\wedge$ c $\in$ G.coordenadasConPokemons) $\wedge$ (9) (($\forall$ j: jugador)(0 $\leq$ j $<$ Longitud(G.jugadores) $\yluego$ G.jugadores[j].expulsado = false)  $\impluego$ SumaPokemon(claves(Siguiente(G.jugadores[j].pokemons)), Siguiente(G.jugadores[j].pokemons)) = G.jugadores[j].cantTotalPoke)} 
 
-\tadOperacion{pokemonsSalvajes}{conj(pokemons) cp, dicc(pokemons, <nat, nat> d)}{nat}{($\forall$ p: Pokemon) (p $\in$ cp) $\impluego$ (Definido?(x, d))}
+\tadOperacion{pokemonsSalvajes}{conj(pokemons) cp, dicc(pokemons, <nat, nat> d)}{nat}{($\forall$ p: Pokemon) (p $\in$ cp) $\Rightarrow$ (Definido?(x, d))}
 
 \tadAxioma{pokemonsSalvajes(cp, d)}{\IF $\emptyset$(cp) THEN 0 ELSE $\pi_1$(Significado(DameUno(cp), d)) + pokemonsSalvajes(SinUno(cp), d) FI}
 
-\tadOperacion{SumarDicc}{Conj(string)/cs, Dicc(stirng, $<$nat, nat$>$)/d}{nat}{($\forall$ s: Sting)(s $\in$ cs) $\impluego$ (Definido?(x, d))}
+\tadOperacion{SumarDicc}{Conj(string)/cs, Dicc(stirng, $<$nat, nat$>$)/d}{nat}{($\forall$ s: Sting)(s $\in$ cs) $\Rightarrow$ (Definido?(x, d))}
 
 \tadAxioma{SumarDicc(cs, d)}{\IF $\emptyset$(cs) THEN 0 ELSE $\pi_2$(Significado(DameUno(cs), d)) + SumarDicc(SinUno(cs), d) FI}
 
-\tadOperacion{SumarPokemon}{Conj(string)/cs, Dicc(stirng, nat)/d}{nat}{($\forall$ s: Sting)(s $\in$ cs) $\impluego$ (Definido?(x, d))}
+\tadOperacion{SumarPokemon}{Conj(string)/cs, Dicc(stirng, nat)/d}{nat}{($\forall$ s: Sting)(s $\in$ cs) $\Rightarrow$ (Definido?(x, d))}
 
 \tadAxioma{SumarPokemon(cs, d)}{\IF $\emptyset$(cs) THEN 0 ELSE Significado(DameUno(cs), d) + SumarPokemon(SinUno(cs), d) FI}
 
@@ -332,7 +332,7 @@ $\pi_2(T_1) <  \pi_2(T_2)$.
 
 \AbsFc[Game]{juego}[g]{ j :Juego| (g.mapa = mapa(j)) $\wedge$ (g.jugadores = jugadores(j)$\cup$expulsados(j) $\yluego$ ($\forall$ x :Jugador)(x $\in$ j.jugadores) $\impluego$ estaConectado(x, j) = g.jugadores[x].conectado $\wedge$ sanciones(x, j) = g.jugadores[x].sanciones $\wedge$ posicion(x, j) = g.jugadores[x].pos $\wedge$ deDiccAMulti(claves(Siguiente(g.jugadores[x].pokemons)), Siguiente(g.jugadores[x].pokemons)) = pokemons(x, j)) $\wedge$ (g.coordenadasConPokemons = j.posConPokemon $\yluego$ ($\forall$ c: coordenada)(c $in$ j.posConPokemons) $\impluego$ g.mapaInfo[c].pokemon = pokemonEnPos(c, j) $\wedge$ g.mapaInfo[c].MovimientosRestantes = cantMovimientosParaCapturar(c, j))}
 
-\tadOperacion{deDiccAMulti}{conj(pokemon)/cp, dicc(pokemon, cantidad) d}{multiconj(pokemon)}{($\forall$ p: Pokemon) (p $\in$ cp) $\impluego$ (Definido?(x, d))}
+\tadOperacion{deDiccAMulti}{conj(pokemon)/cp, dicc(pokemon, cantidad) d}{multiconj(pokemon)}{($\forall$ p: Pokemon) (p $\in$ cp) $\Rightarrow$ (Definido?(x, d))}
 
 \tadAxioma{deDiccAMulti(cp, d)}{\IF $\emptyset$(cp) THEN $\emptyset$ ELSE agregarATodos(Significado(DameUno(cp), d), DameUno(cp)) $\cup$ deDiccAMulti(SinUno(cp), d) FI}
 

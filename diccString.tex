@@ -145,11 +145,10 @@ El iterador del diccionario utiliza un iterador a lista porque desde el Trie no 
 \subsection{Invariante de representacion}
 
 \textbf{Informal}
-(1) Debe cumplir el invariante de diccstring
-(2)	Debe cumplir el invariante de itLista
+(1) El iterador debe corresponderse con la lista de claves del Dicc
 
 \textbf{Formal}
-\Rep[iter I][I]{(1) Rep(*I.arbol) $\wedge$ (2) Rep(I.siguiente)}  
+\Rep[iter I][I]{(1) I.siguiente = CrearIt(*(I.arbol).claves)}  
 
 \subsection{Predicado de abtraccion}
 

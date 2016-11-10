@@ -103,7 +103,7 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 (5)Todo subárbol es un heap.\\
 
 \textbf{Formal}
-\Rep[colaMin C][C]{(2) C.raiz->padre = NULL $\wedge$ (3) ($\forall$ p: nodoHeap($\sigma$)) p.der $\neq$ NULL $\Rightarrow$ p.izq $\neq$ NULL $\wedge$ (4) ($\forall$ p: nodoHeap($\sigma$)) p.clave $>$ p.izq->clave $\wedge$ p.clave $>$ p.der->clave}
+\Rep[colaMin C][C]{C.raiz = NULLL $\vee$ (2) C.raiz->padre = NULL $\wedge$ (3) ($\forall$ p: nodoHeap($\sigma$)) p.der $\neq$ NULL $\Rightarrow$ p.izq $\neq$ NULL $\wedge$ (4) ($\forall$ p: nodoHeap($\sigma$))(((p.izq $\neq$ NuLL) $\impluego$ p.clave $>$ p.izq->clave) $\wedge$ ((p.der $\neq$ NULL) $\impluego$ p.clave $>$ p.der->clave)) $\wedge$ (5) Rep(C.raiz->izq) $\wedge$ Rep(C.raiz->der)}
 
 
 \subsection{Predicado de abstracción}
