@@ -265,19 +265,29 @@ InfoJugador representa la informaci\'on de cada jugador. Aqu\'i guardamos al jug
 		\tupItem{\\sanciones}{Nat}
 		\tupItem{\\pos}{Coordenada}
 		\tupItem{\\pokemons}{itLista(Dicc(pokemon: string, cant: nat))}
-		\tupItem{\\posicionMapa}{itDicc(jugador: Nat, EsperandoCapturar: itColaDePrioridad(cantPokemon)))}
+		\tupItem{\\posicionMapa}{itDicc(jugador: Nat, EsperandoCapturar: itColaDePrioridad(T, menorT)))}
 		\tupItem{\\cantTotalPoke}{Nat}
 	\end{Tupla}
 	
 	
 	\begin{Tupla}[InfoCoordenada]
 		\tupItem{pokemon}{Pokemon}
-		\tupItem{\\jugEspe}{ColaDePrioridad($\sigma$)}
+		\tupItem{\\jugEspe}{ColaDePrioridad(T)}
 		\tupItem{\\hayPokemon}{Bool}
 		\tupItem{\\yaSeCapturo}{Bool}
-		\tupItem{\\jugadores}{Dicc(jugador: nat, EsperandoCapturar: itColaDePrioridad(cantPokemon))}
+		\tupItem{\\jugadores}{Dicc(jugador: nat, EsperandoCapturar: itColaDePrioridad(T, menorT))}
 		\tupItem{\\MovimientosRestantes}{Nat}
 	\end{Tupla}
+
+	\begin{Tupla}[T]
+		\tupItem{pokemon}{Pokemon}
+		\tupItem{\\cantidadPokemonesCapturados}{Nat}
+	\end{Tupla}
+
+\vskip 0.5cm
+Donde \textbf{menorT} es una funci\'on:\\
+$menorT(T_1, T_2) \rightarrow Bool$\\
+$\pi_2(T_1) <  \pi_2(T_2)$.
 
 \subsubsection{Invariante de representación}
 
