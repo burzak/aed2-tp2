@@ -82,7 +82,7 @@ Implementamos la cola de prioridad sobre minHeap para poder tener acceso en O(1)
 		
 		\begin{Tupla}[colaMin]
 			\tupItem{raiz}{puntero(nodoHeap($\sigma$))}
-			\tupItem{padreAgregar}{puntero(nodoHeap($\sigma$)))}		
+			\tupItem{ultimoAgregdo}{puntero(nodoHeap($\sigma$)))}		
 		\end{Tupla}
 		
 		\begin{Tupla}[nodoHeap]
@@ -138,7 +138,7 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 
 \subsection{Algoritmos}
 
-\ttitulo{Funciones Auxiliares, no exportadoas}
+\ttitulo{Funciones Auxiliares, no exportadas}
 
 \InterfazFuncion{BuscarPadreInsertar}{\Inout {c}{colaPrioridadMin}}{}
 {Conserva la propiedad de heap}
@@ -157,11 +157,37 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 [O(1)]
 [Mueve hacia abajo en la cola de prioridad a p si alguno de sus hijos es de mayor prioridad]\\
 
+\InterfazFuncion{Swap}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}, \In {q}{puntero}}{}
+[$\neg EVacia?(Desencolar(c))$]
+{No necesariamente conserva la propiedad de heap}
+[O(1)]
+[Toma dos nodos del heap e intercambia sus posiciones.]\\
+
+\InterfazFuncion{TieneQueSubir?}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{bool}
+[$\neg EVacia?(Desencolar(c))$]
+{No necesariamente conserva la propiedad de heap}
+[O(1)]
+[Verifica si hay que hacer siftUp para reestablecer la propiedad del heap]\\
+
+\InterfazFuncion{TieneQueBajar?}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{bool}
+[$\neg EVacia?(Desencolar(c))$]
+{No necesariamente conserva la propiedad de heap}
+[O(1)]
+[Verifica si hay que hacer siftDown para reestablecer la propiedad del heap]\\
+
+\InterfazFuncion{Borrar}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{}
+[$\neg EVacia?(c)$]
+{No necesariamente conserva la propiedad de heap}
+[O(1)]
+[Elimina un nodo del árbol]\\
+
 \InterfazFuncion{Eliminar}{\Inout {it}{iterCola}}{}
 [HayMas?(it) $\wedge$ it $=$ it$_0$]
 {it $=$ Eliminar(it$_0$)}
 [O(1)]
 [Borra el nodo apuntado por el iterador y pone el iterador a NULL]\\
+
+
 
 \begin{Algoritmos}
 
@@ -190,31 +216,28 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 \begin{algorithm}[H]{\textbf{iEncolar}(\Inout {c}{colaMin}, \In {k}{$\kappa$}, \In {s}{$\beta$}) $\to$ res: iterColaMin}
 	\begin{algorithmic}[1]
 
-		% Insertamos el elemento
-		\State BuscarPadreAgregar(c) \Comment O(log(n))
-		\,
-		\ puntero(nodoHeap($\sigma$)) nuevo $\leftarrow$ c.padreAgregar$\rightarrow$izq\Comment O(1)
-		\,
-		\State nuevo$\rightarrow$izq $\leftarrow$ NULL\Comment O(1)
-		\State nuevo$\rightarrow$der $\leftarrow$ NULL\Comment O(1)
-		\State nuevo.clave $\leftarrow$ k\Comment O(1)
-		\State nuevo.significado $\leftarrow$ s\Comment O(1)
-		\State nuevo$\rightarrow$padre $\leftarrow$ c.padreAgregar\Comment O(1)
-		\,	
-		\If{c.padreAgregar$\rightarrow$izq = NULL}\Comment O(1)
-			\State c.padreAgregar$\rightarrow$izq $\leftarrow$ nuevo\Comment O(1)
-		\,
-		\Else
-			\State c.padreAgregar$\rightarrow$der $\leftarrow$ nuevo\Comment O(1)
+		\State puntero(nodoHeap($\sigma$)) insertado
+		
+		\If{c.raiz = NULL}
+			\State c.raiz$\gets$ insertado
+			\State c.ultimo $\gets$ insertado
 		\EndIf
-		\,
-		% Sift up
-				
-		\While{nuevo.clave < nuevo$\rightarrow$padre.clave}\Comment O(log(n))
-			\State siftUp(c, nuevo)\Comment O(1)
-		\EndWhile			
-		\,		
-		\State res$\rightarrow$nuevo
+		
+		\State dondeAgregar $\gets$ buscarPadreInsertar(c, ultimo)
+		
+		\If{dondeAgregar$\to$izq = NULL}
+			\State dondeAgrega$\to$izq $\gets$ insertado
+		\Else
+			\If {dondeAgregar$\to$der = NULL}
+				\State dondeAgregar$\to$der $\gets$ insertado
+			\EndIf
+		\EndIf
+		
+		\State insertado$\to$padre $\gets$ dondeAgregar
+		\State c.ultimo $\gets$ insertado
+		
+		\State SiftUp(c, insertado)
+		\State res $\gets$ iterador(insertado)
 		
 		
 		\medskip
@@ -227,24 +250,26 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 \begin{algorithm}[H]{\textbf{iDesencolar}(\Inout {c}{colaMin}})
 	\begin{algorithmic}[1]
 
-		\State puntero(nodoHeap($\sigma$)) ultimo $\leftarrow$ NULL\Comment O(1)
-		\,
-		\If{c.padreAgregar$\rightarrow$der = NULL}\Comment O(1)
-			\State ultimo $\leftarrow$ c.padreAgregar$\rightarrow$izq\Comment O(1)
-			\State c.padreAgregar$\rightarrow$izq$\leftarrow$NULL\Comment O(1)
-			\,
-		\Else
-			\State ultimo $\leftarrow$ c.padreAgregar$\rightarrow$der\Comment O(1)
-			\State c.padreAgregar$\rightarrow$der$\leftarrow$NULL\Comment O(1)
-		\EndIf
-		\State ultimo$\rightarrow$izq$\leftarrow$c.raiz$\rightarrow$izq\Comment O(1)
-		\State ultimo$\rightarrow$der$\leftarrow$c.raiz$\rightarrow$der\Comment O(1)
-		\State c.raiz$\leftarrow$ultimo\Comment O(1)
-		\,
-		%Ahora sift down
-		\While {ultimo$\rightarrow$der $\neq$ NULL $\wedge$ ultimo$\rightarrow$izq $\neq$ NULL $\wedge$ (ultimo$\rightarrow$der.clave $<$ ultimo.clave $\vee$ ultimo$\rightarrow$izq.clave $<$ ultimo.clave))} \Comment O(log(n))
-			\State siftDown(ultimo, c)\Comment O(1)
-		\EndWhile
+		\If {c.raiz$\to$izq = NULL}
+			\State c.raiz = NULL
+			\State c.ultimo = NULL
+		\Else	
+			\State puntero(nodoHeap($\sigma$)) nuevoUltimo $\gets$ buscarUltimo(c.ultimo)
+
+			\State puntero(nodoHeap($\sigma$)) aBorrar $\gets$ c.raiz
+			\State swap(c.raiz, c.ultimo)
+		
+			\If {c.ultimo$\to$padre$\to$der = aBorrar}
+				\State c.ultimo$\to$padre$\to$der $\gets$ NULL
+			\Else
+				\State c.ultimo$\to$padre$\to$izq $\gets$ NULL
+			\EndIf
+		
+		\State c.ultimo $\gets$ nuevoUltimo
+		\State SiftDown(c.raiz)
+
+		\EndIf	
+
 		
 		\medskip
 		\Statex \underline{Complejidad:} O(log(n))
