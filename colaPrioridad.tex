@@ -323,9 +323,174 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 % Funciones auxiliares
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{algorithm}[H]{\textbf{BuscarPadreInsertar}(\In {c}{colaPrioridadMin($\sigma$)})}
+\begin{algorithm}[H]{\textbf{tieneQueSubir}(\In {c}{colaPrioridadMin($\sigma$)}, \In {n}{puntero(nodoHeap($\sigma$))}) $\to$ res: Bool}
+	\begin{algorithmic}[1]
+	
+		\If {n$\to$padre = NULL}
+			\State res $\gets$ False
+		\Else
+			\State res $\gets$ n$\to$valor < n$\to$padre$\to$valor
+		\EndIf
+
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Una pequeña función para determinar si hay que hacer siftUp. 
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{tieneQueBajar}(\In {c}{colaPrioridadMin($\sigma$)}, \In {n}{puntero(nodoHeap($\sigma$))}) $\to$ res: Bool}
+	\begin{algorithmic}[1]
+	
+		\If {n$\to$izq = NULL $\wedge$ n$\to$der = NULL}
+			\State res $\gets$ False
+		\Else
+			\If {n$\to$der != NULL $\wedge$ n$\to$der$\to$valor < n$\to$valor}
+				\State res $\gets$ True
+			\Else
+				\State res $\gets$ n$\to$izq$\to$valor < n$\to$valor	
+			\EndIf
+		\EndIf
+
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Una pequeña función para determinar si hay que hacer siftDown. 
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{swap}(\In {c}{colaPrioridadMin($\sigma$)}, \In {nodo1}{puntero(nodoHeap($\sigma$))}, \In {nodo2}{puntero(nodoHeap($\sigma$))})}
 	\begin{algorithmic}[1]
 		
+		\State n1 $\gets$ nodo1
+		\State n1Padre $\gets$ nodo1$\to$padre
+		\State n1Der $\gets$ nodo1$\to$der
+		\State n1Izq $\gets$ nodo1$\to$izq
+		
+		\State n2 $\gets$ nodo2
+		\State n2Padre $\gets$ nodo2$\to$padre
+		\State n2Der $\gets$ nodo2$\to$der
+		\State n2Izq $\gets$ nodo2$\to$izq
+		
+		\Comment Cambiamos los padres
+		\If {nodo1$\to$padre = nodo2$\to$padre}
+			\State No hacer nada, dejarlos con el mismo padre
+		\Else
+			\If {nodo1$\to$padre != nodo2 $\wedge$ nodo2$\to$padre != nodo1}
+				\State nodo1$\to$padre $\gets$ n2Padre	
+				\State nodo2$\to$padre $\gets$ n1Padre
+				\If {nodo1$\to$izq != NULL}
+					\State nodo1$\to$der$\to$padre $\gets$ nodo2
+				\EndIf
+				\If {nodo1$\to$der != NULL}
+					\State nodo1$\to$izq$\to$padre $\gets$ nodo2
+				\EndIf
+				\If {nodo2$\to$izq != NULL}
+					\State nodo1$\to$izq$\to$padre $\gets$ nodo1
+				\EndIf
+				\If {nodo2$\to$der != NULL}
+					\State nodo1$\to$der$\to$padre $\gets$ nodo1
+				\EndIf
+			\Else
+				\If {nodo2$\to$padre = nodo1}
+					\State nodo1$\to$padre $\gets$ n2
+					\State nodo2$\to$padre $\gets$ n1Padre	
+					\If {nodo1$\to$izq != NULL $\wedge$ nodo1$\to$izq != nodo2)}
+						\State nodo1$\to$izq$\to$padre $\gets$ nodo2					
+					\EndIf
+					\If {nodo1$\to$der != NULL $\wedge$ nodo1$\to$der != nodo2}
+						\State nodo1$\to$der$\to$padre $\gets$ nodo2					
+					\EndIf
+					\If {nodo2$\to$izq != NULL}
+						\State nodo2$\to$izq$\to$padre $\gets$ nodo1
+					\EndIf
+					\If {nodo2$\to$der != NULL}
+						\State nodo2$\to$der$\to$padre $\gets$ nodo1
+					\EndIf
+				\Else
+					\If {nodo1$\to$padre = nodo2}
+						\State nodo1$\to$padre $\gets$ n2Padre
+						\State nodo2$\to$padre = n1
+						\If {nodo1$\to$izq != NULL}
+							\State nodo1$\to$izq$\to$padre $\gets$ nodo2
+						\EndIf
+						\If {nodo1$\to$der != NULL}
+							\State nodo1$\to$der$\to$padre $\gets$ nodo2
+						\EndIf
+						\If {nodo2$\to$izq != NULL}
+							\State nodo2$\to$izq$\to$padre $\gets$ nodo1
+						\EndIf
+						\If {nodo2$\to$der != NULL}
+							\State nodo2$\to$der$\to$padre $\gets$ nodo1
+						\EndIf
+					\EndIf
+				\EndIf
+			
+				\Comment Apuntamos los nuevos hijos de cada nodo			
+				\State nodo1$\to$izq $\gets$ n2Izq
+				\If {nodo1$\to$izq != NULL $\wedge$ nodo1$\to$izq = nodo1}
+					\State nodo1$\to$izq $\gets$ nodo2
+				\EndIf
+				\State nodo1$\to$der $\gets$ n2Der
+				\If {nodo1$\to$der != NULL $\wedge$ nodo1$\to$der = nodo1}
+					\State nodo1$\to$der $\gets$ nodo2
+				\EndIf
+				\State nodo2$\to$izq $\gets$ n1Izq
+				\If {nodo2$\to$izq != NULL $\wedge$ nodo2$\to$izq = nodo2}
+					\State nodo2$\to$izq $\gets$ nodo1
+				\EndIf
+				\State nodo2$\to$der $\gets$ n1Der
+				\If {nodo2$\to$der != NULL $\wedge$ nodo2$\to$der = nodo2}
+					\State nodo2$\to$der $\gets$ nodo1
+				\EndIf
+				
+				\Comment Tenemos que actualizar las referencias de los padres
+				\If {nodo1$\to$padre = nodo2$\to$padre}
+					\State izqAux $\gets$ nodo1$\to$padre$\to$izq
+					\State nodo1$\to$padre$\to$izq $\gets$ nodo1$\to$padre$\to$der
+					\State nodo1$\to$padre$\to$der $\gets$ izqAux
+				\Else
+					\If {n1Padre != NULL $\wedge$ n1Padre$\to$izq = n1}
+						\State n1Padre$\to$izq $\gets$ n2
+					\EndIf
+					\If {n1Padre != NULL $\wedge$ n1Padre$\to$der = n1}
+						\State n1Padre$\to$der $\gets$ n2
+					\EndIf
+					\If {n2Padre != NULL $\wedge$ n2Padre$\to$izq = n2}
+						\State n2Padre$\to$izq $\gets$ n1
+					\EndIf
+					\If {n2Padre != NULL $\wedge$ n2Padre$\to$der = n2}
+						\State n2Padre$\to$der $\gets$ n1
+					\EndIf				
+				\EndIf
+			\EndIf
+			
+			\Comment Seteamos la nueva raíz
+			\If {nodo1 = c$\to$raiz}			
+				\State c$\to$raiz $\gets$ nodo2			
+			\Else
+				\If {nodo2 = c$\to$raiz}
+					\State c$\to$raiz $\gets$ nodo1
+				\EndIf			
+			\EndIf
+			
+			\Comment Actualizamos el ultimo
+			\If {c$\to$ultimo = nodo1}
+				\State c$\to$ultimo $\gets$ nodo2
+			\Else
+				\If {c$\to$ultimo = nodo2}
+					\State c$\to$ultimo $\gets$ nodo1			
+				\EndIf
+			\EndIf
+		\EndIf
+		\medskip
+		\Statex \underline{Complejidad:} O(1)
+			\Statex \underline{Justificacion:}Una pequeña función para determinar si hay que hacer siftDown. 
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]{\textbf{BuscarPadreInsertar}(\In {c}{colaPrioridadMin($\sigma$)})}
+	\begin{algorithmic}[1]
+	
 		\If {c.padreAgregar$\rightarrow$der $\neq$ NULL}\Comment O(1)
 			\State puntero(nodoHeap($\sigma$)) aux $\leftarrow$ c.padreAgregar\Comment O(1)
 			\,	
@@ -356,72 +521,36 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 	\end{algorithmic}
 \end{algorithm}
 
-
 \begin{algorithm}[H]{\textbf{siftUp}(\In {c}{colaPrioridadMin($\sigma$)}, \In {n}{puntero(nodoHeap($\sigma$))})}
 	\begin{algorithmic}[1]
-		
-		\State puntero(nodoHeap($\sigma$)) aux $\leftarrow$ NULL\Comment O(1)
-		\Comment Se crea un nodo auxiliar para poder hacer el intercambio de posicion entre los nodos
-		\,
-		\If {n$\rightarrow$der.clave < n.clave}\Comment O(1)
-			\State aux$\rightarrow$der $\leftarrow$ n$\rightarrow$der$\rightarrow$der\Comment O(1)
-			\State aux$\rightarrow$izq $\leftarrow$ n$\rightarrow$der$\rightarrow$izq\Comment O(1)
-			\State aux$\rightarrow$padre $\leftarrow$ n$\rightarrow$der\Comment O(1)
-			\,
-			\State n$\rightarrow$der$\rightarrow$der $\leftarrow$ n$\rightarrow$der\Comment O(1)
-			\State n$\rightarrow$der$\rightarrow$izq $\leftarrow$ aux\Comment O(1)
-			\State n$\rightarrow$der$\rightarrow$padre $\leftarrow$ n$\rightarrow$padre\Comment O(1)
-			\,
-		\Else
-			\State aux$\rightarrow$der $\leftarrow$ n$\rightarrow$izq$\rightarrow$der\Comment O(1)
-			\State aux$\rightarrow$izq $\leftarrow$ n$\rightarrow$izq$\rightarrow$izq\Comment O(1)
-			\State aux$\rightarrow$padre $\leftarrow$ n$\rightarrow$izq\Comment O(1)
-			\,
-			\State n$\rightarrow$izq$\rightarrow$der $\leftarrow$ n$\rightarrow$der\Comment O(1)
-			\State n$\rightarrow$izq$\rightarrow$izq $\leftarrow$ aux\Comment O(1)
-			\State n$\rightarrow$izq$\rightarrow$padre $\leftarrow$ n$\rightarrow$padre\Comment O(1)
-			\,		
-		\EndIf
-		\,
-		\State n $\leftarrow$ aux\Comment O(1)
-		
+
+		\While {tieneQueSubir(n)}
+			\State swap(n, n$\to$padre)		
+		\EndWhile
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 			\Statex \underline{Justificacion:}Se intercambia un nodo con uno de sus hijos que tenga clave menor. Pese a que no tiene precondiciones, es llamado en un contexto en el cual no se puede indefinir. Es una secuencia de asignaciones, todas O(1), por lo tanto el algoritmo tiene complejidad O(1).
 	\end{algorithmic}
 \end{algorithm}
 
-
-
 \begin{algorithm}[H]{\textbf{siftDown}(\In {c}{colaPrioridadMin($\sigma$)}, \In {n}{puntero(nodoHeap($\sigma$))})}
 	\begin{algorithmic}[1]
 		
-		\State puntero(nodoHeap($\sigma$)) aux $\leftarrow$ NULL\Comment O(1) $\,$
-		\Comment Se crea un nodo auxiliar para poder hacer el intercambio de posicion entre los nodos
-		
-		\If {n$\rightarrow$padre$\rightarrow$izq = n}\Comment O(1)
-			\State aux$\rightarrow$der $\leftarrow$ n$\rightarrow$padre$\rightarrow$der\Comment O(1)
-			\State aux$\rightarrow$izq $\leftarrow$ n$\rightarrow$padre\Comment O(1)
-			
-		\Else
-			\State aux$\rightarrow$der $\leftarrow$ n$\rightarrow$padre\Comment O(1)
-			\State aux$\rightarrow$izq $\leftarrow$ n$\rightarrow$padre$\rightarrow$izq\Comment O(1)
-		\EndIf
-				
-			
-			
-		\If {n$\rightarrow$padre = c.raiz}\Comment O(1)
-			\State aux$\rightarrow$padre $\leftarrow$ NULL\Comment O(1)
-		\Else
-			\State aux$\rightarrow$padre $\leftarrow$ n$\rightarrow$padre$\rightarrow$padre\Comment O(1)
-		\EndIf
-		
-		\State n$\rightarrow$padre$\rightarrow$der $\leftarrow$ n$\rightarrow$der\Comment O(1)
-		\State n$\rightarrow$padre$\rightarrow$izq $\leftarrow$ n$\rightarrow$izq\Comment O(1)
-		\State n$\rightarrow$padre$\rightarrow$padre $\leftarrow$ aux\Comment O(1)
-		
-		\State n $\leftarrow$ aux\Comment O(1)
-		
+		\State aBajar $\gets$ nodoEvaluado
+		\While {tieneQueBajar(aBajar)}
+			\If {aBajar$\to$der = NULL}
+				\State swap(aBajar$\to$izq, aBajar)
+			\Else
+				\If {aBajar$\to$izq != NULL $\wedge$ aBajar$\to$der != NULL}
+					\If {aBajar$\to$izq$\to$valor < aBajar$\to$der$\to$valor}
+						\State swap(aBajar$\to$izq, aBajar)					
+					\Else
+						\State swap(aBajar$\to$der, aBajar)
+					\EndIf	
+				\EndIf
+			\EndIf
+		\EndWhile		
+
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 			\Statex \underline{Justificacion:}Se intercambia un nodo con su padre. Pese a que no tiene precondiciones, es llamado en un contexto en el cual no se puede indefinir. Es una secuencia de asignaciones, todas O(1), por lo tanto el algoritmo tiene complejidad O(1). 
