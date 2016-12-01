@@ -148,13 +148,13 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 \InterfazFuncion{SiftUp}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{}
 [$\neg EVacia?(Desencolar(c))$]
 {No necesariamente conserva la propiedad de heap}
-[O(1)]
+[O(log(n))]
 [Mueve hacia arriba en la cola de prioridad a p si su padre es de menor prioridad]\\
 
 \InterfazFuncion{SiftDown}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}}{}
 [$\neg EVacia?(Desencolar(c))$]
 {No necesariamente conserva la propiedad de heap}
-[O(1)]
+[O(log(n))]
 [Mueve hacia abajo en la cola de prioridad a p si alguno de sus hijos es de mayor prioridad]\\
 
 \InterfazFuncion{Swap}{\Inout {c}{colaPrioridadMin}, \In {p}{puntero}, \In {q}{puntero}}{}
@@ -223,7 +223,7 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 			\State c.ultimo $\gets$ insertado
 		\EndIf
 		
-		\State dondeAgregar $\gets$ buscarPadreInsertar(c, ultimo)
+		\State dondeAgregar $\gets$ buscarPadreInsertar(c, ultimo) \Comment O(log(n))
 		
 		\If{dondeAgregar$\to$izq = NULL}
 			\State dondeAgrega$\to$izq $\gets$ insertado
@@ -236,7 +236,7 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 		\State insertado$\to$padre $\gets$ dondeAgregar
 		\State c.ultimo $\gets$ insertado
 		
-		\State SiftUp(c, insertado)
+		\State SiftUp(c, insertado)		\Comment O(log(n))
 		\State res $\gets$ iterador(insertado)
 		
 		
@@ -257,7 +257,7 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 			\State puntero(nodoHeap($\sigma$)) nuevoUltimo $\gets$ buscarUltimo(c.ultimo)
 
 			\State puntero(nodoHeap($\sigma$)) aBorrar $\gets$ c.raiz
-			\State swap(c.raiz, c.ultimo)
+			\State swap(c.raiz, c.ultimo)		\Comment O(1)
 		
 			\If {c.ultimo$\to$padre$\to$der = aBorrar}
 				\State c.ultimo$\to$padre$\to$der $\gets$ NULL
@@ -266,7 +266,7 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 			\EndIf
 		
 		\State c.ultimo $\gets$ nuevoUltimo
-		\State SiftDown(c.raiz)
+		\State SiftDown(c.raiz)	\Comment O(log(n))
 
 		\EndIf	
 
@@ -359,8 +359,9 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 
 \begin{algorithm}[H]{\textbf{swap}(\In {c}{colaPrioridadMin($\sigma$)}, \In {nodo1}{puntero(nodoHeap($\sigma$))}, \In {nodo2}{puntero(nodoHeap($\sigma$))})}
 	\begin{algorithmic}[1]
+		\begin{scriptsize}
 		
-		\State n1 $\gets$ nodo1
+		\State n1 $\gets$ nodo1 \Comment Swap es O(1)
 		\State n1Padre $\gets$ nodo1$\to$padre
 		\State n1Der $\gets$ nodo1$\to$der
 		\State n1Izq $\gets$ nodo1$\to$izq
@@ -484,52 +485,73 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 		\medskip
 		\Statex \underline{Complejidad:} O(1)
 			\Statex \underline{Justificacion:}Una pequeña función para determinar si hay que hacer siftDown. 
+	\end{scriptsize}
 	\end{algorithmic}
 \end{algorithm}
 
 
-\begin{algorithm}[H]{\textbf{BuscarPadreInsertar}(\In {c}{colaPrioridadMin($\sigma$)})}
+\begin{algorithm}[H]{\textbf{BuscarPadreInsertar}(\In {c}{colaPrioridadMin($\sigma$)}, \In {n}{puntero(nodoHeap($\sigma$))}) $\to$ res :{puntero(nodoHeap($\sigma$))} }
 	\begin{algorithmic}[1]
 	
-		\If {c.padreAgregar$\rightarrow$der $\neq$ NULL}\Comment O(1)
-			\State puntero(nodoHeap($\sigma$)) aux $\leftarrow$ c.padreAgregar\Comment O(1)
-			\,	
-			\While {aux $\neq$ c.raiz $\wedge$ aux$\rightarrow$padre$\rightarrow$der = aux}\Comment O(log(n))\,
-				\Comment Buscamos el padre hacia la izquierda hasta no poder avanzar
-				\State aux $\leftarrow$ aux$\rightarrow$padre\Comment O(1)		
-			\EndWhile
-			\,			
-			\If {aux $\neq$ c.raiz}\Comment O(1)\,
-				\Comment Nos movemos al subárbol hermano
-				\State aux $\leftarrow$ aux$\rightarrow$padre\Comment O(1)
-				\State aux $\leftarrow$ aux$\rightarrow$der\Comment O(1)
+		\If {n = c$\to$raiz}
+			\State res $\gets$ n
+		\Else
+			\If {nodo$\to$padre$\to$der = NULL}
+				\State res $\gets$ n$\to$padre			
+			\Else
+				\State aux $\gets$ n$\to$padre
+				\While {aux != c$\to$raiz $\wedge$ aux$\to$padre$\to$der = aux}	 \Comment O(log(n))
+					\State aux $\gets$ aux$\to$padre
+				\EndWhile
+				\If {aux != c$\to$raiz}
+					\State aux $\gets$ aux$\to$padre$\to$der
+				\EndIf
+				\While {aux$\to$izq != NULL}		\Comment O(log(n))
+					\State aux $\gets$ aux$\to$izq
+				\EndWhile
+				\State res $\gets$ aux
 			\EndIf
-			\,			
-			\While {aux$\rightarrow$izq $\neq$ NULL}\Comment O(1)\,
-				\Comment Bajamos a la izquierda hasta no poder avanzar.
-				\State aux $\leftarrow$ aux$\rightarrow$izq\Comment O(1)
-			\EndWhile
-			\,
-			\State c.padreAgregar $\leftarrow$ aux\Comment O(1)
 		\EndIf
-		
 		\medskip
 		\Statex \underline{Complejidad:} O(log(n))
-			\Statex \underline{Justificacion:}Se obtiene nodo al cual hay que agregarle hojas para mantener la propiedad de heap al encolar.\,
-			     Subimos hacia la izquierda mientras los subárboles estén completos para encontrar el subárbol "hermano" al cual hay que agregarle el elemento a encolar. Luego bajamos hacia la izquierda para encontrar el padre de la futura hoja. En caso de que el árbol total sea completo se sube hasta la raíz y se baja hacia el elemento más a la izquierda.
-			\,   En el peor caso se recorre dos veces la altura del heap, es decir 2log(n) operaciones, dando una complejidad O(log(n)). 
+			\Statex \underline{Justificacion:} En el peor caso se recorre dos veces la altura del heap, es decir 2log(n) operaciones, dando una complejidad O(log(n)). 
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]{\textbf{buscarUltimoAlDesencolar}(\In {c}{colaPrioridadMin($\sigma$)}, \In {n}{puntero(nodoHeap($\sigma$))}) $\to$ res :{puntero(nodoHeap($\sigma$))} }
+	\begin{algorithmic}[1]
+		
+		\If {n$\to$padre$\to$der = n}
+			\State res $\gets$ n$\to$padre$\to$izq
+		\Else
+			aux $\gets$ n$\to$padre
+			\While {aux != c$\to$raiz $\wedge$ aux$\to$padre$\to$izq = aux} 	\Comment O(log(n))
+				\State aux $\gets$ aux$\to$padre
+			\EndWhile
+			\If {aux != c$\to$raiz}
+				\State aux $\gets$ aux$\to$padre$\to$izq
+			\EndIf
+			\While {aux$\to$der != NULL}		\Comment O(log(n))
+				\State aux $\gets$ aux$\to$der
+			\EndWhile
+			\State res $\gets$ aux
+		\EndIf
+
+		\medskip
+		\Statex \underline{Complejidad:} O(log(n))
+			\Statex \underline{Justificacion:}Similar a BuscarPadreInsertar. En el peor caso se recorre dos veces la altura del heap, es decir 2log(n) operaciones, dando una complejidad O(log(n)). 
 	\end{algorithmic}
 \end{algorithm}
 
 \begin{algorithm}[H]{\textbf{siftUp}(\In {c}{colaPrioridadMin($\sigma$)}, \In {n}{puntero(nodoHeap($\sigma$))})}
 	\begin{algorithmic}[1]
 
-		\While {tieneQueSubir(n)}
-			\State swap(n, n$\to$padre)		
+		\While {tieneQueSubir(n)}	\Comment O(log(n))
+			\State swap(n, n$\to$padre)		\Comment O(1)
 		\EndWhile
 		\medskip
-		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:}Se intercambia un nodo con uno de sus hijos que tenga clave menor. Pese a que no tiene precondiciones, es llamado en un contexto en el cual no se puede indefinir. Es una secuencia de asignaciones, todas O(1), por lo tanto el algoritmo tiene complejidad O(1).
+		\Statex \underline{Complejidad:} O(log(n))
+			\Statex \underline{Justificacion:}Se intercambia un nodo con uno de sus hijos que tenga clave menor. Como mucho puede recorrer toda la altura del árbol, que es log(n).
 	\end{algorithmic}
 \end{algorithm}
 
@@ -537,7 +559,7 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 	\begin{algorithmic}[1]
 		
 		\State aBajar $\gets$ nodoEvaluado
-		\While {tieneQueBajar(aBajar)}
+		\While {tieneQueBajar(aBajar)} 	\Comment O(log(n))
 			\If {aBajar$\to$der = NULL}
 				\State swap(aBajar$\to$izq, aBajar)
 			\Else
@@ -552,8 +574,8 @@ Este iterador en particular no tiene función avanzar porque sólo nos interesa 
 		\EndWhile		
 
 		\medskip
-		\Statex \underline{Complejidad:} O(1)
-			\Statex \underline{Justificacion:}Se intercambia un nodo con su padre. Pese a que no tiene precondiciones, es llamado en un contexto en el cual no se puede indefinir. Es una secuencia de asignaciones, todas O(1), por lo tanto el algoritmo tiene complejidad O(1). 
+		\Statex \underline{Complejidad:} O(log(n))
+			\Statex \underline{Justificacion:}Se intercambia un nodo con su padre. Como mucho puede recorrer toda la altura del árbol, que es log(n).
 	\end{algorithmic}
 \end{algorithm}
 
