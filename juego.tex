@@ -779,6 +779,29 @@ true
 \end{algorithm}
 
 
+\begin{algorithm}[H]{\textbf{iCantMovimientosParaCaptura}(\In {c}{Conj(coordenada)}, \In {g}{Game}) $\to$ res: Conj(Jugador)}
+	\begin{algorithmic}[1]
+	
+		\State coord $\gets$ c$\to$celdasValidas
+		\State itCoord $\gets$ CrearIt(coord)
+		\While {HaySiguiente(itCoord)}
+			\If {HayCamino(mapa, Siguiente(itCoord)), c}
+				\State itDicc $\gets$ mapaInfo[Siguiente(itCoord)$\to$latitud]
+				\While {HaySiguiente(itDicc)}
+					j $\gets$ SiguienteClave(itDicc)
+					\State Agregar(res, j)
+					\State Avanzar(itDicc)
+				\EndWhile
+			\EndIf
+			\State Avanzar(itCoord)
+		\EndWhile
+		
+		\medskip
+		\Statex \underline{Complejidad:} O()
+		\Statex \underline{Justificacion:} 
+	\end{algorithmic}
+\end{algorithm}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Otras operaciones
